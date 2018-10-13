@@ -72,7 +72,7 @@ public class Project extends AbstractEntity implements Persistable<Long> {
 
     @Override
     public boolean isNew() {
-        return null == id;
+        return id == null;
     }
 
     public void setId(Long id) {
