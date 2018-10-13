@@ -1,0 +1,26 @@
+package org.sudocode.api.project.comment;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
+
+@Repository
+@Transactional(
+        propagation = Propagation.MANDATORY
+)
+public interface CommentRepository extends JpaRepository<Comment, Long> {
+
+    @Query(value = "SELECT c FROM Comment c JOIN FETCH c.project JOIN FETCH c.author WHERE c.project.id = :id",
+        countQuery = "SELECT count(c) FROM Comment c WHERE c.project.id = :id")
+    Page<Comment> fetchAllByProjectId(@Param("id") Long id, Pageable pageable);
+
+    @Query("SELECT c FROM Comment c JOIN FETCH c.author WHERE c.id = :id")
+    Optional<Comment> fetchById(@Param("id") Long id);
+}
