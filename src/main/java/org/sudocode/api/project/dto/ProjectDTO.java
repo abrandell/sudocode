@@ -14,7 +14,6 @@ import java.time.LocalDateTime;
 @Getter
 public class ProjectDTO {
 
-    private final String datePattern = "yyyy-MM-d HH:mm:ss";
 
     private final Long id;
     private final String title;
@@ -22,10 +21,8 @@ public class ProjectDTO {
     private final String description;
     private final UserDTO author;
 
-    @JsonFormat(pattern = datePattern)
     private LocalDateTime datePosted;
 
-    @JsonFormat(pattern = datePattern)
     private LocalDateTime lastModifiedDate;
 
     public ProjectDTO(Project project) {
@@ -38,6 +35,24 @@ public class ProjectDTO {
         this.author = new UserDTO(project.getAuthor());
     }
 
+    /**
+     * Constructor with a ridiculous amount of params for JPQL constructor expressions.
+     *
+     * Not to be used directly.
+     *
+     * @see org.sudocode.api.project.domain.ProjectRepository
+     */
+    public ProjectDTO(Long id, String title, Difficulty difficulty, String description, LocalDateTime datePosted, LocalDateTime lastModifiedDate,
+                      Long userId, String login, String avatarUrl, boolean hireable) {
+        this.id = id;
+        this.title = title;
+        this.difficulty = difficulty;
+        this.datePosted = datePosted;
+        this.lastModifiedDate = lastModifiedDate;
+        this.description = description;
+        this.author = new UserDTO(userId, login, avatarUrl, hireable);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -47,7 +62,6 @@ public class ProjectDTO {
         ProjectDTO that = (ProjectDTO) o;
 
         return new EqualsBuilder()
-                .append(datePattern, that.datePattern)
                 .append(id, that.id)
                 .append(title, that.title)
                 .append(difficulty, that.difficulty)
@@ -61,7 +75,6 @@ public class ProjectDTO {
     @Override
     public int hashCode() {
         return new HashCodeBuilder(17, 37)
-                .append(datePattern)
                 .append(id)
                 .append(title)
                 .append(difficulty)

@@ -26,6 +26,21 @@ public class CommentDTO {
         this.author = new UserDTO(comment.getAuthor());
     }
 
+    /**
+     * Constructor with a ridiculous amount of params for JPQL constructor expressions.
+     *
+     * @see CommentRepository
+     */
+    public CommentDTO(Long id, String body, LocalDateTime datePosted,
+                      LocalDateTime lastModifiedDate, Long userId,
+                      String login, String avatarUrl, boolean hireable) {
+        this.id = id;
+        this.body = body;
+        this.datePosted = datePosted;
+        this.lastModifiedDate = lastModifiedDate;
+        this.author = new UserDTO(userId, login, avatarUrl, hireable);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

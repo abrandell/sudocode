@@ -49,6 +49,7 @@ public class OAuth2ServiceUtils {
                 (request, body, execution) -> {
 
                     var authentication = SecurityContextHolder.getContext().getAuthentication();
+
                     if (authentication instanceof OAuth2AuthenticationToken) {
 
                         var token = (OAuth2AuthenticationToken) authentication;
@@ -58,6 +59,7 @@ public class OAuth2ServiceUtils {
                         );
 
                         final String accessToken = client.getAccessToken().getTokenValue();
+
                         request.getHeaders().add(AUTHORIZATION, "Bearer " + accessToken);
                     }
 

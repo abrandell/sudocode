@@ -6,7 +6,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.sudocode.api.core.SecurityUtils;
 import org.sudocode.api.core.TimeOutService;
 import org.sudocode.api.core.TooManyRequestException;
 import org.sudocode.api.project.comment.Comment;
@@ -19,12 +18,9 @@ import org.sudocode.api.project.domain.ProjectRepository;
 import org.sudocode.api.project.dto.ProjectDTO;
 import org.sudocode.api.project.dto.ProjectSummary;
 import org.sudocode.api.project.web.ProjectPost;
-import org.sudocode.api.user.UserNotLoggedInException;
 import org.sudocode.api.user.UserService;
 import org.sudocode.api.user.domain.User;
 
-import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.concurrent.ExecutionException;
 
 import static org.sudocode.api.project.domain.Difficulty.*;
@@ -98,8 +94,10 @@ public class ProjectService {
      * @see Pageable
      * @see ProjectSummary
      */
-    public Page<ProjectSummary> fetchAll(@Nullable String title, @Nullable String difficulty,
-                                         @Nullable String description, Pageable pageable) {
+    public Page<ProjectSummary> fetchAll(@Nullable String title,
+                                         @Nullable String difficulty,
+                                         @Nullable String description,
+                                         Pageable pageable) {
 
         Difficulty difficultyEnum = (difficulty != null && !difficulty.isEmpty()) ? fromText(difficulty) : null;
 
@@ -114,7 +112,7 @@ public class ProjectService {
      * @throws ProjectNotFoundException if the project couldn't be found, or if id was null.
      */
     public ProjectDTO fetchById(Long id) {
-        return projectToDTO(projectRepo.findById(id).orElseThrow(() -> new ProjectNotFoundException(id)));
+        return projectRepo.fetchDTOById(id).orElseThrow(() -> new ProjectNotFoundException(id));
     }
 
     /**
@@ -217,7 +215,7 @@ public class ProjectService {
      * @see Pageable
      */
     public Page<CommentDTO> fetchCommentsByProjectId(Long id, Pageable pageable) {
-        return commentRepo.fetchAllByProjectId(id, pageable).map(CommentDTO::new);
+        return commentRepo.fetchDTOPageByProjectId(id, pageable);
     }
 
 
