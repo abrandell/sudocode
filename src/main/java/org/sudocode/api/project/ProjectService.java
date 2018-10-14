@@ -25,7 +25,6 @@ import org.sudocode.api.user.domain.User;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.concurrent.ExecutionException;
 
 import static org.sudocode.api.project.domain.Difficulty.*;
 import static org.sudocode.api.project.dto.ProjectMapper.*;
@@ -223,14 +222,13 @@ public class ProjectService {
     }
 
     // TODO rename me. Checks last time posted and times out the user for 5 mins if it was under 30 sec ago.
-    private void ensureNotSpamming(Long userId, LocalDateTime lastPosted) {
-        LocalDateTime latestPostDate = commentRepo.fetchLatestPostDateByAuthorId(userId);
+    private void ensureNotSpamming(Long userId, @Nullable LocalDateTime lastPosted) {
 
-        if (latestPostDate != null) {
+        if (lastPosted != null) {
             var now = LocalDateTime.now();
-            assert now.isAfter(latestPostDate);
+            assert now.isAfter(lastPosted);
 
-            long secPassed = Duration.between(latestPostDate, now).toSeconds();
+            long secPassed = Duration.between(lastPosted, now).toSeconds();
 
             if (secPassed < 30) {
                 timeOutService.timeOutUser(userId);

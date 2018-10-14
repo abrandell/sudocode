@@ -10,6 +10,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutionException;
 
+/**
+ * Service for timing out users for spamming and/or posting too often.
+ */
 @Service
 public final class TimeOutService {
 
