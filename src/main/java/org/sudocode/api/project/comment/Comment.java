@@ -6,6 +6,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.validator.constraints.Length;
+import org.sudocode.api.core.AbstractAuditableEntity;
 import org.sudocode.api.core.AbstractEntity;
 import org.sudocode.api.project.domain.Project;
 import org.sudocode.api.user.domain.User;
@@ -20,7 +21,7 @@ import static java.time.LocalDateTime.now;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Comment extends AbstractEntity {
+public class Comment extends AbstractAuditableEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
@@ -37,19 +38,6 @@ public class Comment extends AbstractEntity {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     private User author;
 
-    @Column(name = "posted_date")
-    @CreationTimestamp
-    private LocalDateTime datePosted;
-
-    @Column(name = "last_modified")
-    private LocalDateTime lastModifiedDate;
-
-    @PreUpdate
-    protected void createLastModifiedDate() {
-        LocalDateTime currentTime = now();
-        this.lastModifiedDate = (this.datePosted != currentTime) ? currentTime : null;
-    }
-
     @Override
     public String toString() {
         return new ToStringBuilder(this)
@@ -57,8 +45,8 @@ public class Comment extends AbstractEntity {
                 .append("project", project)
                 .append("body", body)
                 .append("author", author)
-                .append("datePosted", datePosted)
-                .append("lastModifiedDate", lastModifiedDate)
+                .append("datePosted", super.getDatePosted())
+                .append("lastModifiedDate", super.getLastModifiedDate())
                 .toString();
     }
 }

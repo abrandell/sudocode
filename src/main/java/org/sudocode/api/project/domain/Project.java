@@ -11,6 +11,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.data.domain.Persistable;
+import org.sudocode.api.core.AbstractAuditableEntity;
 import org.sudocode.api.core.AbstractEntity;
 import org.sudocode.api.user.domain.User;
 
@@ -25,7 +26,7 @@ import static java.time.LocalDateTime.now;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Project extends AbstractEntity implements Persistable<Long> {
+public class Project extends AbstractAuditableEntity implements Persistable<Long> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
@@ -45,20 +46,6 @@ public class Project extends AbstractEntity implements Persistable<Long> {
     @JoinColumn(name = "user_fk")
     private User author;
 
-    @Column(name = "posted_date")
-    @CreationTimestamp
-    @JsonFormat(pattern = "yyyy-MM-d HH:mm:ss")
-    private LocalDateTime datePosted;
-
-    @Column(name = "last_modified")
-    @JsonFormat(pattern = "yyyy-MM-d HH:mm:ss")
-    private LocalDateTime lastModifiedDate;
-
-    @PreUpdate
-    protected void createLastModifiedDate() {
-        LocalDateTime currentTime = now();
-        this.lastModifiedDate = (this.datePosted != currentTime) ? currentTime : null;
-    }
 
     @Override
     public boolean isNew() {
@@ -73,8 +60,8 @@ public class Project extends AbstractEntity implements Persistable<Long> {
                 .append("difficulty", difficulty)
                 .append("description", description)
                 .append("author", author)
-                .append("datePosted", datePosted)
-                .append("lastModifiedDate", lastModifiedDate)
+                .append("datePosted", super.getDatePosted())
+                .append("lastModifiedDate", super.getLastModifiedDate())
                 .toString();
     }
 }
