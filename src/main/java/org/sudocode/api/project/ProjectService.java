@@ -66,8 +66,17 @@ public class ProjectService {
      */
     @Transactional(rollbackFor = Exception.class)
     public ProjectDTO post(ProjectPost postForm) {
-        Project project = new Project();
+        User currentUser = SecurityUtils.getCurrentUser().orElseThrow(UserNotLoggedInException::new);
 
+        if (timeOutService.isUserTimedOut(currentUser.getId())) {
+            throw new TooManyRequestException();
+        }
+
+        LocalDateTime lastPostDate = projectRepo.fetchLatestPostDateByAuthorId(currentUser.getId());
+
+        ensureNotSpamming(currentUser.getId(), lastPostDate);
+
+        Project project = new Project();
         project.setTitle(postForm.getTitle());
         project.setDescription(postForm.getDescription());
         project.setDifficulty(postForm.getDifficulty());
@@ -163,14 +172,14 @@ public class ProjectService {
      * @throws TooManyRequestException if the last comment made by the user was under 1 min ago.
      */
     @Transactional(rollbackFor = Exception.class)
-    public CommentDTO postComment(CommentForm commentForm, Long projectId) throws ExecutionException {
+    public CommentDTO postComment(CommentForm commentForm, Long projectId) {
         User currentUser = SecurityUtils.getCurrentUser().orElseThrow(UserNotLoggedInException::new);
 
-        if (timeOutService.isTimedOut(currentUser.getId())) {
+        if (timeOutService.isUserTimedOut(currentUser.getId())) {
             throw new TooManyRequestException();
         }
-
-        ensureNotSpamming(currentUser.getId());
+        LocalDateTime lastPostDate = commentRepo.fetchLatestPostDateByAuthorId(currentUser.getId());
+        ensureNotSpamming(currentUser.getId(), lastPostDate);
 
         Comment comment = new Comment();
         comment.setBody(commentForm.getBody());
@@ -179,7 +188,7 @@ public class ProjectService {
                            .orElseThrow(() -> new ProjectNotFoundException(projectId))
         );
 
-        comment.setAuthor(userService.currentUser());
+        comment.setAuthor(currentUser);
 
         return new CommentDTO(commentRepo.save(comment));
     }
@@ -214,8 +223,8 @@ public class ProjectService {
     }
 
     // TODO rename me. Checks last time posted and times out the user for 5 mins if it was under 30 sec ago.
-    private void ensureNotSpamming(Long userId) {
-        LocalDateTime latestPostDate = commentRepo.fetchLatestByAuthorId(userId);
+    private void ensureNotSpamming(Long userId, LocalDateTime lastPosted) {
+        LocalDateTime latestPostDate = commentRepo.fetchLatestPostDateByAuthorId(userId);
 
         if (latestPostDate != null) {
             var now = LocalDateTime.now();

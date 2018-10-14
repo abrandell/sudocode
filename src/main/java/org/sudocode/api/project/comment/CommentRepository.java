@@ -26,5 +26,5 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     Optional<Comment> fetchById(@Param("id") Long id);
 
     @Query("SELECT max(c.datePosted) FROM Comment c WHERE c.author.id = :id")
-    LocalDateTime fetchLatestByAuthorId(@Param("id") Long id);
+    LocalDateTime fetchLatestPostDateByAuthorId(@Param("id") Long id);
 }

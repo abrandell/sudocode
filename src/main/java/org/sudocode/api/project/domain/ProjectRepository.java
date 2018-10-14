@@ -10,6 +10,8 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.sudocode.api.project.dto.ProjectSummary;
 
+import java.time.LocalDateTime;
+
 @Repository
 @Transactional(
         readOnly = true,
@@ -34,6 +36,8 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
                                   @Param("description") String description,
                                   Pageable pageable);
 
+    @Query("SELECT max(p.datePosted) FROM Project p WHERE p.author.id = :id")
+    LocalDateTime fetchLatestPostDateByAuthorId(@Param("id") Long id);
 
 }
 /*   private final EntityManager em;
