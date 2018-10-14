@@ -25,6 +25,7 @@ import org.sudocode.api.user.domain.User;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.concurrent.ExecutionException;
 
 import static org.sudocode.api.project.domain.Difficulty.*;
 import static org.sudocode.api.project.dto.ProjectMapper.*;
@@ -162,7 +163,7 @@ public class ProjectService {
      * @throws TooManyRequestException if the last comment made by the user was under 1 min ago.
      */
     @Transactional(rollbackFor = Exception.class)
-    public CommentDTO postComment(CommentForm commentForm, Long projectId) {
+    public CommentDTO postComment(CommentForm commentForm, Long projectId) throws ExecutionException {
         User currentUser = SecurityUtils.getCurrentUser().orElseThrow(UserNotLoggedInException::new);
 
         if (timeOutService.isTimedOut(currentUser.getId())) {
@@ -212,7 +213,7 @@ public class ProjectService {
         return commentRepo.fetchAllByProjectId(id, pageable).map(CommentDTO::new);
     }
 
-    // TODO rename me. Checks last time posted and times out the user for 5 mins if it was under 1 min ago.
+    // TODO rename me. Checks last time posted and times out the user for 5 mins if it was under 30 sec ago.
     private void ensureNotSpamming(Long userId) {
         LocalDateTime latestPostDate = commentRepo.fetchLatestByAuthorId(userId);
 

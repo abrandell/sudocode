@@ -18,6 +18,7 @@ import org.sudocode.api.project.dto.ProjectSummary;
 
 import java.security.Principal;
 import java.time.LocalDateTime;
+import java.util.concurrent.ExecutionException;
 
 import static org.springframework.http.MediaType.*;
 
@@ -58,7 +59,7 @@ public final class ProjectRestController {
     }
 
     @PostMapping(value = "/{id}/comments", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
-    public CommentDTO postComment(@PathVariable("id") Long projectId, @RequestBody CommentForm commentForm, Principal principal) {
+    public CommentDTO postComment(@PathVariable("id") Long projectId, @RequestBody CommentForm commentForm, Principal principal) throws ExecutionException {
 
         LOG.info("Posting comment by " + principal.getName() + " at " + LocalDateTime.now());
 
