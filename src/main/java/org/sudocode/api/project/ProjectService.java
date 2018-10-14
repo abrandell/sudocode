@@ -13,6 +13,7 @@ import org.sudocode.api.project.comment.CommentDTO;
 import org.sudocode.api.project.comment.CommentForm;
 import org.sudocode.api.project.comment.CommentRepository;
 import org.sudocode.api.project.domain.Difficulty;
+import org.sudocode.api.project.domain.InvalidDifficultyException;
 import org.sudocode.api.project.domain.Project;
 import org.sudocode.api.project.domain.ProjectRepository;
 import org.sudocode.api.project.dto.ProjectDTO;
@@ -93,6 +94,9 @@ public class ProjectService {
      * @return Page of ProjectSummary's.
      * @see Pageable
      * @see ProjectSummary
+     * @see Difficulty#fromText(String)
+     * @throws InvalidDifficultyException if the String provided isn't a a {@link Difficulty} enum value.
+     *
      */
     public Page<ProjectSummary> fetchAll(@Nullable String title,
                                          @Nullable String difficulty,

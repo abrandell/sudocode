@@ -95,6 +95,12 @@ public class User implements Identifiable<Long>, OAuth2User {
         return AuthorityUtils.createAuthorityList("ROLE_USER");
     }
 
+    /**
+     * Required to implement {@link OAuth2User}. Do not use.
+     *
+     * All needed info is provided via standard getters.
+     * @return null
+     */
     @JsonIgnore
     @Override
     public Map<String, Object> getAttributes() {
