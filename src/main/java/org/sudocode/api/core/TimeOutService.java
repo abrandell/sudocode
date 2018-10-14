@@ -25,7 +25,11 @@ public final class TimeOutService {
 //    }
 
     public void timeOutUser(Long id) {
-        timeOutMap.putIfAbsent(id, LocalDateTime.now());
+        if (timeOutMap.containsKey(id)) {
+            timeOutMap.replace(id, LocalDateTime.now());
+        } else {
+            timeOutMap.putIfAbsent(id, LocalDateTime.now());
+        }
     }
 
     public boolean isUserTimedOut(Long id) {
