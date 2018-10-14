@@ -112,8 +112,8 @@ public final class ProjectRestController {
      * @see ProjectService#update(Long, ProjectPost)
      */
     @PutMapping(value = "/{id}", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
-    public ProjectDTO update(@PathVariable("id") Long id, @RequestBody ProjectPost projectPostform) throws ExecutionException {
-        return projectService.update(id, projectPostform);
+    public ProjectDTO update(@PathVariable("id") Long id, @RequestBody ProjectPost projectPostForm) throws ExecutionException {
+        return projectService.update(id, projectPostForm);
     }
 
     /**
