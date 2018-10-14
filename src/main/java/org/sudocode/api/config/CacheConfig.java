@@ -29,31 +29,20 @@ public class CacheConfig {
 
 
     @Bean
-    public LoadingCache<Long, LocalDateTime> commentTimeOutCache() {
+    public LoadingCache<Long, LocalDateTime> loadingCache() {
         return CacheBuilder.newBuilder()
                            .expireAfterWrite(10, TimeUnit.MINUTES)
                            .maximumSize(50)
                            .build(new CacheLoader<>() {
                                @Override
                                public LocalDateTime load(@NonNull Long key) throws Exception {
-                                   return commentRepository.fetchLatestPostDateByAuthorId(key);
+                                   var lastCommented = commentRepository.fetchLatestPostDateByAuthorId(key);
+                                   var lastPosted = projectRepository.fetchLatestPostDateByAuthorId(key);
+
+                                   return lastCommented.compareTo(lastPosted) > 0 ? lastCommented : lastPosted;
                                }
                            });
 
     }
-
-    @Bean
-    public LoadingCache<Long, LocalDateTime> projectTimeOutCache() {
-        return CacheBuilder.newBuilder()
-                           .expireAfterWrite(10, TimeUnit.MINUTES)
-                           .maximumSize(50)
-                           .build(new CacheLoader<>() {
-                               @Override
-                               public LocalDateTime load(@NonNull Long key) throws Exception {
-                                   return projectRepository.fetchLatestPostDateByAuthorId(key);
-                               }
-                           });
-    }
-
 
 }

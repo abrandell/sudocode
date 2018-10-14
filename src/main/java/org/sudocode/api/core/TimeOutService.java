@@ -1,7 +1,8 @@
 package org.sudocode.api.core;
 
 import com.google.common.cache.LoadingCache;
-import org.apache.tomcat.jni.Local;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
@@ -16,37 +17,49 @@ import java.util.concurrent.ExecutionException;
 @Service
 public final class TimeOutService {
 
-//    private final LoadingCache<Long, LocalDateTime> commentTimeOutCache;
-//    private final LoadingCache<Long, LocalDateTime> projectTimeOutCache;
+    private final LoadingCache<Long, LocalDateTime> loadingCache;
 
-    private final ConcurrentMap<Long, LocalDateTime> timeOutMap = new ConcurrentHashMap<>();
-
-//    public TimeOutService(LoadingCache<Long, LocalDateTime> commentTimeOutCache,
-//                          LoadingCache<Long, LocalDateTime> projectTimeOutCache) {
-//        this.commentTimeOutCache = commentTimeOutCache;
-//        this.projectTimeOutCache = projectTimeOutCache;
-//    }
-
-    public void timeOutUser(Long id) {
-        if (timeOutMap.containsKey(id)) {
-            timeOutMap.replace(id, LocalDateTime.now());
-        } else {
-            timeOutMap.putIfAbsent(id, LocalDateTime.now());
-        }
+    @Autowired
+    public TimeOutService(LoadingCache<Long, LocalDateTime> loadingCache) {
+        this.loadingCache = loadingCache;
     }
 
-    public boolean isUserTimedOut(Long id) {
-        if (!timeOutMap.containsKey(id)) return false;
+    public void timeOutUser(Long id) {
+        loadingCache.put(id, LocalDateTime.now());
+    }
 
-        long minPassed = Duration.between(timeOutMap.get(id), LocalDateTime.now()).toMinutes();
-
-        if (minPassed >= 5) {
-            timeOutMap.remove(id);
+    public boolean isTimedOut(Long id) throws ExecutionException {
+        if (loadingCache.get(id) == null) {
             return false;
         }
 
-        return true;
+        return Duration.between(loadingCache.get(id), LocalDateTime.now()).toMinutes() <= .5;
+
     }
+
+    public void handleIfTimedOut(Long id) throws ExecutionException {
+        if (isTimedOut(id)) {
+            throw new TooManyRequestException();
+        }
+    }
+
+    // TODO rename me. Checks last time posted and times out the user for 5 mins if it was under 30 sec ago.
+    public void ensureNotSpamming(Long userId, @Nullable LocalDateTime lastPosted) {
+
+        if (lastPosted != null) {
+            var now = LocalDateTime.now();
+            assert now.isAfter(lastPosted);
+
+            long secPassed = Duration.between(lastPosted, now).toSeconds();
+
+            if (secPassed < 30) {
+                timeOutUser(userId);
+                throw new TooManyRequestException();
+            }
+
+        }
+    }
+}
 //
 //    public void timeOutUserFromComments(Long userId) {
 //        commentTimeOutCache.put(userId, LocalDateTime.now());
@@ -69,4 +82,3 @@ public final class TimeOutService {
 //    }
 
 
-}

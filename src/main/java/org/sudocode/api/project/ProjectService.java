@@ -25,6 +25,7 @@ import org.sudocode.api.user.domain.User;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.concurrent.ExecutionException;
 
 import static org.sudocode.api.project.domain.Difficulty.*;
 import static org.sudocode.api.project.dto.ProjectMapper.*;
@@ -64,22 +65,20 @@ public class ProjectService {
      * @see ProjectPost
      */
     @Transactional(rollbackFor = Exception.class)
-    public ProjectDTO post(ProjectPost postForm) {
+    public ProjectDTO post(ProjectPost postForm) throws ExecutionException {
         User currentUser = SecurityUtils.getCurrentUser().orElseThrow(UserNotLoggedInException::new);
 
-        if (timeOutService.isUserTimedOut(currentUser.getId())) {
-            throw new TooManyRequestException();
-        }
+        timeOutService.handleIfTimedOut(currentUser.getId());
 
-        LocalDateTime lastPostDate = projectRepo.fetchLatestPostDateByAuthorId(currentUser.getId());
+        LocalDateTime lastPosted = projectRepo.fetchLatestPostDateByAuthorId(currentUser.getId());
 
-        ensureNotSpamming(currentUser.getId(), lastPostDate);
+        timeOutService.ensureNotSpamming(currentUser.getId(), lastPosted);
 
         Project project = new Project();
         project.setTitle(postForm.getTitle());
         project.setDescription(postForm.getDescription());
         project.setDifficulty(postForm.getDifficulty());
-        project.setAuthor(userService.currentUser());
+        project.setAuthor(currentUser);
 
         return projectToDTO(projectRepo.save(project));
     }
@@ -144,7 +143,7 @@ public class ProjectService {
      * @throws NotPostAuthorException if user making the request did not post the project.
      */
     @Transactional(rollbackFor = Exception.class)
-    public ProjectDTO update(Long id, ProjectPost projectPostForm) {
+    public ProjectDTO update(Long id, ProjectPost projectPostForm) throws ExecutionException {
         if (projectRepo.existsById(id)) {
             Project updated = projectRepo.getOne(id);
 
@@ -168,17 +167,17 @@ public class ProjectService {
      * @param projectId   id of the project to comment on.
      * @return DTO of newly created comment.
      * @throws ProjectNotFoundException if the {@literal projectId} does not match any project id in the DB.
-     * @throws TooManyRequestException if the last comment made by the user was under 1 min ago.
+     * @throws TooManyRequestException  if the last comment made by the user was under 1 min ago.
      */
     @Transactional(rollbackFor = Exception.class)
-    public CommentDTO postComment(CommentForm commentForm, Long projectId) {
+    public CommentDTO postComment(CommentForm commentForm, Long projectId) throws ExecutionException {
         User currentUser = SecurityUtils.getCurrentUser().orElseThrow(UserNotLoggedInException::new);
 
-        if (timeOutService.isUserTimedOut(currentUser.getId())) {
-            throw new TooManyRequestException();
-        }
-        LocalDateTime lastPostDate = commentRepo.fetchLatestPostDateByAuthorId(currentUser.getId());
-        ensureNotSpamming(currentUser.getId(), lastPostDate);
+        timeOutService.handleIfTimedOut(currentUser.getId());
+
+        LocalDateTime lastPosted = commentRepo.fetchLatestPostDateByAuthorId(currentUser.getId());
+
+        timeOutService.ensureNotSpamming(currentUser.getId(), lastPosted);
 
         Comment comment = new Comment();
         comment.setBody(commentForm.getBody());
@@ -221,20 +220,5 @@ public class ProjectService {
         return commentRepo.fetchAllByProjectId(id, pageable).map(CommentDTO::new);
     }
 
-    // TODO rename me. Checks last time posted and times out the user for 5 mins if it was under 30 sec ago.
-    private void ensureNotSpamming(Long userId, @Nullable LocalDateTime lastPosted) {
 
-        if (lastPosted != null) {
-            var now = LocalDateTime.now();
-            assert now.isAfter(lastPosted);
-
-            long secPassed = Duration.between(lastPosted, now).toSeconds();
-
-            if (secPassed < 30) {
-                timeOutService.timeOutUser(userId);
-                throw new TooManyRequestException();
-            }
-
-        }
-    }
 }

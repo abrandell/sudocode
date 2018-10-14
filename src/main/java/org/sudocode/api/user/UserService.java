@@ -1,6 +1,5 @@
 package org.sudocode.api.user;
 
-import com.google.common.util.concurrent.RateLimiter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,10 +13,8 @@ import org.sudocode.api.user.domain.UserRepository;
 import org.sudocode.api.user.dto.UserDTO;
 
 import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
 
 import static com.google.common.base.Preconditions.*;
-import static com.google.common.util.concurrent.RateLimiter.*;
 
 @Service
 @Transactional(
@@ -27,14 +24,11 @@ public class UserService {
 
     private static final String GITHUB_USER_ENDPOINT = "https://api.github.com/user";
 
-    private final OAuth2ServiceUtils oauth2Utils;
     private final RestTemplate restTemplate;
     private final UserRepository userRepo;
-    private final static RateLimiter rateLimiter = RateLimiter.create(1.0);
 
     @Autowired
-    UserService(OAuth2ServiceUtils oauth2Utils, RestTemplate restTemplate, UserRepository userRepo) {
-        this.oauth2Utils = oauth2Utils;
+    UserService(RestTemplate restTemplate, UserRepository userRepo) {
         this.restTemplate = restTemplate;
         this.userRepo = userRepo;
     }
@@ -80,7 +74,6 @@ public class UserService {
      * @throws UserNotFoundException if the id does not match any persisted user.
      */
     public User fetchById(Long id) {
-        rateLimiter.acquire(1);
         return userRepo.findById(id).orElseThrow(() -> new UserNotFoundException(id));
     }
 
@@ -92,7 +85,6 @@ public class UserService {
      * @throws UserNotFoundException if the login does not match any persisted user.
      */
     public User fetchByLogin(String login) {
-        rateLimiter.acquire(1);
         return userRepo.findByLogin(login).orElseThrow(() -> new UserNotFoundException(login));
     }
 
@@ -103,7 +95,6 @@ public class UserService {
      */
     @Transactional(rollbackFor = Exception.class)
     public void deleteById(Long id) {
-        rateLimiter.acquire(1);
         userRepo.deleteById(id);
     }
 
@@ -113,7 +104,6 @@ public class UserService {
      * @see UserService#fetchByLogin(String)
      */
     public UserDTO fetchByLoginDTO(String login) {
-        rateLimiter.acquire(1);
         return userRepo.fetchDTOByLogin(login).orElseThrow(() -> new UserNotFoundException(login));
     }
 
@@ -123,7 +113,6 @@ public class UserService {
      * @see UserService#currentUser()
      */
     public UserDTO currentUserDTO() {
-        rateLimiter.acquire(1);
         return new UserDTO(currentUser());
     }
 
@@ -137,7 +126,6 @@ public class UserService {
     }
 
     private User getUserFromRestCall(String url) {
-        rateLimiter.acquire(1);
         User user = restTemplate.getForObject(url, User.class);
         checkNotNull(user);
         return user;

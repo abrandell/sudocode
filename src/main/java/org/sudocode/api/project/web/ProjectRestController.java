@@ -35,7 +35,7 @@ public final class ProjectRestController {
     }
 
     @PostMapping(consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
-    public ProjectDTO post(@RequestBody ProjectPost projectPost) {
+    public ProjectDTO post(@RequestBody ProjectPost projectPost) throws ExecutionException {
         return projectService.post(projectPost);
     }
 
@@ -73,7 +73,7 @@ public final class ProjectRestController {
     }
 
     @PutMapping(value = "/{id}", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
-    public ProjectDTO update(@PathVariable("id") Long id, @RequestBody ProjectPost projectPostform) {
+    public ProjectDTO update(@PathVariable("id") Long id, @RequestBody ProjectPost projectPostform) throws ExecutionException {
         return projectService.update(id, projectPostform);
     }
 
