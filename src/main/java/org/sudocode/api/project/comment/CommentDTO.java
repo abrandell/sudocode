@@ -1,12 +1,15 @@
 package org.sudocode.api.project.comment;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.sudocode.api.user.dto.UserDTO;
 
 import java.time.LocalDateTime;
 
-
+@Getter
+@Setter
 public class CommentDTO {
 
     private Long id;
@@ -21,46 +24,6 @@ public class CommentDTO {
         this.datePosted = comment.getDatePosted();
         this.lastModifiedDate = comment.getLastModifiedDate();
         this.author = new UserDTO(comment.getAuthor());
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getBody() {
-        return body;
-    }
-
-    public void setBody(String body) {
-        this.body = body;
-    }
-
-    public UserDTO getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(UserDTO author) {
-        this.author = author;
-    }
-
-    public LocalDateTime getDatePosted() {
-        return datePosted;
-    }
-
-    public void setDatePosted(LocalDateTime datePosted) {
-        this.datePosted = datePosted;
-    }
-
-    public LocalDateTime getLastModifiedDate() {
-        return lastModifiedDate;
-    }
-
-    public void setLastModifiedDate(LocalDateTime lastModifiedDate) {
-        this.lastModifiedDate = lastModifiedDate;
     }
 
     @Override

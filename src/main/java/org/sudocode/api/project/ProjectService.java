@@ -34,7 +34,7 @@ import static org.sudocode.api.project.dto.ProjectMapper.*;
  * Service for projects (and comments) transactions. Transactions start here for all projects and comments.
  * By default it is set to read-only and rolls back for ANY exception.
  * <p>
- * Be sure to add the {@code @Transactional} annotation if starting a modifying transaction.
+ * Be sure to add the {@code @Transactional} annotation if starting a modifying transaction (i.e. create, delete, etc).
  */
 @Service
 @Transactional(
@@ -49,7 +49,8 @@ public class ProjectService {
     private final TimeOutService timeOutService;
 
     @Autowired
-    public ProjectService(UserService userService, ProjectRepository projectRepo, CommentRepository commentRepo, TimeOutService timeOutService) {
+    public ProjectService(UserService userService, ProjectRepository projectRepo,
+                          CommentRepository commentRepo, TimeOutService timeOutService) {
         this.userService = userService;
         this.projectRepo = projectRepo;
         this.commentRepo = commentRepo;
@@ -66,13 +67,13 @@ public class ProjectService {
      */
     @Transactional(rollbackFor = Exception.class)
     public ProjectDTO post(ProjectPost postForm) throws ExecutionException {
-        User currentUser = SecurityUtils.getCurrentUser().orElseThrow(UserNotLoggedInException::new);
-
+        User currentUser = userService.currentUser();
         timeOutService.handleIfTimedOut(currentUser.getId());
 
-        LocalDateTime lastPosted = projectRepo.fetchLatestPostDateByAuthorId(currentUser.getId());
-
-        timeOutService.ensureNotSpamming(currentUser.getId(), lastPosted);
+        timeOutService.ensureNotSpamming(
+                currentUser.getId(),
+                projectRepo.fetchLatestPostDateByAuthorId(currentUser.getId())
+        );
 
         Project project = new Project();
         project.setTitle(postForm.getTitle());
@@ -167,24 +168,23 @@ public class ProjectService {
      * @param projectId   id of the project to comment on.
      * @return DTO of newly created comment.
      * @throws ProjectNotFoundException if the {@literal projectId} does not match any project id in the DB.
-     * @throws TooManyRequestException  if the last comment made by the user was under 1 min ago.
+     * @throws TooManyRequestException  if the last {@link Comment} or {@link Project} posted by the user was under 1 min ago.
      */
     @Transactional(rollbackFor = Exception.class)
     public CommentDTO postComment(CommentForm commentForm, Long projectId) throws ExecutionException {
-        User currentUser = SecurityUtils.getCurrentUser().orElseThrow(UserNotLoggedInException::new);
-
+        User currentUser = userService.currentUser();
         timeOutService.handleIfTimedOut(currentUser.getId());
 
-        LocalDateTime lastPosted = commentRepo.fetchLatestPostDateByAuthorId(currentUser.getId());
-
-        timeOutService.ensureNotSpamming(currentUser.getId(), lastPosted);
+        timeOutService.ensureNotSpamming(
+                currentUser.getId(),
+                commentRepo.fetchLatestPostDateByAuthorId(currentUser.getId())
+        );
 
         Comment comment = new Comment();
         comment.setBody(commentForm.getBody());
-        comment.setProject(
-                projectRepo.findById(projectId)
-                           .orElseThrow(() -> new ProjectNotFoundException(projectId))
-        );
+
+        comment.setProject(projectRepo.findById(projectId)
+                                      .orElseThrow(() -> new ProjectNotFoundException(projectId)));
 
         comment.setAuthor(currentUser);
 

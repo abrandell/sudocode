@@ -11,50 +11,51 @@ import org.sudocode.api.user.UserNotFoundException;
 import org.sudocode.api.user.UserNotLoggedInException;
 
 import static org.springframework.hateoas.MediaTypes.*;
+import static org.springframework.http.HttpStatus.*;
 
 @RestControllerAdvice(annotations = RestController.class)
 @RequestMapping(produces = HAL_JSON_VALUE)
 public class RestExceptionHandler {
 
     @ExceptionHandler(ProjectNotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseStatus(NOT_FOUND)
     public VndErrors projectNotFound(ProjectNotFoundException ex) {
-        return new VndErrors("404", ex.getMessage());
+        return new VndErrors(NOT_FOUND.toString(), ex.getMessage());
     }
 
     @ExceptionHandler(InvalidDifficultyException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(BAD_REQUEST)
     public VndErrors invalidDifficulty(InvalidDifficultyException ex) {
-        return new VndErrors("400", ex.getMessage());
+        return new VndErrors(BAD_REQUEST.toString(), ex.getMessage());
     }
 
     @ExceptionHandler(UserNotLoggedInException.class)
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ResponseStatus(UNAUTHORIZED)
     public VndErrors notLoggedIn(UserNotLoggedInException ex) {
-        return new VndErrors("401", ex.getMessage());
+        return new VndErrors(UNAUTHORIZED.toString(), ex.getMessage());
     }
 
     @ExceptionHandler(NotPostAuthorException.class)
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ResponseStatus(UNAUTHORIZED)
     public VndErrors notPostAuthor(NotPostAuthorException ex) {
-        return new VndErrors("401", ex.getMessage());
+        return new VndErrors(UNAUTHORIZED.toString(), ex.getMessage());
     }
 
     @ExceptionHandler(TooManyRequestException.class)
-    @ResponseStatus(HttpStatus.TOO_MANY_REQUESTS)
+    @ResponseStatus(TOO_MANY_REQUESTS)
     public VndErrors tooManyRequests(TooManyRequestException ex) {
-        return new VndErrors("429", ex.getMessage());
+        return new VndErrors(TOO_MANY_REQUESTS.toString(), ex.getMessage());
     }
 
     @ExceptionHandler(CommentNotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseStatus(NOT_FOUND)
     public VndErrors commentNotFound(CommentNotFoundException ex) {
-        return new VndErrors("404", ex.getMessage());
+        return new VndErrors(NOT_FOUND.toString(), ex.getMessage());
     }
 
     @ExceptionHandler(UserNotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseStatus(NOT_FOUND)
     public VndErrors userNotFound(UserNotFoundException ex) {
-        return new VndErrors("404", ex.getMessage());
+        return new VndErrors(NOT_FOUND.toString(), ex.getMessage());
     }
 }

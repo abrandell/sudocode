@@ -6,20 +6,24 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
-import org.sudocode.api.core.OAuth2ServiceUtils;
 import org.sudocode.api.core.SecurityUtils;
 import org.sudocode.api.user.domain.User;
 import org.sudocode.api.user.domain.UserRepository;
 import org.sudocode.api.user.dto.UserDTO;
 
-import java.time.LocalDateTime;
 
 import static com.google.common.base.Preconditions.*;
 
+/**
+ * Service for user transactions. Read only by default & rolls back for any exception.
+ *
+ * Be sure to include another transactional annotation with the required params for any modifying transaction.
+ */
 @Service
 @Transactional(
         readOnly = true,
-        rollbackFor = Exception.class)
+        rollbackFor = Exception.class
+)
 public class UserService {
 
     private static final String GITHUB_USER_ENDPOINT = "https://api.github.com/user";
@@ -54,16 +58,13 @@ public class UserService {
     /**
      * Fetch a pageable of all users in DTO form.
      *
-     * @param pageable
+     * @param pageable {@link Pageable}
      * @return Page of all UserDTOs.
      * @see Pageable
      * @see UserDTO
      */
     public Page<UserDTO> fetchAll(Pageable pageable) {
-        var users = userRepo.fetchAll(pageable);
-
-        System.out.println(" -----------------------------" + LocalDateTime.now());
-        return users;
+        return userRepo.fetchAll(pageable);
     }
 
     /**

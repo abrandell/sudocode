@@ -1,10 +1,15 @@
 package org.sudocode.api.project.dto;
 
+import lombok.Getter;
+import lombok.Setter;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.sudocode.api.project.domain.Difficulty;
 import org.sudocode.api.user.UserSummary;
 
 import java.time.LocalDateTime;
 
+@Getter
 public class ProjectSummary {
 
     private final Long id;
@@ -24,57 +29,33 @@ public class ProjectSummary {
         this.author = new UserSummary(userId, login, avatarUrl);
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public LocalDateTime getDatePosted() {
-        return datePosted;
-    }
-
-    public Difficulty getDifficulty() {
-        return difficulty;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public UserSummary getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(UserSummary author) {
-        this.author = author;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
+
         if (o == null || getClass() != o.getClass()) return false;
 
         ProjectSummary that = (ProjectSummary) o;
 
-        if (!id.equals(that.id)) return false;
-        if (!title.equals(that.title)) return false;
-        if (difficulty != that.difficulty) return false;
-        if (!description.equals(that.description)) return false;
-        if (!datePosted.equals(that.datePosted)) return false;
-        return author.equals(that.author);
+        return new EqualsBuilder()
+                .append(id, that.id)
+                .append(title, that.title)
+                .append(difficulty, that.difficulty)
+                .append(description, that.description)
+                .append(datePosted, that.datePosted)
+                .append(author, that.author)
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
-        int result = id.hashCode();
-        result = 31 * result + title.hashCode();
-        result = 31 * result + difficulty.hashCode();
-        result = 31 * result + description.hashCode();
-        result = 31 * result + datePosted.hashCode();
-        result = 31 * result + author.hashCode();
-        return result;
+        return new HashCodeBuilder(17, 37)
+                .append(id)
+                .append(title)
+                .append(difficulty)
+                .append(description)
+                .append(datePosted)
+                .append(author)
+                .toHashCode();
     }
 }

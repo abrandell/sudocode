@@ -1,6 +1,10 @@
 package org.sudocode.api.project.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.hibernate.annotations.CreationTimestamp;
@@ -17,6 +21,10 @@ import java.time.LocalDateTime;
 import static java.time.LocalDateTime.now;
 
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Project extends AbstractEntity implements Persistable<Long> {
 
     @Id
@@ -52,79 +60,9 @@ public class Project extends AbstractEntity implements Persistable<Long> {
         this.lastModifiedDate = (this.datePosted != currentTime) ? currentTime : null;
     }
 
-    public Project() {}
-
-    public Project(String title, Difficulty difficulty, String description,
-                   User author, LocalDateTime datePosted, LocalDateTime lastModifiedDate) {
-        this.title = title;
-        this.difficulty = difficulty;
-        this.description = description;
-        this.author = author;
-        this.datePosted = datePosted;
-        this.lastModifiedDate = lastModifiedDate;
-    }
-
-    // ----GETTERS & SETTERS----
-
-    public Long getId() {
-        return id;
-    }
-
     @Override
     public boolean isNew() {
         return id == null;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public Difficulty getDifficulty() {
-        return difficulty;
-    }
-
-    public void setDifficulty(Difficulty difficulty) {
-        this.difficulty = difficulty;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public User getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(User author) {
-        this.author = author;
-    }
-
-    public LocalDateTime getDatePosted() {
-        return datePosted;
-    }
-
-    public void setDatePosted(LocalDateTime datePosted) {
-        this.datePosted = datePosted;
-    }
-
-    public LocalDateTime getLastModifiedDate() {
-        return lastModifiedDate;
-    }
-
-    public void setLastModifiedDate(LocalDateTime lastModifiedDate) {
-        this.lastModifiedDate = lastModifiedDate;
     }
 
     @Override

@@ -23,6 +23,8 @@ import static org.springframework.data.annotation.AccessType.*;
 @Entity
 @Table(name = "users")
 @AccessType(Type.FIELD)
+@Getter
+@Setter
 public class User implements Identifiable<Long>, OAuth2User {
 
     /**
@@ -49,38 +51,9 @@ public class User implements Identifiable<Long>, OAuth2User {
         return id.toString();
     }
 
-    @Override
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getLogin() {
-        return login;
-    }
-
-    public void setLogin(String login) {
-        this.login = login;
-    }
-
     @JsonProperty("avatar_url")
     public String getAvatarUrl() {
         return avatarUrl;
-    }
-
-    public void setAvatarUrl(String avatarUrl) {
-        this.avatarUrl = avatarUrl;
-    }
-
-    public boolean isHireable() {
-        return hireable;
-    }
-
-    public void setHireable(boolean hireable) {
-        this.hireable = hireable;
     }
 
     /**

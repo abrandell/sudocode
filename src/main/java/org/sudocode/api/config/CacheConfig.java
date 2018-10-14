@@ -32,7 +32,7 @@ public class CacheConfig {
      * <p>
      * This is mainly to check if a user is spamming/posting too often.
      *
-     * @return LoadingCache that loads both dates (if they exist) for the last {@link Project} and {@link Comment} posted.
+     * @return LoadingCache that fetches both dates (if they exist) for the last {@link Project} and {@link Comment} posted.
      *         The load function returns the latest.
      * @see LoadingCache
      */

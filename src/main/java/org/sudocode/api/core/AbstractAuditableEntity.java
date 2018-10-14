@@ -1,6 +1,8 @@
 package org.sudocode.api.core;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.Column;
@@ -11,6 +13,8 @@ import java.time.LocalDateTime;
 import static java.time.LocalDateTime.now;
 
 @MappedSuperclass
+@Getter
+@Setter
 public abstract class AbstractAuditableEntity extends AbstractEntity {
 
     @Column(name = "posted_date")
@@ -26,19 +30,4 @@ public abstract class AbstractAuditableEntity extends AbstractEntity {
         this.lastModifiedDate = (this.datePosted != currentTime) ? currentTime : null;
     }
 
-    public LocalDateTime getDatePosted() {
-        return datePosted;
-    }
-
-    public void setDatePosted(LocalDateTime datePosted) {
-        this.datePosted = datePosted;
-    }
-
-    public LocalDateTime getLastModifiedDate() {
-        return lastModifiedDate;
-    }
-
-    public void setLastModifiedDate(LocalDateTime lastModifiedDate) {
-        this.lastModifiedDate = lastModifiedDate;
-    }
 }

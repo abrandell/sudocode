@@ -7,6 +7,9 @@ import org.sudocode.api.user.domain.User;
 import java.security.Principal;
 import java.util.Optional;
 
+/**
+ * General security convenience methods.
+ */
 public class SecurityUtils {
 
     /**

@@ -12,6 +12,11 @@ import org.sudocode.api.project.dto.ProjectSummary;
 
 import java.time.LocalDateTime;
 
+/**
+ * Project repository.
+ *
+ * Not to be accessed without an ongoing transaction (preferably from {@link org.sudocode.api.project.ProjectService}.
+ */
 @Repository
 @Transactional(
         readOnly = true,
@@ -40,77 +45,3 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
     LocalDateTime fetchLatestPostDateByAuthorId(@Param("id") Long id);
 
 }
-/*   private final EntityManager em;
-
-    private final String ACCOUNT_RESOURCE =
-            " org.sudocode.api.account.rest.AccountResource(a.username, a.realName, a.displayName, a.githubId, a.gitlabId) ";
-
-    public AccountRepository(EntityManager em) {
-        this.em = em;
-    }
-
-    @Modifying
-    @Transactional(rollbackFor = Exception.class)
-    public Account save(Account user) {
-        if (user.isNew()) {
-            em.persist(user);
-            return user;
-        }
-        return em.merge(user);
-    }
-
-    public Optional<AccountResource> fetchByIdDTO(Long id) {
-        return fetchOrEmpty(() ->
-                em.createQuery("" +
-                        "SELECT NEW" + ACCOUNT_RESOURCE +
-                        "FROM Account a WHERE a.id = :id", AccountResource.class)
-                  .setParameter("id", id)
-                  .getSingleResult());
-    }
-
-    public boolean existsById(Long id) {
-        return (boolean) em.createQuery(
-                "SELECT CASE "
-                        + "WHEN COUNT(u) > 0 "
-                        + "THEN true ELSE false END "
-                        + "FROM Account u WHERE u.id =: id"
-        ).setParameter("id", id).getSingleResult();
-    }
-
-    List<AccountResource> fetchAll(int page, int size, String direction) {
-        return em.createQuery(
-                "SELECT NEW org.sudocode.api.account.rest.AccountResource" +
-                        "(a.username, a.name, a.displayName, a.githubId, a.gitlabId) " +
-                        "FROM Account a " +
-                        "ORDER BY a.creationDate " + direction, AccountResource.class
-        ).setMaxResults(size)
-                 .setFirstResult((page == 0 ? page : --page) * size)
-                 .getResultList();
-    }
-
-
-//    public AccountResource fetchByIdDTO()
-//
-//    public Iterable<Account> findAllById(Iterable<Long> longs) {
-//        return null;
-//    }
-//
-//    public long count() {
-//        return 0;
-//    }
-//
-//    public void deleteById(Long aLong) {
-//
-//    }
-//
-//    public void delete(Account entity) {
-//
-//    }
-//
-//    public void deleteAll(Iterable<? extends Account> entities) {
-//
-//    }
-//
-//    public void deleteAll() {
-//
-//    }*/

@@ -12,6 +12,9 @@ import org.sudocode.api.user.UserService;
 
 import static org.springframework.http.MediaType.*;
 
+/**
+ * Rest controller for {@link org.sudocode.api.user.domain.User}.
+ */
 @RestController
 @RequestMapping("api/users")
 public final class UserRestController {
@@ -22,9 +25,10 @@ public final class UserRestController {
     UserRestController(UserService userService) {
         this.userService = userService;
     }
+
     /**
      * GET /api/users/me
-     * @see UserService#fetchAll(Pageable)
+     * @see UserService#currentUserDTO()
      */
     @GetMapping(value = "/me", produces = APPLICATION_JSON_VALUE)
     public UserDTO currentUser() {
@@ -33,7 +37,7 @@ public final class UserRestController {
 
     /**
      * GET /api/users/:id
-     * @see UserService#fetchAll(Pageable)
+     * @see UserService#fetchByIdDTO(Long)
      */
     @GetMapping(value = "/{id}", produces = APPLICATION_JSON_VALUE)
     public UserDTO fetchById(@PathVariable("id") Long id) {

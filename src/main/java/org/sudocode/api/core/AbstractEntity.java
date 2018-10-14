@@ -3,6 +3,7 @@ package org.sudocode.api.core;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.springframework.data.annotation.AccessType;
 
 import javax.persistence.MappedSuperclass;
@@ -47,8 +48,13 @@ public abstract class AbstractEntity implements Serializable {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
+
         if (o == null || getClass() != o.getClass()) return false;
+
         AbstractEntity that = (AbstractEntity) o;
-        return Objects.equals(UUID, that.UUID);
+
+        return new EqualsBuilder()
+                .append(UUID, that.UUID)
+                .isEquals();
     }
 }

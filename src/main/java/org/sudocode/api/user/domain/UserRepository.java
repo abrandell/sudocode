@@ -12,6 +12,11 @@ import org.sudocode.api.user.dto.UserDTO;
 
 import java.util.Optional;
 
+/**
+ * Repository for users. Read only and rolls back for ANY exception.
+ *
+ * The transaction MUST take place before calling a method here (preferably by {@link org.sudocode.api.user.UserService}
+ */
 @Repository
 @Transactional(
         readOnly = true,
@@ -19,8 +24,6 @@ import java.util.Optional;
         rollbackFor = Exception.class
 )
 public interface UserRepository extends JpaRepository<User, Long> {
-
-    String USER_DTO_FROM_USER = "org.sudocode.api.user.dto(u.id, u.login, u.avatarUrl, u.hireable) FROM User u";
 
     @Query("SELECT NEW " +
                 "org.sudocode.api.user.dto.UserDTO" +

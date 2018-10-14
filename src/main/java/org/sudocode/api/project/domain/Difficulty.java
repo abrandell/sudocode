@@ -4,7 +4,12 @@ import com.fasterxml.jackson.annotation.JsonValue;
 
 import java.util.Arrays;
 
-public enum  Difficulty {
+/**
+ * Difficulty for the {@link Project} idea.
+ *
+ * @see Project
+ */
+public enum Difficulty {
 
     BASIC("basic"),
     BEGINNER("beginner"),
