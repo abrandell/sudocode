@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Repository
@@ -23,4 +24,7 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
 
     @Query("SELECT c FROM Comment c JOIN FETCH c.author WHERE c.id = :id")
     Optional<Comment> fetchById(@Param("id") Long id);
+
+    @Query("SELECT max(c.datePosted) FROM Comment c WHERE c.author.id = :id")
+    LocalDateTime fetchLatestByAuthorId(@Param("id") Long id);
 }

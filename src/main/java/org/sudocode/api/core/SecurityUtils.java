@@ -16,6 +16,8 @@ public class SecurityUtils {
      * @see User
      */
     public static Optional<User> getCurrentUser() {
-        return Optional.of((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+        return Optional.of(
+                (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()
+        );
     }
 }

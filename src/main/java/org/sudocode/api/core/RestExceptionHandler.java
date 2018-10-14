@@ -3,9 +3,11 @@ package org.sudocode.api.core;
 import org.springframework.hateoas.VndErrors;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.sudocode.api.project.CommentNotFoundException;
 import org.sudocode.api.project.NotPostAuthorException;
 import org.sudocode.api.project.domain.InvalidDifficultyException;
 import org.sudocode.api.project.ProjectNotFoundException;
+import org.sudocode.api.user.UserNotFoundException;
 import org.sudocode.api.user.UserNotLoggedInException;
 
 import static org.springframework.hateoas.MediaTypes.*;
@@ -36,5 +38,23 @@ public class RestExceptionHandler {
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public VndErrors notPostAuthor(NotPostAuthorException ex) {
         return new VndErrors("401", ex.getMessage());
+    }
+
+    @ExceptionHandler(TooManyRequestException.class)
+    @ResponseStatus(HttpStatus.TOO_MANY_REQUESTS)
+    public VndErrors tooManyRequests(TooManyRequestException ex) {
+        return new VndErrors("429", ex.getMessage());
+    }
+
+    @ExceptionHandler(CommentNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public VndErrors commentNotFound(CommentNotFoundException ex) {
+        return new VndErrors("404", ex.getMessage());
+    }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public VndErrors userNotFound(UserNotFoundException ex) {
+        return new VndErrors("404", ex.getMessage());
     }
 }

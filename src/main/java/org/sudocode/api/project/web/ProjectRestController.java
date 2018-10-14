@@ -1,5 +1,8 @@
 package org.sudocode.api.project.web;
 
+import com.google.common.util.concurrent.RateLimiter;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,6 +16,9 @@ import org.sudocode.api.project.ProjectService;
 import org.sudocode.api.project.dto.ProjectSummary;
 
 
+import java.security.Principal;
+import java.time.LocalDateTime;
+
 import static org.springframework.http.MediaType.*;
 
 @RestController
@@ -20,6 +26,8 @@ import static org.springframework.http.MediaType.*;
 public final class ProjectRestController {
 
     private final ProjectService projectService;
+    private final Log LOG = LogFactory.getLog(ProjectRestController.class);
+
     @Autowired
     public ProjectRestController(ProjectService projectService) {
         this.projectService = projectService;
@@ -50,8 +58,10 @@ public final class ProjectRestController {
     }
 
     @PostMapping(value = "/{id}/comments", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
-    public CommentDTO postComment(@PathVariable("id") Long projectId, @RequestBody CommentForm commentForm) {
-        System.out.println(commentForm);
+    public CommentDTO postComment(@PathVariable("id") Long projectId, @RequestBody CommentForm commentForm, Principal principal) {
+
+        LOG.info("Posting comment by " + principal.getName() + " at " + LocalDateTime.now());
+
         return projectService.postComment(commentForm, projectId);
     }
 

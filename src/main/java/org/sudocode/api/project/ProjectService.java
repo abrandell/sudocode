@@ -6,6 +6,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.sudocode.api.core.SecurityUtils;
+import org.sudocode.api.core.TimeOutService;
+import org.sudocode.api.core.TooManyRequestException;
 import org.sudocode.api.project.comment.Comment;
 import org.sudocode.api.project.comment.CommentDTO;
 import org.sudocode.api.project.comment.CommentForm;
@@ -16,7 +19,12 @@ import org.sudocode.api.project.domain.ProjectRepository;
 import org.sudocode.api.project.dto.ProjectDTO;
 import org.sudocode.api.project.dto.ProjectSummary;
 import org.sudocode.api.project.web.ProjectPost;
+import org.sudocode.api.user.UserNotLoggedInException;
 import org.sudocode.api.user.UserService;
+import org.sudocode.api.user.domain.User;
+
+import java.time.Duration;
+import java.time.LocalDateTime;
 
 import static org.sudocode.api.project.domain.Difficulty.*;
 import static org.sudocode.api.project.dto.ProjectMapper.*;
@@ -24,7 +32,7 @@ import static org.sudocode.api.project.dto.ProjectMapper.*;
 /**
  * Service for projects (and comments) transactions. Transactions start here for all projects and comments.
  * By default it is set to read-only and rolls back for ANY exception.
- *
+ * <p>
  * Be sure to add the {@code @Transactional} annotation if starting a modifying transaction.
  */
 @Service
@@ -37,16 +45,19 @@ public class ProjectService {
     private final UserService userService;
     private final ProjectRepository projectRepo;
     private final CommentRepository commentRepo;
+    private final TimeOutService timeOutService;
 
     @Autowired
-    public ProjectService(UserService userService, ProjectRepository projectRepo, CommentRepository commentRepo) {
+    public ProjectService(UserService userService, ProjectRepository projectRepo, CommentRepository commentRepo, TimeOutService timeOutService) {
         this.userService = userService;
         this.projectRepo = projectRepo;
         this.commentRepo = commentRepo;
+        this.timeOutService = timeOutService;
     }
 
     /**
      * Post a new project.
+     *
      * @param postForm The ProjectPost form. A DTO for project-creation.
      * @return DTO of the newly posted project.
      * @see Project
@@ -70,10 +81,10 @@ public class ProjectService {
      * <br>
      * Casing does not matter.
      *
-     * @param title Title to search for.
-     * @param difficulty String value of the difficulty to search for.
-     * @param description  Description to search for.
-     * @param pageable Pageable params.
+     * @param title       Title to search for.
+     * @param difficulty  String value of the difficulty to search for.
+     * @param description Description to search for.
+     * @param pageable    Pageable params.
      * @return Page of ProjectSummary's.
      * @see Pageable
      * @see ProjectSummary
@@ -88,6 +99,7 @@ public class ProjectService {
 
     /**
      * Searches for and returns a DTO of project based on id.
+     *
      * @param id of the project to fetch.
      * @return ProjectDTO of the project found.
      * @throws ProjectNotFoundException if the project couldn't be found, or if id was null.
@@ -98,6 +110,7 @@ public class ProjectService {
 
     /**
      * Deletes the comment of the given ID.
+     *
      * @param id of the comment.
      * @throws NotPostAuthorException if the user making the request did not post the comment.
      */
@@ -115,7 +128,8 @@ public class ProjectService {
 
     /**
      * Updates the given project.
-     * @param id of the project to update.
+     *
+     * @param id              of the project to update.
      * @param projectPostForm values to update for said project.
      * @return {@code ProjectDTO} of the updated project.
      * @throws NotPostAuthorException if user making the request did not post the project.
@@ -140,15 +154,24 @@ public class ProjectService {
 
     /**
      * Post a comment.
+     *
      * @param commentForm CommentForm DTO for comment-creation.
-     * @param projectId id of the project to comment on.
+     * @param projectId   id of the project to comment on.
      * @return DTO of newly created comment.
      * @throws ProjectNotFoundException if the {@literal projectId} does not match any project id in the DB.
+     * @throws TooManyRequestException if the last comment made by the user was under 1 min ago.
      */
     @Transactional(rollbackFor = Exception.class)
     public CommentDTO postComment(CommentForm commentForm, Long projectId) {
-        Comment comment = new Comment();
+        User currentUser = SecurityUtils.getCurrentUser().orElseThrow(UserNotLoggedInException::new);
 
+        if (timeOutService.isTimedOut(currentUser.getId())) {
+            throw new TooManyRequestException();
+        }
+
+        ensureNotSpamming(currentUser.getId());
+
+        Comment comment = new Comment();
         comment.setBody(commentForm.getBody());
         comment.setProject(
                 projectRepo.findById(projectId)
@@ -162,6 +185,7 @@ public class ProjectService {
 
     /**
      * Delete a comment.
+     *
      * @param id of the comment to be deleted.
      * @throws NotPostAuthorException if the user making the request did not post the comment.
      */
@@ -169,7 +193,7 @@ public class ProjectService {
     public void deleteCommentById(Long id) {
         Comment comment = commentRepo.fetchById(id).orElseThrow(() -> new CommentNotFoundException(id));
 
-        if(comment.getAuthor() != userService.currentUser()) {
+        if (!comment.getAuthor().equals(userService.currentUser())) {
             throw new NotPostAuthorException("Not author of comment.");
         }
 
@@ -178,12 +202,31 @@ public class ProjectService {
 
     /**
      * Fetches a page with all Comment DTO's for the given project.
-     * @param id of the project to fetch comments for.
+     *
+     * @param id       of the project to fetch comments for.
      * @param pageable the Page request.
      * @return Page of all comment DTO's for the given project.
      * @see Pageable
      */
     public Page<CommentDTO> fetchCommentsByProjectId(Long id, Pageable pageable) {
         return commentRepo.fetchAllByProjectId(id, pageable).map(CommentDTO::new);
+    }
+
+    // TODO rename me. Checks last time posted and times out the user for 5 mins if it was under 1 min ago.
+    private void ensureNotSpamming(Long userId) {
+        LocalDateTime latestPostDate = commentRepo.fetchLatestByAuthorId(userId);
+
+        if (latestPostDate != null) {
+            var now = LocalDateTime.now();
+            assert now.isAfter(latestPostDate);
+
+            long secPassed = Duration.between(latestPostDate, now).toSeconds();
+
+            if (secPassed < 30) {
+                timeOutService.timeOutUser(userId);
+                throw new TooManyRequestException();
+            }
+
+        }
     }
 }

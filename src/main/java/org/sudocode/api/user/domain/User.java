@@ -43,10 +43,10 @@ public class User implements Identifiable<Long>, OAuth2User {
     private boolean hireable;
 
     /**
-     * Required for principal.
+     * Required for principal. Returns ID since that never changes.
      */
     public String getName() {
-        return login;
+        return id.toString();
     }
 
     @Override

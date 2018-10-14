@@ -17,7 +17,7 @@ import java.util.Map;
 import static org.springframework.http.HttpMethod.*;
 
 @Configuration
-@EnableWebSecurity(debug = true)
+@EnableWebSecurity(debug = false)
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
@@ -41,6 +41,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                     .antMatchers(GET, "/api/projects/**").permitAll()
                     .antMatchers(GET, "/api/users/me").permitAll()
+                    .antMatchers(GET, "/api/users*").permitAll()
                     .anyRequest()
                     .authenticated()
                     .and()
