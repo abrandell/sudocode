@@ -31,6 +31,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(HttpSecurity http) throws Exception {
         http
+                /*.requiresChannel()
+                    .requestMatchers(request -> request.getHeader("X-Fowarded-Proto") != null)
+                    .requiresSecure()
+                    .and()*/
                 .formLogin()
                     .disable()
                 .httpBasic()
