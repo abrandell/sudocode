@@ -24,17 +24,15 @@ public final class TimeOutService {
         this.loadingCache = loadingCache;
     }
 
-    public void timeOutUser(Long id) {
+    private void timeOutUser(Long id) {
         loadingCache.put(id, LocalDateTime.now());
     }
 
-    public boolean isTimedOut(Long id) throws ExecutionException {
+    private boolean isTimedOut(Long id) throws ExecutionException {
         if (loadingCache.get(id) == null) {
             return false;
         }
-
         return Duration.between(loadingCache.get(id), LocalDateTime.now()).toMinutes() <= .5;
-
     }
 
     public void handleIfTimedOut(Long id) throws ExecutionException {
@@ -60,25 +58,6 @@ public final class TimeOutService {
         }
     }
 }
-//
-//    public void timeOutUserFromComments(Long userId) {
-//        commentTimeOutCache.put(userId, LocalDateTime.now());
-//    }
-//
-//    public boolean isTimedOutFromComments(Long userId) throws ExecutionException {
-//        if (commentTimeOutCache.get(userId) == null) return false;
-//
-//        return Duration.between(commentTimeOutCache.get(userId), LocalDateTime.now()).toMinutes() <= 5;
-//    }
-//
-//    public void timeOutFromProjects(Long userId) {
-//        projectTimeOutCache.put(userId, LocalDateTime.now());
-//    }
-//
-//    public boolean isTimedOutFromProjects(Long userId) throws ExecutionException {
-//        if (projectTimeOutCache.get(userId) == null) return false;
-//
-//        return Duration.between(projectTimeOutCache.get(userId), LocalDateTime.now()).toMinutes() <= 5;
-//    }
+
 
 
