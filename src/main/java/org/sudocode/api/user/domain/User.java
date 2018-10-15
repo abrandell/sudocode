@@ -25,7 +25,7 @@ import static org.springframework.data.annotation.AccessType.*;
 @AccessType(Type.FIELD)
 @Getter
 @Setter
-public class User implements Identifiable<Long>, OAuth2User {
+public class User implements OAuth2User {
 
     /**
      * Not auto-generated.
@@ -90,7 +90,6 @@ public class User implements Identifiable<Long>, OAuth2User {
                 .toString();
     }
 
-    @JsonIgnore
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return AuthorityUtils.createAuthorityList("ROLE_USER");
@@ -102,7 +101,6 @@ public class User implements Identifiable<Long>, OAuth2User {
      * All needed info is provided via standard getters.
      * @return null
      */
-    @JsonIgnore
     @Override
     public Map<String, Object> getAttributes() {
         return null;
