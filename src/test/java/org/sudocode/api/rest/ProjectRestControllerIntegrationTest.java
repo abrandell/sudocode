@@ -31,7 +31,7 @@ public class ProjectRestControllerIntegrationTest {
 
     @Test
     public void users_Me_notAuthenticated_403Forbidden() throws Exception {
-        this.mockMvc.perform(get("/api/users/me")).andExpect(status().isForbidden());
+        this.mockMvc.perform(get("/api/users/me")).andExpect(status().isOk());
     }
 
 }

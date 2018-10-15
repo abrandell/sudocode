@@ -28,11 +28,12 @@ import static org.springframework.data.annotation.AccessType.*;
 public class User implements Identifiable<Long>, OAuth2User {
 
     /**
-     * Not generated.
+     * Not auto-generated.
      *
      * Uses the same ID as the github API.
      */
     @Id
+    @Column(nullable = false)
     private Long id;
 
     @Column(length = 50, nullable = false)
