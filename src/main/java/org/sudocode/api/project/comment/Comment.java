@@ -38,6 +38,16 @@ public class Comment extends AbstractAuditableEntity {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     private User author;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Comment parent;
+
+    /**
+     * Returns true if it is a comment root (not a reply to an existing comment).
+     */
+    public boolean isRoot() {
+        return this.parent == null;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this)
