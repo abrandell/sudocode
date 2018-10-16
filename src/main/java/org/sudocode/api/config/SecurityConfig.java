@@ -54,8 +54,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .userInfoEndpoint()
                     .customUserType(User.class, "github")
                     .userService(oAuth2UserService());
-
-
     }
 
     private CustomUserTypesOAuth2UserService oAuth2UserService() {

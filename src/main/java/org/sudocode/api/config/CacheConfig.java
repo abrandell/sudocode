@@ -3,6 +3,7 @@ package org.sudocode.api.config;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.lang.NonNull;
@@ -15,6 +16,7 @@ import java.time.LocalDateTime;
 import java.util.concurrent.TimeUnit;
 
 @Configuration
+@EnableCaching
 public class CacheConfig {
 
     private final CommentRepository commentRepository;

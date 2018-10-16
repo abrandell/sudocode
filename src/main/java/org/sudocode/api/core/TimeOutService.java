@@ -1,6 +1,8 @@
 package org.sudocode.api.core;
 
 import com.google.common.cache.LoadingCache;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
@@ -18,37 +20,40 @@ import java.util.concurrent.ExecutionException;
 public final class TimeOutService {
 
     private final LoadingCache<Long, LocalDateTime> loadingCache;
+    private final Log LOG = LogFactory.getLog(TimeOutService.class);
 
     @Autowired
     public TimeOutService(LoadingCache<Long, LocalDateTime> loadingCache) {
         this.loadingCache = loadingCache;
     }
 
-    private void timeOutUser(Long id) {
-        loadingCache.put(id, LocalDateTime.now());
+    private void timeOutUser(Long id) throws ExecutionException {
+        var currentTime = LocalDateTime.now();
+        LOG.info("TOO MANY REQUESTS --- Timing out user with ID" + id + " at " + currentTime);
+        loadingCache.put(id, currentTime);
     }
 
     private boolean isTimedOut(Long id) throws ExecutionException {
-        if (loadingCache.get(id) == null) {
+        LocalDateTime lastPosted = loadingCache.get(id);
+        if (lastPosted == null) {
             return false;
         }
-        return Duration.between(loadingCache.get(id), LocalDateTime.now()).toMinutes() <= .5;
+        return Duration.between(lastPosted, LocalDateTime.now()).toMinutes() <= .5;
     }
 
     public void handleIfTimedOut(Long id) throws ExecutionException {
         if (isTimedOut(id)) {
+            LOG.info("User with ID " + id + " attempted to make a post and is currently timed out.");
             throw new TooManyRequestException();
         }
     }
 
     // TODO rename me. Checks last time posted and times out the user for 5 mins if it was under 30 sec ago.
-    public void ensureNotSpamming(Long userId, @Nullable LocalDateTime lastPosted) {
+    public void ensureNotSpamming(Long userId, @Nullable LocalDateTime lastPostDate) throws ExecutionException {
 
-        if (lastPosted != null) {
-            var now = LocalDateTime.now();
-            assert now.isAfter(lastPosted);
-
-            long secPassed = Duration.between(lastPosted, now).toSeconds();
+        if (lastPostDate != null) {
+            long secPassed = Duration.between(lastPostDate, LocalDateTime.now()).toSeconds();
+            LOG.info("User with ID: " + userId + " waited " + secPassed + " seconds before attempting to post again");
 
             if (secPassed < 30) {
                 timeOutUser(userId);

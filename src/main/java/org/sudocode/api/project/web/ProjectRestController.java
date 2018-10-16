@@ -5,6 +5,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.sudocode.api.project.comment.CommentDTO;
 import org.sudocode.api.project.comment.CommentForm;
@@ -13,6 +14,7 @@ import org.sudocode.api.project.ProjectNotFoundException;
 import org.sudocode.api.project.dto.ProjectDTO;
 import org.sudocode.api.project.ProjectService;
 import org.sudocode.api.project.dto.ProjectSummary;
+import org.sudocode.api.user.domain.User;
 
 import java.security.Principal;
 import java.time.LocalDateTime;
@@ -42,8 +44,9 @@ public final class ProjectRestController {
      * @see ProjectService#post(ProjectPost)
      */
     @PostMapping(consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
-    public ProjectDTO post(@RequestBody ProjectPost projectPost) throws ExecutionException {
-        return projectService.post(projectPost);
+    public ProjectDTO post(@RequestBody ProjectPost projectPost,
+                           @AuthenticationPrincipal User currentUser) throws ExecutionException {
+        return projectService.post(projectPost, currentUser);
     }
 
     /**
@@ -88,11 +91,9 @@ public final class ProjectRestController {
     @PostMapping(value = "/{id}/comments", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public CommentDTO postComment(@PathVariable("id") Long projectId,
                                   @RequestBody CommentForm commentForm,
-                                  Principal principal) throws ExecutionException {
+                                  @AuthenticationPrincipal User user) throws ExecutionException {
 
-        LOG.info("Posting comment by " + principal.getName() + " at " + LocalDateTime.now());
-
-        return projectService.postComment(commentForm, projectId);
+        return projectService.postComment(commentForm, projectId, user);
     }
 
     /**

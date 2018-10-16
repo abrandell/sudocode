@@ -1,5 +1,7 @@
 package org.sudocode.api.project;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,6 +24,7 @@ import org.sudocode.api.project.web.ProjectPost;
 import org.sudocode.api.user.UserService;
 import org.sudocode.api.user.domain.User;
 
+import java.time.LocalTime;
 import java.util.concurrent.ExecutionException;
 
 import static org.sudocode.api.project.domain.Difficulty.*;
@@ -44,6 +47,7 @@ public class ProjectService {
     private final ProjectRepository projectRepo;
     private final CommentRepository commentRepo;
     private final TimeOutService timeOutService;
+    private final Log LOG = LogFactory.getLog(ProjectService.class);
 
     @Autowired
     public ProjectService(UserService userService, ProjectRepository projectRepo,
@@ -63,8 +67,7 @@ public class ProjectService {
      * @see ProjectPost
      */
     @Transactional(rollbackFor = Exception.class)
-    public ProjectDTO post(ProjectPost postForm) throws ExecutionException {
-        User currentUser = userService.currentUser();
+    public ProjectDTO post(ProjectPost postForm, User currentUser) throws ExecutionException {
         timeOutService.handleIfTimedOut(currentUser.getId());
 
         timeOutService.ensureNotSpamming(
@@ -160,7 +163,8 @@ public class ProjectService {
             return projectToDTO(updated);
         }
 
-        return post(projectPostForm);
+        // TODO this is unneeded.
+        return post(projectPostForm, userService.fetchById(id));
     }
 
     /**
@@ -173,8 +177,7 @@ public class ProjectService {
      * @throws TooManyRequestException  if the last {@link Comment} or {@link Project} posted by the user was under 1 min ago.
      */
     @Transactional(rollbackFor = Exception.class)
-    public CommentDTO postComment(CommentForm commentForm, Long projectId) throws ExecutionException {
-        User currentUser = userService.currentUser();
+    public CommentDTO postComment(CommentForm commentForm, Long projectId, User currentUser) throws ExecutionException {
         timeOutService.handleIfTimedOut(currentUser.getId());
 
         timeOutService.ensureNotSpamming(
@@ -182,6 +185,7 @@ public class ProjectService {
                 commentRepo.fetchLatestPostDateByAuthorId(currentUser.getId())
         );
 
+        LOG.info("Posting comment by " + currentUser.getId() + " at" + LocalTime.now());
         Comment comment = new Comment();
         comment.setBody(commentForm.getBody());
 
