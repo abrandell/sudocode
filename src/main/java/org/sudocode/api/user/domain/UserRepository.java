@@ -15,7 +15,7 @@ import java.util.Optional;
 /**
  * Repository for users. Read only and rolls back for ANY exception.
  *
- * The transaction MUST take place before calling a method here (preferably by {@link org.sudocode.api.user.UserService}
+ * The transaction MUST take place before calling a method here (preferably by {@link org.sudocode.api.user.UserServiceImpl}
  */
 @Repository
 @Transactional(

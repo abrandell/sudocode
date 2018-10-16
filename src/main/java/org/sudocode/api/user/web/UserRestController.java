@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.sudocode.api.user.dto.UserDTO;
-import org.sudocode.api.user.UserService;
+import org.sudocode.api.user.UserServiceImpl;
 
 import static org.springframework.http.MediaType.*;
 
@@ -19,16 +19,16 @@ import static org.springframework.http.MediaType.*;
 @RequestMapping("api/users")
 public final class UserRestController {
 
-    private final UserService userService;
+    private final UserServiceImpl userService;
 
     @Autowired
-    UserRestController(UserService userService) {
+    UserRestController(UserServiceImpl userService) {
         this.userService = userService;
     }
 
     /**
      * GET /api/users/me
-     * @see UserService#currentUserDTO()
+     * @see UserServiceImpl#currentUserDTO()
      */
     @GetMapping(value = "/me", produces = APPLICATION_JSON_VALUE)
     public UserDTO currentUser() {
@@ -37,7 +37,7 @@ public final class UserRestController {
 
     /**
      * GET /api/users/:id
-     * @see UserService#fetchByIdDTO(Long)
+     * @see UserServiceImpl#fetchByIdDTO(Long)
      */
     @GetMapping(value = "/{id}", produces = APPLICATION_JSON_VALUE)
     public UserDTO fetchById(@PathVariable("id") Long id) {
@@ -46,7 +46,7 @@ public final class UserRestController {
 
     /**
      * GET /api/users?{page, sort}
-     * @see UserService#fetchAll(Pageable)
+     * @see UserServiceImpl#fetchAll(Pageable)
      */
     @GetMapping(produces = APPLICATION_JSON_VALUE)
     public Page<UserDTO> fetchAll(Pageable pageable) {

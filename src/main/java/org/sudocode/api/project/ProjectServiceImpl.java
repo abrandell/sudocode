@@ -20,6 +20,7 @@ import org.sudocode.api.project.domain.Project;
 import org.sudocode.api.project.domain.ProjectRepository;
 import org.sudocode.api.project.web.ProjectPostForm;
 import org.sudocode.api.user.UserService;
+import org.sudocode.api.user.UserServiceImpl;
 import org.sudocode.api.user.domain.User;
 
 import java.time.LocalTime;
@@ -48,7 +49,7 @@ public class ProjectServiceImpl implements ProjectService {
     private final Log LOG = LogFactory.getLog(ProjectServiceImpl.class);
 
     @Autowired
-    public ProjectServiceImpl(UserService userService, ProjectRepository projectRepo,
+    ProjectServiceImpl(UserService userService, ProjectRepository projectRepo,
                               CommentRepository commentRepo, TimeOutService timeOutService) {
         this.userService = userService;
         this.projectRepo = projectRepo;

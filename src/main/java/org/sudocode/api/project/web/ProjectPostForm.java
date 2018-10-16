@@ -1,13 +1,16 @@
 package org.sudocode.api.project.web;
 
-import lombok.Data;
+import lombok.Value;
 import org.sudocode.api.project.domain.Difficulty;
 
-@Data
+/**
+ * Simple value object for posting projects.
+ */
+@Value
 public class ProjectPostForm {
 
-    private String title;
-    private Difficulty difficulty;
-    private String description;
+    String title;
+    Difficulty difficulty;
+    String description;
 
 }
