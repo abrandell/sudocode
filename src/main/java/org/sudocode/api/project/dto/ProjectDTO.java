@@ -1,8 +1,6 @@
 package org.sudocode.api.project.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
-import lombok.Setter;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.sudocode.api.project.domain.Difficulty;
@@ -13,7 +11,6 @@ import java.time.LocalDateTime;
 
 @Getter
 public class ProjectDTO {
-
 
     private final Long id;
     private final String title;
