@@ -41,7 +41,7 @@ public final class ProjectRestController {
     /**
      * POST /api/projects
      *
-     * @see ProjectService#post(ProjectPost)
+     * @see ProjectService#post(ProjectPost, User)
      */
     @PostMapping(consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public ProjectDTO post(@RequestBody ProjectPost projectPost,
@@ -86,7 +86,7 @@ public final class ProjectRestController {
     /**
      * POST /api/projects/:id/comments
      *
-     * @see ProjectService#post(ProjectPost)
+     * @see ProjectService#postComment(CommentForm, Long, User)
      */
     @PostMapping(value = "/{id}/comments", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public CommentDTO postComment(@PathVariable("id") Long projectId,
