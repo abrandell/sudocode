@@ -1,4 +1,4 @@
-package org.sudocode.api.project.dto;
+package org.sudocode.api.project;
 
 import lombok.Getter;
 import org.apache.commons.lang3.builder.EqualsBuilder;

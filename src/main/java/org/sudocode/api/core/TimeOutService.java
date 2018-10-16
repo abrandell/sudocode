@@ -27,13 +27,13 @@ public final class TimeOutService {
         this.loadingCache = loadingCache;
     }
 
-    private void timeOutUser(Long id) {
+    public void timeOutUser(Long id) {
         var currentTime = LocalDateTime.now();
         LOG.info("TOO MANY REQUESTS --- Timing out user with ID: " + id + " at " + currentTime);
         loadingCache.put(id, currentTime);
     }
 
-    private boolean isTimedOut(Long id) throws ExecutionException {
+    public boolean isTimedOut(Long id) throws ExecutionException {
         LocalDateTime lastPosted = loadingCache.get(id);
         if (lastPosted == null) {
             return false;
@@ -43,7 +43,7 @@ public final class TimeOutService {
 
     public void handleIfTimedOut(Long id) throws ExecutionException {
         if (isTimedOut(id)) {
-            LOG.info("Timed out User with ID: " + id + " attempted to make a post and is currently timed out.");
+            LOG.info("Timed out User with ID: " + id + " attempted to make a postProject and is currently timed out.");
             throw new TooManyRequestException();
         }
     }
@@ -53,7 +53,7 @@ public final class TimeOutService {
 
         if (lastPostDate != null) {
             long secPassed = Duration.between(lastPostDate, LocalDateTime.now()).toSeconds();
-            LOG.info("User with ID: " + userId + " waited " + secPassed + " seconds before attempting to post again");
+            LOG.info("User with ID: " + userId + " waited " + secPassed + " seconds before attempting to postProject again");
 
             if (secPassed < 10) {
                 timeOutUser(userId);

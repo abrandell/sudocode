@@ -4,7 +4,7 @@ import lombok.Data;
 import org.sudocode.api.project.domain.Difficulty;
 
 @Data
-public class ProjectPost {
+public class ProjectPostForm {
 
     private String title;
     private Difficulty difficulty;

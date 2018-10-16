@@ -1,7 +1,6 @@
-package org.sudocode.api.project.dto;
+package org.sudocode.api.project;
 
 import lombok.Getter;
-import lombok.Setter;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.sudocode.api.project.domain.Difficulty;
@@ -10,7 +9,7 @@ import org.sudocode.api.user.UserSummary;
 import java.time.LocalDateTime;
 
 @Getter
-public class ProjectSummary {
+public class ProjectSummaryDTO {
 
     private final Long id;
     private final String title;
@@ -19,8 +18,8 @@ public class ProjectSummary {
     private final LocalDateTime datePosted;
     private UserSummary author;
 
-    public ProjectSummary(Long id, String title, Difficulty difficulty, String description, LocalDateTime datePosted,
-                          Long userId, String login, String avatarUrl) {
+    public ProjectSummaryDTO(Long id, String title, Difficulty difficulty, String description, LocalDateTime datePosted,
+                             Long userId, String login, String avatarUrl) {
         this.id = id;
         this.title = title;
         this.difficulty = difficulty;
@@ -35,7 +34,7 @@ public class ProjectSummary {
 
         if (o == null || getClass() != o.getClass()) return false;
 
-        ProjectSummary that = (ProjectSummary) o;
+        ProjectSummaryDTO that = (ProjectSummaryDTO) o;
 
         return new EqualsBuilder()
                 .append(id, that.id)

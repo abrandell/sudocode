@@ -7,17 +7,16 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.sudocode.api.project.ProjectService;
 import org.sudocode.api.project.comment.CommentDTO;
 import org.sudocode.api.project.comment.CommentForm;
 import org.sudocode.api.project.domain.InvalidDifficultyException;
 import org.sudocode.api.project.ProjectNotFoundException;
-import org.sudocode.api.project.dto.ProjectDTO;
-import org.sudocode.api.project.ProjectService;
-import org.sudocode.api.project.dto.ProjectSummary;
+import org.sudocode.api.project.ProjectDTO;
+import org.sudocode.api.project.ProjectServiceImpl;
+import org.sudocode.api.project.ProjectSummaryDTO;
 import org.sudocode.api.user.domain.User;
 
-import java.security.Principal;
-import java.time.LocalDateTime;
 import java.util.concurrent.ExecutionException;
 
 import static org.springframework.http.MediaType.*;
@@ -34,31 +33,31 @@ public final class ProjectRestController {
     private final Log LOG = LogFactory.getLog(ProjectRestController.class);
 
     @Autowired
-    public ProjectRestController(ProjectService projectService) {
+    public ProjectRestController(ProjectServiceImpl projectService) {
         this.projectService = projectService;
     }
 
     /**
      * POST /api/projects
      *
-     * @see ProjectService#post(ProjectPost, User)
+     * @see ProjectServiceImpl#postProject(ProjectPostForm, User)
      */
     @PostMapping(consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
-    public ProjectDTO post(@RequestBody ProjectPost projectPost,
+    public ProjectDTO post(@RequestBody ProjectPostForm projectPost,
                            @AuthenticationPrincipal User currentUser) throws ExecutionException {
-        return projectService.post(projectPost, currentUser);
+        return projectService.postProject(projectPost, currentUser);
     }
 
     /**
      * GET /api/projects{?page=}&{title=}&{difficulty=}&{description-}&{sort=}
      *
-     * @see ProjectService#fetchAll(String, String, String, Pageable)
+     * @see ProjectServiceImpl#fetchAll(String, String, String, Pageable)
      */
     @GetMapping(produces = APPLICATION_JSON_VALUE)
-    public Page<ProjectSummary> fetchAll(@RequestParam(value = "title", required = false) String title,
-                                         @RequestParam(value = "difficulty", required = false) String difficulty,
-                                         @RequestParam(value = "description", required = false) String description,
-                                         Pageable pageable) throws InvalidDifficultyException {
+    public Page<ProjectSummaryDTO> fetchAll(@RequestParam(value = "title", required = false) String title,
+                                            @RequestParam(value = "difficulty", required = false) String difficulty,
+                                            @RequestParam(value = "description", required = false) String description,
+                                            Pageable pageable) throws InvalidDifficultyException {
 
         return projectService.fetchAll(title, difficulty, description, pageable);
     }
@@ -66,17 +65,17 @@ public final class ProjectRestController {
     /**
      * GET /api/projects/:id
      *
-     * @see ProjectService#fetchById(Long)
+     * @see ProjectServiceImpl#fetchDTOById(Long)
      */
     @GetMapping(value = "/{id}", produces = APPLICATION_JSON_VALUE)
     public ProjectDTO fetchById(@PathVariable("id") Long id) throws ProjectNotFoundException {
-        return projectService.fetchById(id);
+        return projectService.fetchDTOById(id);
     }
 
     /**
      * GET /api/projects/:id/comments{?page=}&{sort=}
      *
-     * @see ProjectService#fetchCommentsByProjectId(Long, Pageable)
+     * @see ProjectServiceImpl#fetchCommentsByProjectId(Long, Pageable)
      */
     @GetMapping(value = "/{id}/comments", produces = APPLICATION_JSON_VALUE)
     public Page<CommentDTO> fetchComments(@PathVariable("id") Long id, Pageable pageable) {
@@ -86,7 +85,7 @@ public final class ProjectRestController {
     /**
      * POST /api/projects/:id/comments
      *
-     * @see ProjectService#postComment(CommentForm, Long, User)
+     * @see ProjectServiceImpl#postComment(CommentForm, Long, User)
      */
     @PostMapping(value = "/{id}/comments", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public CommentDTO postComment(@PathVariable("id") Long projectId,
@@ -99,7 +98,7 @@ public final class ProjectRestController {
     /**
      * DELETE /api/projects/:projectId/comments/:commentId
      *
-     * @see ProjectService#deleteCommentById(Long)
+     * @see ProjectServiceImpl#deleteCommentById(Long)
      */
     @DeleteMapping(value = "/{projectId}/comments/{commentId}")
     public void deleteCommentById(@PathVariable("projectId") Long projectId,
@@ -110,17 +109,17 @@ public final class ProjectRestController {
     /**
      * PUT /api/projects/:id
      *
-     * @see ProjectService#update(Long, ProjectPost)
+     * @see ProjectServiceImpl#update(Long, ProjectPostForm)
      */
     @PutMapping(value = "/{id}", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
-    public ProjectDTO update(@PathVariable("id") Long id, @RequestBody ProjectPost projectPostForm) throws ExecutionException {
+    public ProjectDTO update(@PathVariable("id") Long id, @RequestBody ProjectPostForm projectPostForm) throws ExecutionException {
         return projectService.update(id, projectPostForm);
     }
 
     /**
      * DELETE /api/projects/:id
      *
-     * @see ProjectService#deleteById(Long)
+     * @see ProjectServiceImpl#deleteById(Long)
      */
     @DeleteMapping(value = "/{id}")
     public void delete(@PathVariable("id") Long id) {

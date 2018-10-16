@@ -1,4 +1,4 @@
-package org.sudocode.api.project.dto;
+package org.sudocode.api.project;
 
 import org.sudocode.api.project.domain.Project;
 
