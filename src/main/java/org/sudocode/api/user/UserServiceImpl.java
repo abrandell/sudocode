@@ -9,7 +9,6 @@ import org.springframework.web.client.RestTemplate;
 import org.sudocode.api.core.SecurityUtils;
 import org.sudocode.api.user.domain.User;
 import org.sudocode.api.user.domain.UserRepository;
-import org.sudocode.api.user.dto.UserDTO;
 
 
 import static com.google.common.base.Preconditions.*;

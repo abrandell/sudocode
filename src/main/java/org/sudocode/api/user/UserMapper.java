@@ -1,4 +1,4 @@
-package org.sudocode.api.user.dto;
+package org.sudocode.api.user;
 
 import org.sudocode.api.user.domain.User;
 

@@ -3,7 +3,6 @@ package org.sudocode.api.user;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.sudocode.api.user.domain.User;
-import org.sudocode.api.user.dto.UserDTO;
 
 public interface UserService {
 
