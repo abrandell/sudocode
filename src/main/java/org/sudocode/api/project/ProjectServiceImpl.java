@@ -12,7 +12,7 @@ import org.sudocode.api.core.TimeOutService;
 import org.sudocode.api.core.TooManyRequestException;
 import org.sudocode.api.project.comment.Comment;
 import org.sudocode.api.project.comment.CommentDTO;
-import org.sudocode.api.project.comment.CommentForm;
+import org.sudocode.api.project.web.CommentForm;
 import org.sudocode.api.project.comment.CommentRepository;
 import org.sudocode.api.project.domain.Difficulty;
 import org.sudocode.api.project.domain.InvalidDifficultyException;

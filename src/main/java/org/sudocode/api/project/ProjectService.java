@@ -4,7 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.lang.Nullable;
 import org.sudocode.api.project.comment.CommentDTO;
-import org.sudocode.api.project.comment.CommentForm;
+import org.sudocode.api.project.web.CommentForm;
 import org.sudocode.api.project.web.ProjectPostForm;
 import org.sudocode.api.user.domain.User;
 

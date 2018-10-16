@@ -9,7 +9,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.sudocode.api.project.ProjectService;
 import org.sudocode.api.project.comment.CommentDTO;
-import org.sudocode.api.project.comment.CommentForm;
 import org.sudocode.api.project.domain.InvalidDifficultyException;
 import org.sudocode.api.project.ProjectNotFoundException;
 import org.sudocode.api.project.ProjectDTO;

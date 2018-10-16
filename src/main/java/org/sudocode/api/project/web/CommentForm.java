@@ -1,4 +1,4 @@
-package org.sudocode.api.project.comment;
+package org.sudocode.api.project.web;
 
 import lombok.Data;
 import lombok.Value;
