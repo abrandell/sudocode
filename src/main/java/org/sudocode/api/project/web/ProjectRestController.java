@@ -44,7 +44,7 @@ public final class ProjectRestController {
     @PostMapping(consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public ProjectDTO post(@RequestBody ProjectPostForm projectPost,
                            @AuthenticationPrincipal User currentUser) throws ExecutionException {
-        return projectService.postProject(projectPost, currentUser);
+        return projectService.postProjectDTO(projectPost, currentUser);
     }
 
     /**

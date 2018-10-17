@@ -105,4 +105,44 @@ public class User implements OAuth2User {
     public Map<String, Object> getAttributes() {
         return null;
     }
+
+    public static class Builder {
+        private Long id;
+        private String login;
+        private String avatarUrl = "https://dummyimage.com/200x200/000/fff";
+        private boolean hireable;
+
+        public Builder() {}
+
+        public Builder id(Long id) {
+            this.id = id;
+            return this;
+        }
+
+        public Builder login(String login) {
+            this.login = login;
+            return this;
+        }
+
+        public Builder avatarUrl(String avatarUrl) {
+            this.avatarUrl = avatarUrl;
+            return this;
+        }
+
+        public Builder hireable(boolean hireable) {
+            this.hireable = hireable;
+            return this;
+        }
+
+        public User build() {
+            User user = new User();
+
+            user.setId(this.id);
+            user.setLogin(this.login);
+            user.setAvatarUrl(this.avatarUrl);
+            user.setHireable(this.hireable);
+
+            return user;
+        }
+    }
 }

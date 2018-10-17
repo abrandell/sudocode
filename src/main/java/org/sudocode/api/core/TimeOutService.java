@@ -17,7 +17,7 @@ import java.util.concurrent.ExecutionException;
  * Service for timing out users for spamming and/or posting too often.
  */
 @Service
-public final class TimeOutService {
+public class TimeOutService {
 
     private final LoadingCache<Long, LocalDateTime> loadingCache;
     private final Log LOG = LogFactory.getLog(TimeOutService.class);

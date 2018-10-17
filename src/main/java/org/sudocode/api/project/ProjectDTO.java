@@ -22,6 +22,7 @@ public class ProjectDTO {
 
     private LocalDateTime lastModifiedDate;
 
+
     public ProjectDTO(Project project) {
         this.id = project.getId();
         this.title = project.getTitle();

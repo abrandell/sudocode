@@ -49,7 +49,7 @@ public class ProjectServiceImpl implements ProjectService {
     private final Log LOG = LogFactory.getLog(ProjectServiceImpl.class);
 
     @Autowired
-    ProjectServiceImpl(UserService userService, ProjectRepository projectRepo,
+    public ProjectServiceImpl(UserService userService, ProjectRepository projectRepo,
                               CommentRepository commentRepo, TimeOutService timeOutService) {
         this.userService = userService;
         this.projectRepo = projectRepo;
@@ -66,7 +66,7 @@ public class ProjectServiceImpl implements ProjectService {
      * @see ProjectPostForm
      */
     @Transactional(rollbackFor = Exception.class)
-    public ProjectDTO postProject(ProjectPostForm postForm, User currentUser) throws ExecutionException {
+    public Project postProject(ProjectPostForm postForm, User currentUser) throws ExecutionException {
         timeOutService.handleIfTimedOut(currentUser.getId());
 
         timeOutService.ensureNotSpamming(
@@ -80,7 +80,11 @@ public class ProjectServiceImpl implements ProjectService {
         project.setDifficulty(postForm.getDifficulty());
         project.setAuthor(currentUser);
 
-        return projectToDTO(projectRepo.save(project));
+        return projectRepo.save(project);
+    }
+
+    public ProjectDTO postProjectDTO(ProjectPostForm postForm, User currentUser) throws ExecutionException {
+        return projectToDTO(postProject(postForm, currentUser));
     }
 
     /**
@@ -145,7 +149,7 @@ public class ProjectServiceImpl implements ProjectService {
         }
 
         // TODO this is unneeded.
-        return postProject(projectPostForm, userService.fetchById(id));
+        return postProjectDTO(projectPostForm, userService.fetchById(id));
     }
 
     /**

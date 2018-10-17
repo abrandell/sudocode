@@ -16,7 +16,6 @@ import java.time.LocalDateTime;
 import java.util.concurrent.TimeUnit;
 
 @Configuration
-@EnableCaching
 public class CacheConfig {
 
     private final CommentRepository commentRepository;
