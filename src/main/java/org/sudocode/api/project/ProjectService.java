@@ -12,7 +12,6 @@ import org.sudocode.api.core.TimeOutService;
 import org.sudocode.api.core.TooManyRequestException;
 import org.sudocode.api.project.comment.Comment;
 import org.sudocode.api.project.comment.CommentDTO;
-import org.sudocode.api.project.web.CommentForm;
 import org.sudocode.api.project.comment.CommentRepository;
 import org.sudocode.api.project.domain.Difficulty;
 import org.sudocode.api.project.domain.InvalidDifficultyException;
@@ -20,10 +19,10 @@ import org.sudocode.api.project.domain.Project;
 import org.sudocode.api.project.domain.ProjectRepository;
 import org.sudocode.api.project.web.ProjectPostForm;
 import org.sudocode.api.user.UserService;
-import org.sudocode.api.user.UserServiceImpl;
 import org.sudocode.api.user.domain.User;
 
 import java.time.LocalTime;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
 import static org.sudocode.api.project.domain.Difficulty.*;
@@ -40,17 +39,17 @@ import static org.sudocode.api.project.ProjectMapper.*;
         readOnly = true,
         rollbackFor = Exception.class
 )
-public class ProjectServiceImpl implements ProjectService {
+public class ProjectService {
 
     private final UserService userService;
     private final ProjectRepository projectRepo;
     private final CommentRepository commentRepo;
     private final TimeOutService timeOutService;
-    private final Log LOG = LogFactory.getLog(ProjectServiceImpl.class);
+    private final Log LOG = LogFactory.getLog(ProjectService.class);
 
     @Autowired
-    public ProjectServiceImpl(UserService userService, ProjectRepository projectRepo,
-                              CommentRepository commentRepo, TimeOutService timeOutService) {
+    public ProjectService(UserService userService, ProjectRepository projectRepo,
+                          CommentRepository commentRepo, TimeOutService timeOutService) {
         this.userService = userService;
         this.projectRepo = projectRepo;
         this.commentRepo = commentRepo;
@@ -78,6 +77,7 @@ public class ProjectServiceImpl implements ProjectService {
         return projectRepo.save(project);
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public ProjectDTO postProjectDTO(Project project, User currentUser) throws ExecutionException {
         return projectToDTO(postProject(project, currentUser));
     }
@@ -156,7 +156,7 @@ public class ProjectServiceImpl implements ProjectService {
     public void deleteById(Long id) {
         Project found = projectRepo.findById(id).orElseThrow(() -> new ProjectNotFoundException(id));
 
-        if (found.getAuthor() != userService.currentUser()) {
+        if (!found.getAuthor().equals(userService.currentUser())) {
             throw new NotPostAuthorException("Not author of project.");
         }
 
@@ -167,14 +167,14 @@ public class ProjectServiceImpl implements ProjectService {
     /**
      * Post a comment.
      *
-     * @param commentForm CommentForm DTO for comment-creation.
+     * @param comment
      * @param projectId   id of the project to comment on.
      * @return DTO of newly created comment.
      * @throws ProjectNotFoundException if the {@literal projectId} does not match any project id in the DB.
      * @throws TooManyRequestException  if the last {@link Comment} or {@link Project} posted by the user was under 1 min ago.
      */
     @Transactional(rollbackFor = Exception.class)
-    public CommentDTO postComment(Comment comment, Long projectId,
+    public Comment postComment(Comment comment, Long projectId,
                                   User currentUser) throws ExecutionException {
 
         timeOutService.handleIfTimedOut(currentUser.getId());
@@ -191,19 +191,30 @@ public class ProjectServiceImpl implements ProjectService {
 
         comment.setAuthor(currentUser);
 
-        return new CommentDTO(commentRepo.save(comment));
+        return commentRepo.save(comment);
     }
 
-/*    @Transactional(rollbackFor = Exception.class)
-    public CommentDTO updateComment(CommentForm commentForm, Long projectId, User currentUser) throws ExecutionException {
+    @Transactional(rollbackFor = Exception.class)
+    public Comment updateComment(Comment comment, Long projectId, User currentUser) throws ExecutionException {
         final Long userId = currentUser.getId();
 
         timeOutService.handleIfTimedOut(userId);
 
         timeOutService.ensureNotSpamming(userId, commentRepo.fetchLatestPostDateByAuthorId(userId));
 
+        Optional<Comment> optionalComment = commentRepo.fetchById(comment.getId());
+        if (optionalComment.isPresent() && (optionalComment.get().getAuthor().equals(currentUser))) {
+            Comment updated = optionalComment.get();
 
-    }*/
+            updated.setId(comment.getId());
+            updated.setBody(comment.getBody());
+
+            return updated;
+        }
+
+        return postComment(comment, projectId, currentUser);
+
+    }
 
     /**
      * Delete a comment.

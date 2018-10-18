@@ -40,7 +40,8 @@ public class ProjectDTO {
      *
      * @see org.sudocode.api.project.domain.ProjectRepository
      */
-    public ProjectDTO(Long id, String title, Difficulty difficulty, String description, LocalDateTime datePosted, LocalDateTime lastModifiedDate,
+    public ProjectDTO(Long id, String title, Difficulty difficulty, String description,
+                      LocalDateTime datePosted, LocalDateTime lastModifiedDate,
                       Long userId, String login, String avatarUrl, boolean hireable) {
         this.id = id;
         this.title = title;

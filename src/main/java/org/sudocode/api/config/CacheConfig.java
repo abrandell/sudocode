@@ -3,7 +3,7 @@ package org.sudocode.api.config;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.lang.NonNull;
@@ -21,6 +21,7 @@ public class CacheConfig {
     private final CommentRepository commentRepository;
     private final ProjectRepository projectRepository;
 
+    @Autowired
     public CacheConfig(CommentRepository commentRepository, ProjectRepository projectRepository) {
         this.commentRepository = commentRepository;
         this.projectRepository = projectRepository;

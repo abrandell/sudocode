@@ -3,12 +3,9 @@ package org.sudocode.api.user.web;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.sudocode.api.user.UserDTO;
-import org.sudocode.api.user.UserServiceImpl;
+import org.sudocode.api.user.UserService;
 
 import static org.springframework.http.MediaType.*;
 
@@ -19,16 +16,16 @@ import static org.springframework.http.MediaType.*;
 @RequestMapping("api/users")
 public final class UserRestController {
 
-    private final UserServiceImpl userService;
+    private final UserService userService;
 
     @Autowired
-    UserRestController(UserServiceImpl userService) {
+    UserRestController(UserService userService) {
         this.userService = userService;
     }
 
     /**
      * GET /api/users/me
-     * @see UserServiceImpl#currentUserDTO()
+     * @see UserService#currentUserDTO()
      */
     @GetMapping(value = "/me", produces = APPLICATION_JSON_VALUE)
     public UserDTO currentUser() {
@@ -37,7 +34,7 @@ public final class UserRestController {
 
     /**
      * GET /api/users/:id
-     * @see UserServiceImpl#fetchByIdDTO(Long)
+     * @see UserService#fetchByIdDTO(Long)
      */
     @GetMapping(value = "/{id}", produces = APPLICATION_JSON_VALUE)
     public UserDTO fetchById(@PathVariable("id") Long id) {
@@ -46,11 +43,16 @@ public final class UserRestController {
 
     /**
      * GET /api/users?{page, sort}
-     * @see UserServiceImpl#fetchAll(Pageable)
+     * @see UserService#fetchAll(Pageable)
      */
     @GetMapping(produces = APPLICATION_JSON_VALUE)
     public Page<UserDTO> fetchAll(Pageable pageable) {
         return userService.fetchAll(pageable);
+    }
+
+    @DeleteMapping(value = "/{id}", produces = APPLICATION_JSON_VALUE)
+    public void deleteById(@PathVariable("id") Long id) {
+        userService.deleteById(id);
     }
 
 

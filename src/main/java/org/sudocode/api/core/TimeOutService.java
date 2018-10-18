@@ -9,8 +9,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -43,7 +41,7 @@ public class TimeOutService {
 
     public void handleIfTimedOut(Long id) throws ExecutionException {
         if (isTimedOut(id)) {
-            LOG.info("Timed out User with ID: " + id + " attempted to make a postProject and is currently timed out.");
+            LOG.info("Timed out User with ID: " + id + " attempted to make a post and is currently timed out.");
             throw new TooManyRequestException();
         }
     }

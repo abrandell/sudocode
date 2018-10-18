@@ -15,7 +15,7 @@ import java.util.Optional;
 /**
  * Repository for users. Read only and rolls back for ANY exception.
  *
- * The transaction MUST take place before calling a method here (preferably by {@link org.sudocode.api.user.UserServiceImpl}
+ * The transaction MUST take place before calling a method here (preferably by {@link org.sudocode.api.user.UserService}
  */
 @Repository
 @Transactional(
@@ -45,5 +45,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
                 "(u.id, u.login, u.avatarUrl, u.hireable) " +
             "FROM User u " +
             "WHERE u.id = :id")
-    Optional<UserDTO> fetchDToById(@Param("id") Long id);
+    Optional<UserDTO> fetchDTOById(@Param("id") Long id);
 }

@@ -17,7 +17,7 @@ import java.util.Optional;
 /**
  * Project repository.
  *
- * Not to be accessed without an ongoing transaction (preferably from {@link org.sudocode.api.project.ProjectServiceImpl}.
+ * Not to be accessed without an ongoing transaction (preferably from {@link org.sudocode.api.project.ProjectService}.
  */
 @Repository
 @Transactional(

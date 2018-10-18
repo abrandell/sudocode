@@ -12,6 +12,8 @@ import org.sudocode.api.user.domain.User;
 import org.sudocode.api.user.domain.UserRepository;
 
 
+import java.util.function.Consumer;
+
 import static com.google.common.base.Preconditions.*;
 
 /**
@@ -24,16 +26,12 @@ import static com.google.common.base.Preconditions.*;
         readOnly = true,
         rollbackFor = Exception.class
 )
-public class UserServiceImpl implements UserService {
+public class UserService {
 
-    private static final String GITHUB_USER_ENDPOINT = "https://api.github.com/user";
-
-    private final RestTemplate restTemplate;
     private final UserRepository userRepo;
 
     @Autowired
-    UserServiceImpl(RestTemplate restTemplate, UserRepository userRepo) {
-        this.restTemplate = restTemplate;
+    UserService(UserRepository userRepo) {
         this.userRepo = userRepo;
     }
 
@@ -103,7 +101,7 @@ public class UserServiceImpl implements UserService {
     /**
      * Fetch by login in DTO form.
      *
-     * @see UserServiceImpl#fetchByLogin(String)
+     * @see UserService#fetchByLogin(String)
      */
     public UserDTO fetchByLoginDTO(String login) {
         return userRepo.fetchDTOByLogin(login).orElseThrow(() -> new UserNotFoundException(login));
@@ -112,7 +110,7 @@ public class UserServiceImpl implements UserService {
     /**
      * Current user in DTO form.
      *
-     * @see UserServiceImpl#currentUser()
+     * @see UserService#currentUser()
      */
     public UserDTO currentUserDTO() {
         return new UserDTO(currentUser());
@@ -121,16 +119,10 @@ public class UserServiceImpl implements UserService {
     /**
      * Fetch by ID in DTO form.
      *
-     * @see UserServiceImpl#fetchById(Long)
+     * @see UserService#fetchById(Long)
      */
     public UserDTO fetchByIdDTO(Long id) {
         return new UserDTO(fetchById(id));
-    }
-
-    private User getUserFromRestCall(String url) {
-        User user = restTemplate.getForObject(url, User.class);
-        checkNotNull(user);
-        return user;
     }
 
 }
