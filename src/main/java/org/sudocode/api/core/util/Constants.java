@@ -2,7 +2,6 @@ package org.sudocode.api.core.util;
 
 import org.springframework.http.MediaType;
 
-import java.awt.*;
 import java.util.regex.Pattern;
 
 public class Constants {
