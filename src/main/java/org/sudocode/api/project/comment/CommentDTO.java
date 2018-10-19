@@ -1,22 +1,25 @@
 package org.sudocode.api.project.comment;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
-import lombok.Setter;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.sudocode.api.project.domain.Project;
 import org.sudocode.api.user.web.UserDTO;
 
 import java.time.LocalDateTime;
 
 @Getter
-@Setter
 public class CommentDTO {
 
-    private Long id;
-    private String body;
-    private UserDTO author;
-    private LocalDateTime datePosted;
-    private LocalDateTime lastModifiedDate;
+    private final Long id;
+    private final String body;
+    private final UserDTO author;
+    private final LocalDateTime datePosted;
+    private final LocalDateTime lastModifiedDate;
+
+    @JsonIgnore
+    private Project project;
 
     public CommentDTO(Comment comment) {
         this.id = comment.getId();
@@ -24,13 +27,15 @@ public class CommentDTO {
         this.datePosted = comment.getDatePosted();
         this.lastModifiedDate = comment.getLastModifiedDate();
         this.author = new UserDTO(comment.getAuthor());
+        this.project = comment.getProject();
     }
 
     /**
-     * Constructor with a ridiculous amount of params for JPQL constructor expressions.
+     * Constructor with a ridiculous amount builder params for JPQL constructor expressions.
      *
      * @see CommentRepository
      */
+    @Deprecated
     public CommentDTO(Long id, String body, LocalDateTime datePosted,
                       LocalDateTime lastModifiedDate, Long userId,
                       String login, String avatarUrl, boolean hireable) {

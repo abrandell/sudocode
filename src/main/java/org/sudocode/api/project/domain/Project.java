@@ -9,6 +9,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.data.domain.Persistable;
+import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.sudocode.api.core.AbstractAuditableEntity;
 import org.sudocode.api.user.domain.User;
@@ -21,7 +22,6 @@ import static java.time.LocalDateTime.now;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 public class Project extends AbstractAuditableEntity implements Persistable<Long> {
 
     @Id
@@ -42,9 +42,21 @@ public class Project extends AbstractAuditableEntity implements Persistable<Long
     @JoinColumn(name = "user_fk")
     private User author;
 
+    private Project(Builder builder) {
+        this.id = builder.id;
+        this.title = builder.title;
+        this.difficulty = builder.difficulty;
+        this.description = builder.description;
+        this.author = builder.author;
+    }
+
+    public static Builder builder(@NonNull User author) {
+        return new Builder(author);
+    }
 
     /**
      * If the id is null, it hasn't been persisted to the DB yet.
+     *
      * @return false if ID is null, true otherwise.
      */
     @Override
@@ -66,19 +78,23 @@ public class Project extends AbstractAuditableEntity implements Persistable<Long
     }
 
     /**
-     * Builder. Mainly for testing purposes.
+     * Builder for a more fluid api.
      */
     public static class Builder {
-        private final Long id;
         private final User author;
 
+        private Long id;
         private String title = "Title-Placeholder";
         private Difficulty difficulty = Difficulty.BASIC;
         private String description = "Description-Placeholder";
 
-        public Builder(@Nullable Long id, User author) {
-            this.id = id;
+        public Builder(@NonNull User author) {
             this.author = author;
+        }
+
+        public Builder id(Long id) {
+            this.id = id;
+            return this;
         }
 
         public Builder title(String title) {
@@ -97,15 +113,7 @@ public class Project extends AbstractAuditableEntity implements Persistable<Long
         }
 
         public Project build() {
-            Project project = new Project();
-
-            project.setId(id);
-            project.setAuthor(author);
-            project.setDescription(description);
-            project.setTitle(title);
-            project.setDifficulty(difficulty);
-
-            return project;
+            return new Project(this);
         }
 
     }

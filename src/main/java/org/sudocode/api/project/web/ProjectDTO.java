@@ -1,4 +1,4 @@
-package org.sudocode.api.project;
+package org.sudocode.api.project.web;
 
 import lombok.Getter;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -34,7 +34,7 @@ public class ProjectDTO {
     }
 
     /**
-     * Constructor with a ridiculous amount of params for JPQL constructor expressions.
+     * Constructor with a ridiculous amount builder params for JPQL constructor expressions.
      *
      * Not to be used directly.
      *

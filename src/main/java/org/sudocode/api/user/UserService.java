@@ -25,12 +25,10 @@ import org.sudocode.api.user.web.UserMapper;
 public class UserService {
 
     private final UserRepository userRepo;
-    private final UserMapper mapper;
 
     @Autowired
-    UserService(UserRepository userRepo, UserMapper mapper) {
+    UserService(UserRepository userRepo) {
         this.userRepo = userRepo;
-        this.mapper = mapper;
     }
 
     /**
@@ -52,10 +50,10 @@ public class UserService {
     }
 
     /**
-     * Fetch a pageable of all users in DTO form.
+     * Fetch a pageable builder all users in DTO form.
      *
      * @param pageable {@link Pageable}
-     * @return Page of all UserDTOs.
+     * @return Page builder all UserDTOs.
      * @see Pageable
      * @see UserDTO
      */
@@ -66,7 +64,7 @@ public class UserService {
     /**
      * Fetch user by id.
      *
-     * @param id of the user to fetch.
+     * @param id builder the user to fetch.
      * @return User with the given ID as their PK.
      * @throws UserNotFoundException if the id does not match any persisted user.
      */
@@ -77,7 +75,7 @@ public class UserService {
     /**
      * Fetch user by login.
      *
-     * @param login of the user to fetch.
+     * @param login builder the user to fetch.
      * @return User with the given login.
      * @throws UserNotFoundException if the login does not match any persisted user.
      */
@@ -88,7 +86,7 @@ public class UserService {
     /**
      * Delete a user by id.
      *
-     * @param id of the user to delete.
+     * @param id builder the user to delete.
      */
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Transactional(rollbackFor = Exception.class)
@@ -96,31 +94,6 @@ public class UserService {
         userRepo.deleteById(id);
     }
 
-    /**
-     * Fetch by login in DTO form.
-     *
-     * @see UserService#fetchByLogin(String)
-     */
-    public User fetchByLoginDTO(String login) {
-        return userRepo.findByLogin(login).orElseThrow(() -> new UserNotFoundException(login));
-    }
 
-    /**
-     * Current user in DTO form.
-     *
-     * @see UserService#currentUser()
-     */
-    public UserDTO currentUserDTO() {
-        return new UserDTO(currentUser());
-    }
-
-    /**
-     * Fetch by ID in DTO form.
-     *
-     * @see UserService#fetchById(Long)
-     */
-    public UserDTO fetchByIdDTO(Long id) {
-        return new UserDTO(fetchById(id));
-    }
 
 }

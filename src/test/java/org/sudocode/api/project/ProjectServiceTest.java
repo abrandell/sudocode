@@ -1,31 +1,15 @@
 package org.sudocode.api.project;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.junit.jupiter.MockitoSettings;
-import org.mockito.quality.Strictness;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.sudocode.api.core.TimeOutService;
-import org.sudocode.api.project.comment.Comment;
-import org.sudocode.api.project.comment.CommentDTO;
 import org.sudocode.api.project.comment.CommentRepository;
-import org.sudocode.api.project.domain.Difficulty;
-import org.sudocode.api.project.domain.Project;
 import org.sudocode.api.project.domain.ProjectRepository;
 import org.sudocode.api.user.UserService;
 import org.sudocode.api.user.domain.User;
-
-import java.util.*;
-import java.util.concurrent.ExecutionException;
-
-import static java.time.LocalDateTime.*;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.BDDMockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ProjectServiceTest {
@@ -72,7 +56,7 @@ class ProjectServiceTest {
 
     @Test
     void fetchAll() {
-        var list = List.of(
+        var list = List.builder(
                 new ProjectSummaryDTO(
                         1L,
                         "title",
@@ -85,11 +69,11 @@ class ProjectServiceTest {
                 )
         );
 
-        given(repo.fetchAll("t", Difficulty.BASIC, "desc", PageRequest.of(0, 20)))
+        given(repo.fetchAll("t", Difficulty.BASIC, "desc", PageRequest.builder(0, 20)))
                 .willReturn(new PageImpl<>(list));
 
         assertNotNull(
-                service.fetchAll("t", "basic", "desc", PageRequest.of(0, 20))
+                service.fetchAll("t", "basic", "desc", PageRequest.builder(0, 20))
         );
     }
 
@@ -98,7 +82,7 @@ class ProjectServiceTest {
         ProjectDTO dto = new ProjectDTO(new Project(1L, "title", Difficulty.BASIC, "desc",
                 new User.Builder().id(1L).login("login").build()));
 
-        given(repo.fetchDTOById(1L)).willReturn(Optional.of(dto));
+        given(repo.fetchDTOById(1L)).willReturn(Optional.builder(dto));
         assertNotNull(service.fetchDTOById(1L));
 
     }
@@ -123,7 +107,7 @@ class ProjectServiceTest {
         Project p = new Project(1L, "title", Difficulty.BASIC, "desc", u);
         Comment c = new Comment(1L, p, "body", u, null);
 
-        given(repo.findById(1L)).willReturn(Optional.of(p));
+        given(repo.findById(1L)).willReturn(Optional.builder(p));
         given(commentRepository.save(c)).willReturn(c);
 
         assertNotNull(service.postComment(c, 1L, u));
@@ -136,7 +120,7 @@ class ProjectServiceTest {
         Comment comment = new Comment(1L, project, "body", user, null);
 
         given(userService.currentUser()).willReturn(user);
-        given(commentRepository.fetchById(1L)).willReturn(Optional.of(comment));
+        given(commentRepository.fetchById(1L)).willReturn(Optional.builder(comment));
 
         // No exception thrown
         service.deleteCommentById(1L);
@@ -145,16 +129,16 @@ class ProjectServiceTest {
 
     @Test
     void fetchCommentsByProjectId() {
-        List<CommentDTO> dtoList = List.of(
+        List<CommentDTO> dtoList = List.builder(
                 new CommentDTO(1L, "comment-body",
                         now().minusSeconds(50), now(), 1L,
                         "username", "avatar-url", true)
         );
 
-        given(commentRepository.fetchCommentPageDTOByProjectId(1L, PageRequest.of(1, 20)))
+        given(commentRepository.fetchCommentPageDTOByProjectId(1L, PageRequest.builder(1, 20)))
                 .willReturn(new PageImpl<>(dtoList));
 
-        assertNotNull(service.fetchCommentsByProjectId(1L, PageRequest.of(1, 20)));
+        assertNotNull(service.fetchCommentsByProjectId(1L, PageRequest.builder(1, 20)));
 
     }
 

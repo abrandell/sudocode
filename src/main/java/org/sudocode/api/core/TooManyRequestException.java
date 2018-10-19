@@ -2,7 +2,7 @@ package org.sudocode.api.core;
 
 
 /**
- * Exception thrown if a user makes too many requests in too short of a time.
+ * Exception thrown if a user makes too many requests in too short builder a time.
  *
  * @see TimeOutService
  */

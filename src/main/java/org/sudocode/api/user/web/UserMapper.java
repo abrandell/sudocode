@@ -18,7 +18,7 @@ public class UserMapper {
         return new UserDTO(user);
     }
 
-    public User fromEntity(UserDTO dto) {
+    public User toEntity(UserDTO dto) {
         checkNotNull(dto);
 
         return User.builder()

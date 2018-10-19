@@ -3,6 +3,7 @@ package org.sudocode.api.core;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
@@ -22,20 +23,11 @@ public class OAuth2ServiceUtils {
         this.clientService = clientService;
     }
 
-    public OAuth2AuthorizedClient getAuthorizedClient() {
-        var token = (OAuth2AuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+    public OAuth2AuthorizedClient getAuthorizedClient(OAuth2AuthenticationToken token) {
         return clientService.loadAuthorizedClient(
                 token.getAuthorizedClientRegistrationId(),
                 token.getName()
         );
-    }
-
-    public String getUserInfoUri() {
-        return getAuthorizedClient()
-                .getClientRegistration()
-                .getProviderDetails()
-                .getUserInfoEndpoint()
-                .getUri();
     }
 
     /**
@@ -48,15 +40,11 @@ public class OAuth2ServiceUtils {
         return new RestTemplateBuilder().interceptors((ClientHttpRequestInterceptor)
                 (request, body, execution) -> {
 
-                    var authentication = SecurityContextHolder.getContext().getAuthentication();
+                    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-                    if (authentication instanceof OAuth2AuthenticationToken) {
-
-                        var token = (OAuth2AuthenticationToken) authentication;
-                        OAuth2AuthorizedClient client = clientService.loadAuthorizedClient(
-                                token.getAuthorizedClientRegistrationId(),
-                                token.getName()
-                        );
+                    if (auth instanceof OAuth2AuthenticationToken) {
+                        var token = (OAuth2AuthenticationToken) auth;
+                        OAuth2AuthorizedClient client = getAuthorizedClient(token);
 
                         final String accessToken = client.getAccessToken().getTokenValue();
 

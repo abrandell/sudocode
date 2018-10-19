@@ -39,9 +39,12 @@ public class TimeOutService {
         return Duration.between(lastPosted, LocalDateTime.now()).toSeconds() <= 30;
     }
 
+    /**
+     * @param id of the user to check if timed out. Throws a {@link TooManyRequestException} if true.
+     */
     public void handleIfTimedOut(Long id) throws ExecutionException {
         if (isTimedOut(id)) {
-            LOG.info("Timed out User with ID: " + id + " attempted to make a post and is currently timed out.");
+            LOG.info(String.format("Timed out User: %d attempted to make a post.", id));
             throw new TooManyRequestException();
         }
     }
@@ -51,7 +54,7 @@ public class TimeOutService {
 
         if (lastPostDate != null) {
             long secPassed = Duration.between(lastPostDate, LocalDateTime.now()).toSeconds();
-            LOG.info("User with ID: " + userId + " waited " + secPassed + " seconds before attempting to postProject again");
+            LOG.info(String.format("User: %d waited %d seconds before attempting to post again.", userId, secPassed));
 
             if (secPassed < 10) {
                 timeOutUser(userId);

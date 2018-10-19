@@ -1,12 +1,16 @@
-package org.sudocode.api.user.web;
+package org.sudocode.api.user.web.rest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
+import org.sudocode.api.user.UserNotFoundException;
 import org.sudocode.api.user.UserService;
+import org.sudocode.api.user.web.UserDTO;
+import org.sudocode.api.user.web.UserMapper;
 
 import static org.springframework.http.MediaType.*;
+import static org.sudocode.api.core.util.Constants.JSON;
 
 /**
  * Rest controller for {@link org.sudocode.api.user.domain.User}.
@@ -26,22 +30,36 @@ public final class UserRestController {
 
     /**
      * GET /api/users/me
-     * @see UserService#currentUserDTO()
+     *
+     * @return Currently logged in user in DTO form.
+     * @see UserService#currentUser()
      */
-    @GetMapping(value = "/me", produces = APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/me", produces = JSON)
     public UserDTO currentUser() {
         return mapper.toDTO(userService.currentUser());
     }
 
     /**
      * GET /api/users/:id
-     * @see UserService#fetchByIdDTO(Long)
+     *
+     * Returns the user with the given ID in DTO form.
+     *
+     * @see UserService#fetchById(Long)
      */
-    @GetMapping(value = "/{id:[\\d]+}", produces = APPLICATION_JSON_VALUE)
-    public UserDTO fetchById(@PathVariable("id") Long id) {
+    @GetMapping(value = "/{id:[\\d]+}", produces = JSON)
+    public UserDTO fetchById(@PathVariable("id") Long id) throws UserNotFoundException {
         return mapper.toDTO(userService.fetchById(id));
     }
 
+    /**
+     *
+     * GET /api/users/:login
+     *
+     * Fetch a user by their login.
+     *
+     * @param login login to search for.
+     * @return User with the given login in DTO form.
+     */
     @GetMapping(value = "/{login:[A-Za-z]+}")
     public UserDTO fetchByLogin(@PathVariable String login) {
         return mapper.toDTO(userService.fetchByLogin(login.toLowerCase()));
@@ -49,14 +67,15 @@ public final class UserRestController {
 
     /**
      * GET /api/users?{page, sort}
+     *
      * @see UserService#fetchAll(Pageable)
      */
-    @GetMapping(produces = APPLICATION_JSON_VALUE)
+    @GetMapping(produces = JSON)
     public Page<UserDTO> fetchAll(Pageable pageable) {
         return userService.fetchAll(pageable).map(mapper::toDTO);
     }
 
-    @DeleteMapping(value = "/{id}", produces = APPLICATION_JSON_VALUE)
+    @DeleteMapping(value = "/{id}", produces = JSON)
     public void deleteById(@PathVariable("id") Long id) {
         userService.deleteById(id);
     }

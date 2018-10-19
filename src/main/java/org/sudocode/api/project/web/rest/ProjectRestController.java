@@ -1,4 +1,4 @@
-package org.sudocode.api.project.web;
+package org.sudocode.api.project.web.rest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -7,14 +7,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.sudocode.api.project.*;
 import org.sudocode.api.project.comment.Comment;
-import org.sudocode.api.project.comment.CommentDTO;
+import org.sudocode.api.project.comment.CommentMapper;
 import org.sudocode.api.project.domain.InvalidDifficultyException;
-import org.sudocode.api.project.ProjectNotFoundException;
-import org.sudocode.api.project.ProjectDTO;
-import org.sudocode.api.project.ProjectService;
-import org.sudocode.api.project.ProjectSummaryDTO;
 import org.sudocode.api.project.domain.Project;
+import org.sudocode.api.project.comment.CommentDTO;
+import org.sudocode.api.project.web.ProjectDTO;
+import org.sudocode.api.project.web.ProjectMapper;
+import org.sudocode.api.project.web.ProjectSummaryDTO;
 import org.sudocode.api.user.domain.User;
 
 import java.util.concurrent.ExecutionException;
@@ -29,23 +30,27 @@ import static org.sudocode.api.core.util.Constants.*;
 @RequestMapping("api/projects")
 public final class ProjectRestController {
 
-    private final ProjectService projectService;
-    private final Log LOG = LogFactory.getLog(ProjectRestController.class);
+    private final ProjectService service;
+    private final ProjectMapper projectMapper;
+    private final CommentMapper commentMapper;
+    private final Log LOG = LogFactory.getLog(this.getClass());
 
     @Autowired
-    public ProjectRestController(ProjectService projectService) {
-        this.projectService = projectService;
+    public ProjectRestController(ProjectService service, ProjectMapper projectMapper, CommentMapper commentMapper) {
+        this.service = service;
+        this.projectMapper = projectMapper;
+        this.commentMapper = commentMapper;
     }
 
     /**
      * POST /api/projects
      *
-     * @see ProjectService#postProjectDTO(Project, User)
+     * @see ProjectService#postProject(Project, User)
      */
     @PostMapping(consumes = JSON, produces = JSON)
     public ProjectDTO post(@RequestBody Project project,
                            @AuthenticationPrincipal User currentUser) throws ExecutionException {
-        return projectService.postProjectDTO(project, currentUser);
+        return projectMapper.toDTO(service.postProject(project, currentUser));
     }
 
     /**
@@ -59,17 +64,17 @@ public final class ProjectRestController {
                                             @RequestParam(value = "description", required = false) String description,
                                             Pageable pageable) throws InvalidDifficultyException {
 
-        return projectService.fetchAll(title, difficulty, description, pageable);
+        return service.fetchAll(title, difficulty, description, pageable);
     }
 
     /**
      * GET /api/projects/:id
      *
-     * @see ProjectService#fetchDTOById(Long)
+     * @see ProjectService#fetchById(Long)
      */
     @GetMapping(value = "/{id:[\\d]}", produces = JSON)
     public ProjectDTO fetchById(@PathVariable("id") Long id) throws ProjectNotFoundException {
-        return projectService.fetchDTOById(id);
+        return projectMapper.toDTO(service.fetchById(id));
     }
 
     /**
@@ -79,7 +84,7 @@ public final class ProjectRestController {
      */
     @GetMapping(value = "/{id}/comments", produces = JSON)
     public Page<CommentDTO> fetchComments(@PathVariable("id") Long id, Pageable pageable) {
-        return projectService.fetchCommentsByProjectId(id, pageable).map(CommentDTO::new);
+        return service.fetchCommentsByProjectId(id, pageable).map(commentMapper::toDTO);
     }
 
     /**
@@ -92,7 +97,7 @@ public final class ProjectRestController {
                                   @RequestBody Comment comment,
                                   @AuthenticationPrincipal User user) throws ExecutionException {
 
-        return new CommentDTO(projectService.postComment(comment, projectId, user));
+        return commentMapper.toDTO(service.postComment(comment, projectId, user));
     }
 
     @PutMapping(value = "/{projectId}/comments/{commentId}", consumes = JSON, produces = JSON)
@@ -101,7 +106,7 @@ public final class ProjectRestController {
                                     @RequestBody Comment comment,
                                     @AuthenticationPrincipal User user) throws ExecutionException {
 
-        return new CommentDTO(projectService.updateComment(comment, commentId, projectId, user));
+        return commentMapper.toDTO(service.updateComment(comment, commentId, projectId, user));
     }
 
     /**
@@ -112,18 +117,20 @@ public final class ProjectRestController {
     @DeleteMapping(value = "/{projectId}/comments/{commentId}")
     public void deleteCommentById(@PathVariable("projectId") Long projectId,
                                   @PathVariable("commentId") Long commentId) {
-        this.projectService.deleteCommentById(commentId);
+        this.service.deleteCommentById(commentId);
     }
 
     /**
      * PUT /api/projects/:id
      *
-     * @see ProjectService#update(Long, Project)
+     * @see ProjectService#update(Long, Project, User)
      */
     @PutMapping(value = "/{id}", consumes = JSON, produces = JSON)
     public ProjectDTO update(@PathVariable("id") Long id,
-                             @RequestBody Project project) throws ExecutionException {
-        return projectService.update(id, project);
+                             @RequestBody Project project,
+                             @AuthenticationPrincipal User user) throws ExecutionException {
+
+        return projectMapper.toDTO(service.update(id, project, user));
     }
 
     /**
@@ -133,7 +140,7 @@ public final class ProjectRestController {
      */
     @DeleteMapping(value = "/{id}")
     public void delete(@PathVariable("id") Long id, @AuthenticationPrincipal User user) {
-        projectService.deleteById(id, user);
+        service.deleteById(id, user);
     }
 
 }

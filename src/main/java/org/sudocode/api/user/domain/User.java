@@ -8,20 +8,16 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.springframework.data.annotation.AccessType;
-import org.springframework.hateoas.Identifiable;
-import org.springframework.lang.NonNull;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.util.Assert;
-import org.sudocode.api.core.util.Constants;
 
 import javax.persistence.*;
 import javax.validation.constraints.Pattern;
 
 import java.util.Collection;
 import java.util.Map;
-import java.util.regex.Matcher;
 
 import static org.springframework.data.annotation.AccessType.*;
 import static org.sudocode.api.core.util.Constants.*;
@@ -127,7 +123,7 @@ public class User implements OAuth2User {
         private String avatarUrl = "https://dummyimage.com/200x200/000/fff";
         private boolean hireable;
 
-        public Builder id(@NonNull Long id) {
+        public Builder id(Long id) {
             this.id = id;
             return this;
         }

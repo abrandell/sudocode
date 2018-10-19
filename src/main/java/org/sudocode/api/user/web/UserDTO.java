@@ -1,14 +1,13 @@
 package org.sudocode.api.user.web;
 
-import lombok.Builder;
-import lombok.Value;
+import lombok.*;
 import org.sudocode.api.user.domain.User;
 
 /**
  * DTO/Value Object for returning serialized User entities.
  */
-@Value
-@Builder
+@Getter
+@Setter
 public class UserDTO {
 
     private Long id;
@@ -16,7 +15,7 @@ public class UserDTO {
     private String avatarUrl;
     private boolean hireable;
 
-    public UserDTO(User user) {
+    public UserDTO(@NonNull User user) {
         this.id = user.getId();
         this.login = user.getLogin();
         this.avatarUrl = user.getAvatarUrl();
