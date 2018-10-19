@@ -21,9 +21,9 @@ import org.sudocode.api.user.UserService;
 import org.sudocode.api.user.domain.User;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
 import static java.time.LocalDateTime.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -125,7 +125,7 @@ class ProjectServiceTest {
         given(repo.findById(1L)).willReturn(Optional.of(p));
         given(commentRepository.save(c)).willReturn(c);
 
-        assertNotNull(service.postComment(c, 1L,u));
+        assertNotNull(service.postComment(c, 1L, u));
     }
 
     @Test
@@ -145,9 +145,9 @@ class ProjectServiceTest {
     @Test
     void fetchCommentsByProjectId() {
         List<CommentDTO> dtoList = List.of(
-                new CommentDTO(1L,"comment-body",
+                new CommentDTO(1L, "comment-body",
                         now().minusSeconds(50), now(), 1L,
-                        "username", "avatar-url", true )
+                        "username", "avatar-url", true)
         );
 
         given(commentRepository.fetchDTOPageByProjectId(1L, PageRequest.of(1, 20)))
@@ -156,5 +156,4 @@ class ProjectServiceTest {
         assertNotNull(service.fetchCommentsByProjectId(1L, PageRequest.of(1, 20)));
 
     }
-
 }
