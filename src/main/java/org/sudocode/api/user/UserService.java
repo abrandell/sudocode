@@ -6,15 +6,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
 import org.sudocode.api.core.SecurityUtils;
 import org.sudocode.api.user.domain.User;
 import org.sudocode.api.user.domain.UserRepository;
-
-
-import java.util.function.Consumer;
-
-import static com.google.common.base.Preconditions.*;
+import org.sudocode.api.user.web.UserDTO;
+import org.sudocode.api.user.web.UserMapper;
 
 /**
  * Service for user transactions. Read only by default & rolls back for any exception.
@@ -29,10 +25,12 @@ import static com.google.common.base.Preconditions.*;
 public class UserService {
 
     private final UserRepository userRepo;
+    private final UserMapper mapper;
 
     @Autowired
-    UserService(UserRepository userRepo) {
+    UserService(UserRepository userRepo, UserMapper mapper) {
         this.userRepo = userRepo;
+        this.mapper = mapper;
     }
 
     /**
@@ -61,8 +59,8 @@ public class UserService {
      * @see Pageable
      * @see UserDTO
      */
-    public Page<UserDTO> fetchAll(Pageable pageable) {
-        return userRepo.fetchAll(pageable);
+    public Page<User> fetchAll(Pageable pageable) {
+        return userRepo.findAll(pageable);
     }
 
     /**
@@ -103,8 +101,8 @@ public class UserService {
      *
      * @see UserService#fetchByLogin(String)
      */
-    public UserDTO fetchByLoginDTO(String login) {
-        return userRepo.fetchDTOByLogin(login).orElseThrow(() -> new UserNotFoundException(login));
+    public User fetchByLoginDTO(String login) {
+        return userRepo.findByLogin(login).orElseThrow(() -> new UserNotFoundException(login));
     }
 
     /**

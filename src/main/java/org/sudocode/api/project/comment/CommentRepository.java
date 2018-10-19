@@ -30,9 +30,14 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     @Query("SELECT max(c.datePosted) FROM Comment c WHERE c.author.id = :id")
     LocalDateTime fetchLatestPostDateByAuthorId(@Param("id") Long id);
 
+    @Deprecated
     @Query("SELECT NEW org.sudocode.api.project.comment.CommentDTO" +
                 "(c.id, c.body, c.datePosted, c.lastModifiedDate, u.id, u.login, u.avatarUrl, u.hireable) " +
             "FROM Comment c JOIN c.author AS u " +
             "WHERE c.project.id = :id")
-    Page<CommentDTO> fetchDTOPageByProjectId(@Param("id") Long id, Pageable pageable);
+    Page<CommentDTO> fetchCommentPageDTOByProjectId(@Param("id") Long id, Pageable pageable);
+
+    @Query("SELECT c FROM Comment c JOIN c.author AS u WHERE c.project.id = :id")
+    Page<Comment> fetchCommentsByProjectId(@Param("id") Long id, Pageable pageable);
+
 }

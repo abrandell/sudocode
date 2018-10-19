@@ -1,6 +1,5 @@
 package org.sudocode.api.project.web;
 
-import com.google.common.base.Preconditions;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,8 +7,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import org.sudocode.api.core.ShortMediaTypeConstans;
-import org.sudocode.api.core.ShortMediaTypeConstants;
 import org.sudocode.api.project.comment.Comment;
 import org.sudocode.api.project.comment.CommentDTO;
 import org.sudocode.api.project.domain.InvalidDifficultyException;
@@ -22,8 +19,7 @@ import org.sudocode.api.user.domain.User;
 
 import java.util.concurrent.ExecutionException;
 
-import static org.springframework.http.MediaType.*;
-import static org.sudocode.api.core.ShortMediaTypeConstants.*;
+import static org.sudocode.api.core.util.Constants.*;
 
 
 /**
@@ -71,7 +67,7 @@ public final class ProjectRestController {
      *
      * @see ProjectService#fetchDTOById(Long)
      */
-    @GetMapping(value = "/{id}", produces = JSON)
+    @GetMapping(value = "/{id:[\\d]}", produces = JSON)
     public ProjectDTO fetchById(@PathVariable("id") Long id) throws ProjectNotFoundException {
         return projectService.fetchDTOById(id);
     }
@@ -83,7 +79,7 @@ public final class ProjectRestController {
      */
     @GetMapping(value = "/{id}/comments", produces = JSON)
     public Page<CommentDTO> fetchComments(@PathVariable("id") Long id, Pageable pageable) {
-        return projectService.fetchCommentsByProjectId(id, pageable);
+        return projectService.fetchCommentsByProjectId(id, pageable).map(CommentDTO::new);
     }
 
     /**
@@ -99,7 +95,14 @@ public final class ProjectRestController {
         return new CommentDTO(projectService.postComment(comment, projectId, user));
     }
 
-    @PutMapping(value = "/{projectId}/comments/{commentId}", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/{projectId}/comments/{commentId}", consumes = JSON, produces = JSON)
+    public CommentDTO updateComment(@PathVariable("projectId") Long projectId,
+                                    @PathVariable("commentId") Long commentId,
+                                    @RequestBody Comment comment,
+                                    @AuthenticationPrincipal User user) throws ExecutionException {
+
+        return new CommentDTO(projectService.updateComment(comment, commentId, projectId, user));
+    }
 
     /**
      * DELETE /api/projects/:projectId/comments/:commentId
@@ -120,18 +123,17 @@ public final class ProjectRestController {
     @PutMapping(value = "/{id}", consumes = JSON, produces = JSON)
     public ProjectDTO update(@PathVariable("id") Long id,
                              @RequestBody Project project) throws ExecutionException {
-        Preconditions.checkNotNull(project);
         return projectService.update(id, project);
     }
 
     /**
      * DELETE /api/projects/:id
      *
-     * @see ProjectService#deleteById(Long)
+     * @see ProjectService#deleteById(Long, User) d(Long)
      */
     @DeleteMapping(value = "/{id}")
-    public void delete(@PathVariable("id") Long id) {
-        projectService.deleteById(id);
+    public void delete(@PathVariable("id") Long id, @AuthenticationPrincipal User user) {
+        projectService.deleteById(id, user);
     }
 
 }

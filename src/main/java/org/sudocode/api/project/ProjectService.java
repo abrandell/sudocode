@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.lang.Nullable;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.sudocode.api.core.TimeOutService;
@@ -28,6 +27,7 @@ import java.time.LocalTime;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
+import static java.lang.String.*;
 import static org.sudocode.api.project.domain.Difficulty.*;
 
 /**
@@ -151,10 +151,10 @@ public class ProjectService {
      * @throws NotPostAuthorException if the user making the request did not postProject the comment.
      */
     @Transactional(rollbackFor = Exception.class)
-    public void deleteById(Long id) {
+    public void deleteById(Long id, User currentUser) {
         Project found = projectRepo.findById(id).orElseThrow(() -> new ProjectNotFoundException(id));
 
-        if (!found.getAuthor().equals(userService.currentUser())) {
+        if (!found.getAuthor().equals(currentUser)) {
             throw new NotPostAuthorException("Not author of project.");
         }
 
@@ -187,16 +187,17 @@ public class ProjectService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public Comment updateComment(Comment comment, Long projectId, User currentUser) throws ExecutionException {
+    public Comment updateComment(Comment comment, Long commentId, Long projectId, User currentUser) throws ExecutionException {
         handleTimeOut(currentUser.getId(), PostType.COMMENT);
 
-        Optional<Comment> optionalComment = commentRepo.fetchById(comment.getId());
+        comment.setId(commentId);
 
+        Optional<Comment> optionalComment = commentRepo.fetchById(comment.getId());
         if (optionalComment.isPresent()) {
             Comment updated = optionalComment.get();
 
             if (updated.getAuthor().equals(currentUser)) {
-                LOG.info("Updating comment by " + currentUser.getId() + " at " + LocalDateTime.now());
+                LOG.info(format("Updating comment by %d at %tc", currentUser.getId(), LocalDateTime.now()));
 
                 updated.setId(comment.getId());
                 updated.setBody(comment.getBody());
@@ -232,8 +233,8 @@ public class ProjectService {
      * @return Page of all comment DTO's for the given project.
      * @see Pageable
      */
-    public Page<CommentDTO> fetchCommentsByProjectId(@NotNull Long id, Pageable pageable) {
-        return commentRepo.fetchDTOPageByProjectId(id, pageable);
+    public Page<Comment> fetchCommentsByProjectId(@NotNull Long id, Pageable pageable) {
+        return commentRepo.fetchAllByProjectId(id, pageable);
     }
 
     private void handleTimeOut(Long userId, PostType type) throws ExecutionException {

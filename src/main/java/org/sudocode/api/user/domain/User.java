@@ -2,33 +2,39 @@ package org.sudocode.api.user.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Getter;
-import lombok.Setter;
+import com.google.common.base.Preconditions;
+import lombok.*;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.springframework.data.annotation.AccessType;
 import org.springframework.hateoas.Identifiable;
+import org.springframework.lang.NonNull;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.springframework.util.Assert;
+import org.sudocode.api.core.util.Constants;
 
 import javax.persistence.*;
+import javax.validation.constraints.Pattern;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.regex.Matcher;
 
 import static org.springframework.data.annotation.AccessType.*;
+import static org.sudocode.api.core.util.Constants.*;
 
 @Entity
 @Table(name = "users")
 @AccessType(Type.FIELD)
 @Getter
-@Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User implements OAuth2User {
 
     /**
-     * Not auto-generated.
+     * Not generated.
      *
      * Uses the same ID as the github API.
      */
@@ -40,13 +46,14 @@ public class User implements OAuth2User {
     private String login;
 
     @Column(nullable = false)
+    @Pattern(regexp = URL_REGEX)
     private String avatarUrl;
 
     @Column(nullable = false)
     private boolean hireable;
 
     /**
-     * Required for principal. Returns ID since that never changes.
+     * Required for principal. Returns ID since that never changes (unless Github decides to change it).
      */
     public String getName() {
         return id.toString();
@@ -101,31 +108,42 @@ public class User implements OAuth2User {
      * All needed info is provided via standard getters.
      * @return null
      */
+    @Deprecated
     @Override
     public Map<String, Object> getAttributes() {
         return null;
     }
 
+
+    // --- BUILDER --- //
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
     public static class Builder {
         private Long id;
-        private String login;
+        private String login = "placeholder-name";
         private String avatarUrl = "https://dummyimage.com/200x200/000/fff";
         private boolean hireable;
 
-        public Builder() {}
-
-        public Builder id(Long id) {
+        public Builder id(@NonNull Long id) {
             this.id = id;
             return this;
         }
 
         public Builder login(String login) {
+            Assert.hasText(login, "Login cannot be blank.");
             this.login = login;
             return this;
         }
 
+
         public Builder avatarUrl(String avatarUrl) {
-            this.avatarUrl = avatarUrl;
+            if (URL_REGEX_PATTERN.matcher(avatarUrl).matches()) {
+                this.avatarUrl = avatarUrl;
+            }
+
             return this;
         }
 
@@ -135,14 +153,14 @@ public class User implements OAuth2User {
         }
 
         public User build() {
-            User user = new User();
-
-            user.setId(this.id);
-            user.setLogin(this.login);
-            user.setAvatarUrl(this.avatarUrl);
-            user.setHireable(this.hireable);
-
-            return user;
+            return new User(this);
         }
+    }
+
+    private User(Builder builder) {
+        this.id = builder.id;
+        this.login = builder.login;
+        this.hireable = builder.hireable;
+        this.avatarUrl = builder.avatarUrl;
     }
 }

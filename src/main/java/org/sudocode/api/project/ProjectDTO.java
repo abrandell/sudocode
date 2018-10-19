@@ -5,7 +5,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.sudocode.api.project.domain.Difficulty;
 import org.sudocode.api.project.domain.Project;
-import org.sudocode.api.user.UserDTO;
+import org.sudocode.api.user.web.UserDTO;
 
 import java.time.LocalDateTime;
 

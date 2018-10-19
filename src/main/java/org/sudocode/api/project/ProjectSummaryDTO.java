@@ -4,7 +4,7 @@ import lombok.Getter;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.sudocode.api.project.domain.Difficulty;
-import org.sudocode.api.user.UserSummaryDTO;
+import org.sudocode.api.user.web.UserSummaryDTO;
 
 import java.time.LocalDateTime;
 
@@ -25,7 +25,11 @@ public class ProjectSummaryDTO {
         this.difficulty = difficulty;
         this.description = description;
         this.datePosted = datePosted;
-        this.author = new UserSummaryDTO(userId, login, avatarUrl);
+        this.author = UserSummaryDTO.builder()
+                                    .id(userId)
+                                    .login(login)
+                                    .avatarUrl(avatarUrl)
+                                    .build();
     }
 
     @Override

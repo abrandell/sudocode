@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
-import org.sudocode.api.user.UserDTO;
 import org.sudocode.api.user.UserService;
 
 import static org.springframework.http.MediaType.*;
@@ -17,10 +16,12 @@ import static org.springframework.http.MediaType.*;
 public final class UserRestController {
 
     private final UserService userService;
+    private final UserMapper mapper;
 
     @Autowired
-    UserRestController(UserService userService) {
+    UserRestController(UserService userService, UserMapper mapper) {
         this.userService = userService;
+        this.mapper = mapper;
     }
 
     /**
@@ -29,16 +30,21 @@ public final class UserRestController {
      */
     @GetMapping(value = "/me", produces = APPLICATION_JSON_VALUE)
     public UserDTO currentUser() {
-        return userService.currentUserDTO();
+        return mapper.toDTO(userService.currentUser());
     }
 
     /**
      * GET /api/users/:id
      * @see UserService#fetchByIdDTO(Long)
      */
-    @GetMapping(value = "/{id}", produces = APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/{id:[\\d]+}", produces = APPLICATION_JSON_VALUE)
     public UserDTO fetchById(@PathVariable("id") Long id) {
-        return userService.fetchByIdDTO(id);
+        return mapper.toDTO(userService.fetchById(id));
+    }
+
+    @GetMapping(value = "/{login:[A-Za-z]+}")
+    public UserDTO fetchByLogin(@PathVariable String login) {
+        return mapper.toDTO(userService.fetchByLogin(login.toLowerCase()));
     }
 
     /**
@@ -47,7 +53,7 @@ public final class UserRestController {
      */
     @GetMapping(produces = APPLICATION_JSON_VALUE)
     public Page<UserDTO> fetchAll(Pageable pageable) {
-        return userService.fetchAll(pageable);
+        return userService.fetchAll(pageable).map(mapper::toDTO);
     }
 
     @DeleteMapping(value = "/{id}", produces = APPLICATION_JSON_VALUE)

@@ -1,5 +1,6 @@
-package org.sudocode.api.user;
+package org.sudocode.api.user.web;
 
+import lombok.Builder;
 import lombok.Value;
 import org.sudocode.api.user.domain.User;
 
@@ -7,6 +8,7 @@ import org.sudocode.api.user.domain.User;
  * DTO/Value Object for returning serialized User entities.
  */
 @Value
+@Builder
 public class UserDTO {
 
     private Long id;
@@ -27,5 +29,4 @@ public class UserDTO {
         this.avatarUrl = avatarUrl;
         this.hireable = hireable;
     }
-
 }
