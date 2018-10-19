@@ -156,4 +156,9 @@ class ProjectServiceTest {
         assertNotNull(service.fetchCommentsByProjectId(1L, PageRequest.of(1, 20)));
 
     }
+
+    @Test
+    void updateComment() {
+
+    }
 }

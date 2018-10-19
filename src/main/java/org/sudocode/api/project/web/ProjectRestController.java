@@ -8,6 +8,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.sudocode.api.core.ShortMediaTypeConstans;
+import org.sudocode.api.core.ShortMediaTypeConstants;
 import org.sudocode.api.project.comment.Comment;
 import org.sudocode.api.project.comment.CommentDTO;
 import org.sudocode.api.project.domain.InvalidDifficultyException;
@@ -21,6 +23,7 @@ import org.sudocode.api.user.domain.User;
 import java.util.concurrent.ExecutionException;
 
 import static org.springframework.http.MediaType.*;
+import static org.sudocode.api.core.ShortMediaTypeConstants.*;
 
 
 /**
@@ -43,7 +46,7 @@ public final class ProjectRestController {
      *
      * @see ProjectService#postProjectDTO(Project, User)
      */
-    @PostMapping(consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    @PostMapping(consumes = JSON, produces = JSON)
     public ProjectDTO post(@RequestBody Project project,
                            @AuthenticationPrincipal User currentUser) throws ExecutionException {
         return projectService.postProjectDTO(project, currentUser);
@@ -54,7 +57,7 @@ public final class ProjectRestController {
      *
      * @see ProjectService#fetchAll(String, String, String, Pageable)
      */
-    @GetMapping(produces = APPLICATION_JSON_VALUE)
+    @GetMapping(produces = JSON)
     public Page<ProjectSummaryDTO> fetchAll(@RequestParam(value = "title", required = false) String title,
                                             @RequestParam(value = "difficulty", required = false) String difficulty,
                                             @RequestParam(value = "description", required = false) String description,
@@ -68,7 +71,7 @@ public final class ProjectRestController {
      *
      * @see ProjectService#fetchDTOById(Long)
      */
-    @GetMapping(value = "/{id}", produces = APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/{id}", produces = JSON)
     public ProjectDTO fetchById(@PathVariable("id") Long id) throws ProjectNotFoundException {
         return projectService.fetchDTOById(id);
     }
@@ -78,7 +81,7 @@ public final class ProjectRestController {
      *
      * @see ProjectService#fetchCommentsByProjectId(Long, Pageable)
      */
-    @GetMapping(value = "/{id}/comments", produces = APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/{id}/comments", produces = JSON)
     public Page<CommentDTO> fetchComments(@PathVariable("id") Long id, Pageable pageable) {
         return projectService.fetchCommentsByProjectId(id, pageable);
     }
@@ -88,13 +91,15 @@ public final class ProjectRestController {
      *
      * @see ProjectService#postComment(Comment, Long, User)
      */
-    @PostMapping(value = "/{id}/comments", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/{id}/comments", consumes = JSON, produces = JSON)
     public CommentDTO postComment(@PathVariable("id") Long projectId,
                                   @RequestBody Comment comment,
                                   @AuthenticationPrincipal User user) throws ExecutionException {
 
         return new CommentDTO(projectService.postComment(comment, projectId, user));
     }
+
+    @PutMapping(value = "/{projectId}/comments/{commentId}", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
 
     /**
      * DELETE /api/projects/:projectId/comments/:commentId
@@ -112,7 +117,7 @@ public final class ProjectRestController {
      *
      * @see ProjectService#update(Long, Project)
      */
-    @PutMapping(value = "/{id}", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/{id}", consumes = JSON, produces = JSON)
     public ProjectDTO update(@PathVariable("id") Long id,
                              @RequestBody Project project) throws ExecutionException {
         Preconditions.checkNotNull(project);

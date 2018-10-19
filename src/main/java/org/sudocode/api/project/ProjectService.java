@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.lang.Nullable;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.sudocode.api.core.TimeOutService;
@@ -22,6 +23,7 @@ import org.sudocode.api.user.UserService;
 import org.sudocode.api.user.domain.User;
 
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
@@ -66,21 +68,15 @@ public class ProjectService {
      */
     @Transactional(rollbackFor = Exception.class)
     public Project postProject(@NotNull Project project, @NotNull User currentUser) throws ExecutionException {
-        timeOutService.handleIfTimedOut(currentUser.getId());
-
-        timeOutService.ensureNotSpamming(
-                currentUser.getId(),
-                projectRepo.fetchLatestPostDateByAuthorId(currentUser.getId())
-        );
+        handleTimeOut(currentUser.getId(), PostType.PROJECT);
 
         project.setAuthor(currentUser);
         return projectRepo.save(project);
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public ProjectDTO postProjectDTO(Project project,
-                                     User currentUser) throws ExecutionException {
-
+    public ProjectDTO postProjectDTO(Project project, User currentUser)
+            throws ExecutionException {
         return new ProjectDTO(postProject(project, currentUser));
     }
 
@@ -95,11 +91,10 @@ public class ProjectService {
      * @param description Description to search for.
      * @param pageable    Pageable params.
      * @return Page of ProjectSummaryDTO's.
+     * @throws InvalidDifficultyException if the String provided isn't a a {@link Difficulty} enum value.
      * @see Pageable
      * @see ProjectSummaryDTO
      * @see Difficulty#fromText(String)
-     * @throws InvalidDifficultyException if the String provided isn't a a {@link Difficulty} enum value.
-     *
      */
     public Page<ProjectSummaryDTO> fetchAll(@Nullable String title,
                                             @Nullable String difficulty,
@@ -125,12 +120,14 @@ public class ProjectService {
     /**
      * Updates the given project.
      *
-     * @param id              of the project to update.
-     * @return {@code ProjectDTO} of the updated project.
+     * @param id of the project to update.
+     * @return {@code ProjectDTO} of the updated (or new) {@link Project}.
      * @throws NotPostAuthorException if user making the request did not postProject the project.
      */
     @Transactional(rollbackFor = Exception.class)
     public ProjectDTO update(Long id, Project project) throws ExecutionException {
+        project.setId(id);
+
         if (projectRepo.existsById(id)) {
             Project updated = projectRepo.getOne(id);
 
@@ -144,7 +141,6 @@ public class ProjectService {
             return new ProjectDTO(updated);
         }
 
-        // TODO this needs to be cleaned up
         return postProjectDTO(project, userService.currentUser());
     }
 
@@ -170,22 +166,16 @@ public class ProjectService {
      * Post a comment.
      *
      * @param comment
-     * @param projectId   id of the project to comment on.
+     * @param projectId id of the project to comment on.
      * @return DTO of newly created comment.
      * @throws ProjectNotFoundException if the {@literal projectId} does not match any project id in the DB.
      * @throws TooManyRequestException  if the last {@link Comment} or {@link Project} posted by the user was under 1 min ago.
      */
     @Transactional(rollbackFor = Exception.class)
-    public Comment postComment(Comment comment,
-                               Long projectId, User currentUser) throws ExecutionException {
+    public Comment postComment(Comment comment, Long projectId, User currentUser) throws ExecutionException {
+        final Long userId = currentUser.getId();
 
-        timeOutService.handleIfTimedOut(currentUser.getId());
-
-        timeOutService.ensureNotSpamming(
-                currentUser.getId(),
-                commentRepo.fetchLatestPostDateByAuthorId(currentUser.getId())
-        );
-
+        handleTimeOut(userId, PostType.COMMENT);
         LOG.info("Posting comment by " + currentUser.getId() + " at" + LocalTime.now());
 
         comment.setProject(projectRepo.findById(projectId)
@@ -198,23 +188,23 @@ public class ProjectService {
 
     @Transactional(rollbackFor = Exception.class)
     public Comment updateComment(Comment comment, Long projectId, User currentUser) throws ExecutionException {
-        final Long userId = currentUser.getId();
-
-        timeOutService.handleIfTimedOut(userId);
-        timeOutService.ensureNotSpamming(userId, commentRepo.fetchLatestPostDateByAuthorId(userId));
+        handleTimeOut(currentUser.getId(), PostType.COMMENT);
 
         Optional<Comment> optionalComment = commentRepo.fetchById(comment.getId());
-        if (optionalComment.isPresent() && (optionalComment.get().getAuthor().equals(currentUser))) {
+
+        if (optionalComment.isPresent()) {
             Comment updated = optionalComment.get();
 
-            updated.setId(comment.getId());
-            updated.setBody(comment.getBody());
+            if (updated.getAuthor().equals(currentUser)) {
+                LOG.info("Updating comment by " + currentUser.getId() + " at " + LocalDateTime.now());
 
-            return updated;
+                updated.setId(comment.getId());
+                updated.setBody(comment.getBody());
+                return updated;
+            }
         }
 
         return postComment(comment, projectId, currentUser);
-
     }
 
     /**
@@ -246,5 +236,22 @@ public class ProjectService {
         return commentRepo.fetchDTOPageByProjectId(id, pageable);
     }
 
+    private void handleTimeOut(Long userId, PostType type) throws ExecutionException {
+        timeOutService.handleIfTimedOut(userId);
+        timeOutService.ensureNotSpamming(
+                userId,
+                type == PostType.COMMENT ?
+                        commentRepo.fetchLatestPostDateByAuthorId(userId) :
+                        projectRepo.fetchLatestPostDateByAuthorId(userId)
+        );
+    }
+
+    /**
+     * Simple helper enum for typesafe post types.
+     */
+    private enum PostType {
+        COMMENT,
+        PROJECT
+    }
 
 }
