@@ -30,7 +30,7 @@ webpackEmptyAsyncContext.id = "./src/$$_lazy_route_resource lazy recursive";
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"container-fluid max-width-wrapper page-content\" >\n  <app-header [headerText]=\"'About sudoCode'\"></app-header>\n\n  <div class=\"m-auto\">\n  <img src=\"https://i.stack.imgur.com/eQ20E.jpg\">\n  </div>\n</div>\n"
+module.exports = "<div class=\"container-fluid max-width-wrapper page-content\" >\n  <app-header [headerText]=\"'About sudoCode'\"></app-header>\n    <div class=\"m-auto\">\n      <img src=\"https://i.stack.imgur.com/eQ20E.jpg\">\n    </div>\n</div>\n"
 
 /***/ }),
 
@@ -175,7 +175,7 @@ var AppRoutingModule = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<app-navbar></app-navbar>\n  <div id=\"content\" class=\"max-width-wrapper container align-self-auto\">\n    <router-outlet></router-outlet>\n  </div>\n<app-footer></app-footer>\n\n"
+module.exports = "<div id=\"webpage\">\n<app-navbar></app-navbar>\n\n  <div id=\"content\">\n    <div id=\"sub-content\" class=\"max-width-wrapper container align-self-auto\">\n    <router-outlet></router-outlet>\n  </div>\n  </div>\n  <app-footer></app-footer>\n</div>\n"
 
 /***/ }),
 
@@ -373,7 +373,7 @@ var AppModule = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"comment-card container-fluid\" style=\"margin-bottom: 1.2rem\">\n  <div *ngIf=\"auth.currentUser?.id == comment?.author?.id\"\n       class=\"author-buttons btn-group-sm\">\n    <button id=\"edit\" class=\"btn btn-sm btn-outline-secondary\">\n      <i class=\"fa fa-pencil\"></i> Edit\n    </button>\n    <button id=\"delete\" class=\"btn btn-sm btn-danger\" (click)=\"deleteComment()\">\n      <i class=\"fa fa-trash-o\"></i> Delete\n    </button>\n  </div>\n  <div class=\"header\">\n    <img class=\"avatar\" src=\"{{comment?.author?.avatar_url}}\">\n    <div class=\"metadata\">\n      <a class=\"clickable login\" href=\"https://github.com/{{comment?.author?.login}}\">\n        <h6>{{comment?.author?.login}}</h6>\n      </a>\n      <div class=\"date\">{{comment?.date_posted | date: 'MMM. d, y'}}</div>\n    </div>\n  </div>\n  <p class=\"comment-body\">{{comment?.body}}</p>\n</div>\n<hr class=\"my-2\">\n"
+module.exports = "<div class=\"comment-card container-fluid\" style=\"margin-bottom: 1.2rem\">\n  <div *ngIf=\"auth.currentUser?.id == comment?.author?.id\"\n       class=\"author-buttons btn-group-sm\">\n    <button id=\"edit\" class=\"btn btn-sm btn-outline-secondary\">\n      <i class=\"fa fa-pencil\"></i> Edit\n    </button>\n    <button id=\"delete\" class=\"btn btn-sm btn-danger\" data-toggle=\"modal\" data-target=\"#confirm-delete\">\n      <i class=\"fa fa-trash-o\"></i> Delete\n    </button>\n\n    <div class=\"modal fade\" id=\"confirm-delete\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"exampleModalCenterTitle\" aria-hidden=\"true\">\n        <div class=\"modal-dialog modal-dialog-centered\" role=\"document\">\n          <div class=\"modal-content\">\n            <div class=\"modal-header\">\n              <h5 class=\"modal-title\" id=\"exampleModalLongTitle\">Are you sure?</h5>\n              <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\">\n                <span aria-hidden=\"true\">&times;</span>\n              </button>\n            </div>\n            <div class=\"modal-body\">\n              This cannot be undone.\n            </div>\n            <div class=\"modal-footer\">\n                <button type=\"button\" class=\"btn btn-danger\" (click)=\"deleteComment()\" data-dismiss=\"modal\">Delete Comment</button>\n              <button type=\"button\" class=\"btn btn-primary\" data-dismiss=\"modal\">Close</button>\n            </div>\n          </div>\n        </div>\n      </div>\n\n\n  </div>\n  <div class=\"header\">\n    <img class=\"avatar\" src=\"{{comment?.author?.avatar_url}}\">\n    <div class=\"metadata\">\n      <a class=\"clickable login\" href=\"https://github.com/{{comment?.author?.login}}\">\n        <h6>{{comment?.author?.login}}</h6>\n      </a>\n      <div class=\"date\">{{comment?.date_posted | date: 'MMM. d, y'}}</div>\n    </div>\n  </div>\n  <p class=\"comment-body\">{{comment?.body}}</p>\n</div>\n<hr class=\"my-2\">\n"
 
 /***/ }),
 
@@ -536,9 +536,12 @@ var CommentPostComponent = /** @class */ (function () {
         this.route.params.subscribe(function (params) { return _this.projectId = params.id; }, function (err) { return console.log(err); });
     };
     CommentPostComponent.prototype.submit = function () {
-        this.submitted = true;
+        var submittedComment;
         this.projectService.postComment(this.projectId, this.comment)
-            .subscribe(function (status) { return console.log(status); }, function (err) { return console.log(err); });
+            .subscribe(function (data) { return submittedComment = data; }, function (err) { return console.log(err); });
+        if (submittedComment) {
+            this.submitted = true;
+        }
         this.router.navigate(['projects', this.projectId]).then(function () { });
     };
     Object.defineProperty(CommentPostComponent.prototype, "diagnostic", {
@@ -584,7 +587,7 @@ module.exports = "<footer>\n  <div class=\"max-width-wrapper container\">\n    <
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "footer {\n  display: none;\n  background-color: #1c2331;\n  position: fixed;\n  bottom: 0;\n  width: 100%; }\n  footer .max-width-wrapper {\n    color: #fffbfe; }\n  footer .max-width-wrapper #footer-content {\n      padding-top: 1rem;\n      font-family: \"Valera Round\", sans-serif;\n      font-size: 1rem; }\n"
+module.exports = "footer {\n  background-color: #1c2331;\n  position: static;\n  bottom: 0;\n  width: 100%;\n  height: 200px; }\n  footer .max-width-wrapper {\n    color: #fffbfe; }\n  footer .max-width-wrapper #footer-content {\n      padding-top: 1rem;\n      font-family: \"Valera Round\", sans-serif;\n      font-size: 1rem; }\n"
 
 /***/ }),
 
@@ -647,7 +650,7 @@ module.exports = "<div id=\"header\">\n  <h2>{{headerText}}</h2>\n  <hr>\n</div>
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "#header {\n  margin-top: 3rem;\n  margin-bottom: 3rem; }\n  #header h2 {\n    font-family: Montserrat, sans-serif;\n    font-weight: 600; }\n"
+module.exports = "#header {\n  margin-bottom: 3rem;\n  padding-top: 5rem; }\n  #header h2 {\n    font-family: Montserrat, sans-serif;\n    font-weight: 600; }\n"
 
 /***/ }),
 
@@ -853,7 +856,7 @@ var ProjectCardComponent = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"container-fluid max-width-wrapper page-content\">\n  <app-header [headerText]=\"'Project Details'\"></app-header>\n  <div class=\"container-fluid\">\n    <div id=\"project-details\" class=\"container\">\n      <div id=\"details-header\">\n        <span class=\"title\">{{project?.title}}</span>\n        <span class=\"date\">{{project?.date_posted | date: 'MMM. d, y'}}</span>\n      </div>\n      <div class=\"metadata\">\n        <span class=\"difficulty\">{{project?.difficulty}}</span>\n        <span id=\"user-info\">\n          <span class=\"author-avatar\">\n            <img src=\"{{project?.author?.avatar_url}}\" alt=\"avatar\">\n          </span>\n          <span class=\"author-login\">{{project?.author?.login}}</span>\n        </span>\n      </div>\n      <div class=\"project-description container\">\n        <p class=\"text\">{{project?.description}}</p>\n      </div>\n      <div class=\"author-buttons\" *ngIf=\"isAuthor()\" id=\"options\">\n        <button id=\"edit\" class=\"btn btn-sm btn-outline-secondary\">\n          <i class=\"fa fa-pencil\"></i> Edit\n        </button>\n        <button id=\"delete\" class=\"btn btn-sm btn-danger\" (click)=\"deleteProject()\">\n          <i class=\"fa fa-trash\"></i> Delete</button>\n      </div>\n    </div>\n    <div id=\"comments\" class=\"container\">\n      <div class=\"comment-post-form\">\n        <hr class=\"my-2\">\n        <app-comment-post></app-comment-post>\n      </div>\n      <div class=\"comment-list-metadata\">\n        <div class=\"result-number\">{{comments?.total_elements}} comment(s)</div>\n        <select class=\"sort-order\" title=\"order\">\n          <option value=\"new\" (click)=\"sortByNewest()\">newest</option>\n          <option value=\"old\" (click)=\"sortByOldest()\">oldest</option>\n        </select>\n        <ul class=\"pagination-sm\">\n          <li [class]=\"comments?.first ? 'page-item disabled' : 'page-item'\">\n            <a class=\"page-link\" (click)=\"prevCommentPage()\">prev</a>\n          </li>\n          <li [class]=\"comments?.last ? 'page-item disabled' : 'page-item'\">\n            <a class=\"page-link\" (click)=\"nextCommentPage()\">next</a>\n          </li>\n        </ul>\n      </div>\n        <ul class=\"comment-list\" [@listStagger]=\"comments\">\n          <li *ngFor=\"let comment of comments?.content\">\n            <app-comment-card [comment]=\"comment\"></app-comment-card>\n          </li>\n        </ul>\n    </div>\n  </div>\n\n  <ul class=\"pagination-sm d-flex float-right\" style=\"margin-right: 3rem\">\n    <li [class]=\"comments?.first ? 'page-item disabled' : 'page-item'\">\n      <a class=\"page-link\" (click)=\"prevCommentPage()\">prev</a>\n    </li>\n    <li [class]=\"comments?.last ? 'page-item disabled' : 'page-item'\">\n      <a class=\"page-link\" (click)=\"nextCommentPage()\">next</a>\n    </li>\n  </ul>\n</div>\n"
+module.exports = "<div class=\"container-fluid max-width-wrapper page-content\">\n  <app-header [headerText]=\"'Project Details'\"></app-header>\n  <div class=\"container-fluid\">\n    <div id=\"project-details\" class=\"container\">\n      <div id=\"details-header\">\n        <span class=\"title\">{{project?.title}}</span>\n        <span class=\"date\">{{project?.date_posted | date: 'MMM. d, y'}}</span>\n      </div>\n      <div class=\"metadata\">\n        <span class=\"difficulty\">{{project?.difficulty}}</span>\n        <span id=\"user-info\">\n          <span class=\"author-avatar\">\n            <img src=\"{{project?.author?.avatar_url}}\" alt=\"avatar\">\n          </span>\n          <span class=\"author-login\">{{project?.author?.login}}</span>\n        </span>\n      </div>\n      <div class=\"project-description container\">\n        <p class=\"text\">{{project?.description}}</p>\n      </div>\n      <div class=\"author-buttons\" *ngIf=\"isAuthor()\" id=\"options\">\n        <button id=\"edit\" class=\"btn btn-sm btn-outline-secondary\">\n          <i class=\"fa fa-pencil\"></i> Edit\n        </button>\n        <button id=\"delete\" class=\"btn btn-sm btn-danger\" (click)=\"deleteProject()\">\n          <i class=\"fa fa-trash\"></i> Delete</button>\n      </div>\n    </div>\n    <div id=\"comments\" class=\"container\">\n      <div class=\"comment-post-form\">\n        <hr class=\"my-2\">\n        <app-comment-post></app-comment-post>\n      </div>\n      <div class=\"comment-list-metadata\">\n        <div class=\"result-number\">{{comments?.total_elements}} comment(s)</div>\n        <select class=\"sort-order\" title=\"order\">\n          <option value=\"new\" (click)=\"sortByNewest()\">newest</option>\n          <option value=\"old\" (click)=\"sortByOldest()\">oldest</option>\n        </select>\n        <ul class=\"pagination-sm\">\n          <li [class]=\"comments?.first ? 'page-item disabled' : 'page-item'\">\n            <a class=\"page-link\" (click)=\"prevCommentPage()\">prev</a>\n          </li>\n          <li [class]=\"comments?.last ? 'page-item disabled' : 'page-item'\">\n            <a class=\"page-link\" (click)=\"nextCommentPage()\">next</a>\n          </li>\n        </ul>\n      </div>\n        <ul class=\"comment-list\" [@listStagger]=\"comments\">\n          <li *ngFor=\"let comment of comments?.content\">\n            <app-comment-card [comment]=\"comment\"></app-comment-card>\n          </li>\n        </ul>\n    </div>\n  </div>\n\n  <ul class=\"pagination-sm d-flex float-right\" style=\"margin-right: 3rem\">\n    <li [class]=\"comments?.first ? 'page-item disabled' : 'page-item'\">\n      <a class=\"page-link\" (click)=\"prevCommentPage()\">prev</a>\n    </li>80px\n    <li [class]=\"comments?.last ? 'page-item disabled' : 'page-item'\">\n      <a class=\"page-link\" (click)=\"nextCommentPage()\">next</a>\n    </li>\n  </ul>\n</div>\n"
 
 /***/ }),
 
@@ -987,95 +990,6 @@ var ProjectDetailComponent = /** @class */ (function () {
 
 /***/ }),
 
-/***/ "./src/app/project/project-list/mock-projects.ts":
-/*!*******************************************************!*\
-  !*** ./src/app/project/project-list/mock-projects.ts ***!
-  \*******************************************************/
-/*! exports provided: PROJECTS */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PROJECTS", function() { return PROJECTS; });
-var PROJECTS = [
-    {
-        id: 1,
-        title: 'ayy baboo',
-        description: 'its a AYY baboo',
-        difficulty: 'beginner',
-        date_posted: '2018-07-29 00:45:16',
-        author: {
-            id: 1,
-            avatar_url: 'http://dummyimage.com/200x200.jpg/5fa2dd/ffffff',
-            name: 'frank',
-            hireable: false,
-            login: 'fuccboi29'
-        }
-    },
-    {
-        id: 2,
-        title: 'FizzBuzz',
-        description: 'Here are some other things that are worth thinking about: - ' +
-            'the type of material. Does it have long words like ‘internationalisation’? ' +
-            'If so, you’ll need more characters per line so that each line has a good chance of a coherent thought, ' +
-            'and to reduce hyphenation/raggedness - the circumstances under which it is read.',
-        difficulty: 'beginner',
-        date_posted: '2018-07-29 00:45:16',
-        author: {
-            id: 69,
-            avatar_url: 'http://dummyimage.com/200x200.jpg/5fa2dd/ffffff',
-            name: '',
-            hireable: false,
-            login: 'bitchtits4901'
-        }
-    },
-    {
-        id: 3,
-        title: 'JS calculator',
-        description: 'write a calculator cant u read',
-        difficulty: 'beginner',
-        date_posted: '2018-07-29 00:45:16',
-        author: {
-            id: 9,
-            avatar_url: 'http://dummyimage.com/200x200.jpg/5fa2dd/ffffff',
-            name: 'todd',
-            hireable: true,
-            login: 'nodeJSfanboy'
-        }
-    },
-    {
-        id: 4,
-        title: 'tic taco toe',
-        description: 'its tic tac toe but for mexicans',
-        difficulty: 'beginner',
-        date_posted: '2018-07-29 00:45:16',
-        author: {
-            id: 29,
-            avatar_url: 'http://dummyimage.com/200x200.jpg/5fa2dd/ffffff',
-            name: 'joe',
-            hireable: true,
-            login: 'sirRacist'
-        }
-    },
-    {
-        id: 5,
-        title: 'idk',
-        description: 'use ur imagination',
-        difficulty: 'beginner',
-        date_posted: '2018-07-29 00:45:16',
-        author: {
-            id: 1,
-            avatar_url: 'http://dummyimage.com/200x200.jpg/5fa2dd/ffffff',
-            name: '',
-            hireable: false,
-            login: 'iNeed2Bebanned'
-        }
-    },
-];
-
-
-/***/ }),
-
 /***/ "./src/app/project/project-list/project-list.component.html":
 /*!******************************************************************!*\
   !*** ./src/app/project/project-list/project-list.component.html ***!
@@ -1109,12 +1023,11 @@ module.exports = ".page-content .container-fluid {\n  display: -ms-grid;\n  disp
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ProjectListComponent", function() { return ProjectListComponent; });
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
-/* harmony import */ var _mock_projects__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./mock-projects */ "./src/app/project/project-list/mock-projects.ts");
-/* harmony import */ var _angular_animations__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/animations */ "./node_modules/@angular/animations/fesm5/animations.js");
-/* harmony import */ var _shared_project_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../shared/project.service */ "./src/app/shared/project.service.ts");
-/* harmony import */ var _shared_auth_service__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../shared/auth.service */ "./src/app/shared/auth.service.ts");
-/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @angular/router */ "./node_modules/@angular/router/fesm5/router.js");
-/* harmony import */ var _shared_sort_order__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../shared/sort-order */ "./src/app/shared/sort-order.ts");
+/* harmony import */ var _angular_animations__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/animations */ "./node_modules/@angular/animations/fesm5/animations.js");
+/* harmony import */ var _shared_project_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../shared/project.service */ "./src/app/shared/project.service.ts");
+/* harmony import */ var _shared_auth_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../shared/auth.service */ "./src/app/shared/auth.service.ts");
+/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/router */ "./node_modules/@angular/router/fesm5/router.js");
+/* harmony import */ var _shared_sort_order__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../shared/sort-order */ "./src/app/shared/sort-order.ts");
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -1124,42 +1037,6 @@ var __decorate = (undefined && undefined.__decorate) || function (decorators, ta
 var __metadata = (undefined && undefined.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-var __generator = (undefined && undefined.__generator) || function (thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
-    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
-    function verb(n) { return function (v) { return step([n, v]); }; }
-    function step(op) {
-        if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
-            if (f = 1, y && (t = y[op[0] & 2 ? "return" : op[0] ? "throw" : "next"]) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [0, t.value];
-            switch (op[0]) {
-                case 0: case 1: t = op; break;
-                case 4: _.label++; return { value: op[1], done: false };
-                case 5: _.label++; y = op[1]; op = [0]; continue;
-                case 7: op = _.ops.pop(); _.trys.pop(); continue;
-                default:
-                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
-                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
-                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
-                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
-                    if (t[2]) _.ops.pop();
-                    _.trys.pop(); continue;
-            }
-            op = body.call(thisArg, _);
-        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
-    }
-};
-
 
 
 
@@ -1171,10 +1048,9 @@ var ProjectListComponent = /** @class */ (function () {
         this.projectService = projectService;
         this.auth = auth;
         this.router = router;
-        this.mockProjects = _mock_projects__WEBPACK_IMPORTED_MODULE_1__["PROJECTS"];
     }
     ProjectListComponent.prototype.ngOnInit = function () {
-        this.order = _shared_sort_order__WEBPACK_IMPORTED_MODULE_6__["SortOrder"].DESC;
+        this.order = _shared_sort_order__WEBPACK_IMPORTED_MODULE_5__["SortOrder"].DESC;
         this.page = 0;
         this.fetchAll(this.page, this.order);
         if (this.projectPage) {
@@ -1211,17 +1087,12 @@ var ProjectListComponent = /** @class */ (function () {
             .subscribe(function (data) { return _this.projectPage = data; }, function (err) { return console.log(err); });
     };
     ProjectListComponent.prototype.postForm = function () {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                this.router.navigate(['projects', 'post'])
-                    .then(function () { });
-                return [2 /*return*/];
-            });
-        });
+        this.router.navigate(['projects', 'post'])
+            .then(function () { });
     };
     ProjectListComponent.prototype.sortByOldest = function () {
         var _this = this;
-        this.order = _shared_sort_order__WEBPACK_IMPORTED_MODULE_6__["SortOrder"].ASC;
+        this.order = _shared_sort_order__WEBPACK_IMPORTED_MODULE_5__["SortOrder"].ASC;
         this.projectService.fetchAll(0, this.order)
             .subscribe(function (data) { return _this.projectPage = data; }, function (err) { return console.log(err); });
     };
@@ -1231,19 +1102,17 @@ var ProjectListComponent = /** @class */ (function () {
             template: __webpack_require__(/*! ./project-list.component.html */ "./src/app/project/project-list/project-list.component.html"),
             styles: [__webpack_require__(/*! ./project-list.component.scss */ "./src/app/project/project-list/project-list.component.scss")],
             animations: [
-                Object(_angular_animations__WEBPACK_IMPORTED_MODULE_2__["trigger"])('listStagger', [
-                    Object(_angular_animations__WEBPACK_IMPORTED_MODULE_2__["transition"])('* <=> *', [
-                        Object(_angular_animations__WEBPACK_IMPORTED_MODULE_2__["query"])(':enter', [
-                            Object(_angular_animations__WEBPACK_IMPORTED_MODULE_2__["style"])({ opacity: 0, transform: 'translateY(-15px)' }),
-                            Object(_angular_animations__WEBPACK_IMPORTED_MODULE_2__["stagger"])('50ms', Object(_angular_animations__WEBPACK_IMPORTED_MODULE_2__["animate"])('550ms ease-out', Object(_angular_animations__WEBPACK_IMPORTED_MODULE_2__["style"])({ opacity: 1, transform: 'translateY(0px)' })))
+                Object(_angular_animations__WEBPACK_IMPORTED_MODULE_1__["trigger"])('listStagger', [
+                    Object(_angular_animations__WEBPACK_IMPORTED_MODULE_1__["transition"])('* <=> *', [
+                        Object(_angular_animations__WEBPACK_IMPORTED_MODULE_1__["query"])(':enter', [
+                            Object(_angular_animations__WEBPACK_IMPORTED_MODULE_1__["style"])({ opacity: 0, transform: 'translateY(-15px)' }),
+                            Object(_angular_animations__WEBPACK_IMPORTED_MODULE_1__["stagger"])('50ms', Object(_angular_animations__WEBPACK_IMPORTED_MODULE_1__["animate"])('550ms ease-out', Object(_angular_animations__WEBPACK_IMPORTED_MODULE_1__["style"])({ opacity: 1, transform: 'translateY(0px)' })))
                         ], { optional: true }),
                     ])
                 ])
             ]
         }),
-        __metadata("design:paramtypes", [_shared_project_service__WEBPACK_IMPORTED_MODULE_3__["ProjectService"],
-            _shared_auth_service__WEBPACK_IMPORTED_MODULE_4__["AuthService"],
-            _angular_router__WEBPACK_IMPORTED_MODULE_5__["Router"]])
+        __metadata("design:paramtypes", [_shared_project_service__WEBPACK_IMPORTED_MODULE_2__["ProjectService"], _shared_auth_service__WEBPACK_IMPORTED_MODULE_3__["AuthService"], _angular_router__WEBPACK_IMPORTED_MODULE_4__["Router"]])
     ], ProjectListComponent);
     return ProjectListComponent;
 }());
@@ -1663,7 +1532,7 @@ var UserService = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div id=\"user-card\">\n\n  <div id=\"user-info\">\n    <img class=\"avatar\" src=\"{{user?.avatar_url}}\">\n    <div class=\"metadata\">\n      <div class=\"login\">{{user?.login}}</div>\n      <div *ngIf=\"user?.hireable\" class=\"hireable\">Looking for work</div>\n      <div id=\"user-icon-links\">\n      <a class=\"github-url\" href=\"https://github.com/{{user?.login}}\">\n        <i class=\"fa fa-github fa-2x\"></i></a>\n      </div>\n    </div>\n  </div>\n\n</div>\n"
+module.exports = "<div id=\"user-card\">\n  <div id=\"user-info\">\n    <img class=\"avatar\" src=\"{{user?.avatar_url}}\">\n    <div class=\"metadata\">\n      <div class=\"login\">{{user?.login}}</div>\n      <div *ngIf=\"user?.hireable\" class=\"hireable\">Looking for work</div>\n      <div id=\"user-icon-links\">\n      <a class=\"github-url\" href=\"https://github.com/{{user?.login}}\">\n        <i class=\"fa fa-github fa-2x\"></i></a>\n      </div>\n    </div>\n  </div>\n</div>\n"
 
 /***/ }),
 
@@ -1674,7 +1543,7 @@ module.exports = "<div id=\"user-card\">\n\n  <div id=\"user-info\">\n    <img c
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "#user-card #user-info {\n  display: -ms-grid;\n  display: grid;\n  -ms-grid-columns: min-content auto;\n      grid-template-columns: -webkit-min-content auto;\n      grid-template-columns: min-content auto; }\n  #user-card #user-info .avatar {\n    max-height: 100px;\n    max-width: 100px;\n    border-radius: 50px;\n    box-shadow: 0 3px .3rem black; }\n  #user-card #user-info .metadata {\n    display: -ms-grid;\n    display: grid;\n    font-size: 1rem;\n    margin-left: 1rem;\n    -ms-grid-rows: (min-content)[3];\n        grid-template-rows: repeat(3, -webkit-min-content);\n        grid-template-rows: repeat(3, min-content); }\n  #user-card #user-info .metadata .login {\n      font-family: Montserrat, sans-serif !important;\n      font-size: 1.2rem;\n      color: #1c2331; }\n  #user-card #user-info .metadata .hireable {\n      font-family: \"Valera Round\", sans-serif;\n      color: gray; }\n  #user-card #user-info .metadata #user-icon-links {\n      margin-top: .5rem; }\n"
+module.exports = "#user-card {\n  max-width: -webkit-fit-content;\n  max-width: -moz-fit-content;\n  max-width: fit-content;\n  -ms-grid-column-align: center;\n      justify-self: center;\n  margin-bottom: 3rem; }\n  #user-card #user-info {\n    display: -ms-grid;\n    display: grid;\n    -ms-grid-columns: min-content auto;\n        grid-template-columns: -webkit-min-content auto;\n        grid-template-columns: min-content auto; }\n  #user-card #user-info .avatar {\n      max-height: 75px;\n      max-width: 75px;\n      border-radius: 50px;\n      box-shadow: 0 3px .3rem black; }\n  #user-card #user-info .metadata {\n      display: -ms-grid;\n      display: grid;\n      font-size: 1rem;\n      margin-left: 1rem;\n      -ms-grid-rows: (min-content)[3];\n          grid-template-rows: repeat(3, -webkit-min-content);\n          grid-template-rows: repeat(3, min-content); }\n  #user-card #user-info .metadata .login {\n        font-family: Montserrat, sans-serif !important;\n        font-size: 1.2rem;\n        color: #1c2331; }\n  #user-card #user-info .metadata .hireable {\n        font-family: \"Valera Round\", sans-serif;\n        font-size: .95rem;\n        color: gray; }\n  #user-card #user-info .metadata #user-icon-links {\n        font-size: .7rem;\n        margin-top: .3rem; }\n"
 
 /***/ }),
 
@@ -1741,7 +1610,7 @@ module.exports = "<div class=\"container-fluid max-width-wrapper page-content\" 
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = ""
+module.exports = ".user-list li {\n  display: -ms-grid;\n  display: grid;\n  -ms-grid-columns: (auto)[4];\n      grid-template-columns: repeat(4, auto); }\n"
 
 /***/ }),
 

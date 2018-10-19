@@ -21,12 +21,12 @@ import org.sudocode.api.project.web.ProjectPostForm;
 import org.sudocode.api.user.UserService;
 import org.sudocode.api.user.domain.User;
 
+import javax.validation.constraints.NotNull;
 import java.time.LocalTime;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
 import static org.sudocode.api.project.domain.Difficulty.*;
-import static org.sudocode.api.project.ProjectMapper.*;
 
 /**
  * Service for projects (and comments) transactions. Transactions start here for all projects and comments.
@@ -65,7 +65,7 @@ public class ProjectService {
      * @see ProjectPostForm
      */
     @Transactional(rollbackFor = Exception.class)
-    public Project postProject(Project project, User currentUser) throws ExecutionException {
+    public Project postProject(@NotNull Project project, @NotNull User currentUser) throws ExecutionException {
         timeOutService.handleIfTimedOut(currentUser.getId());
 
         timeOutService.ensureNotSpamming(
@@ -78,8 +78,10 @@ public class ProjectService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public ProjectDTO postProjectDTO(Project project, User currentUser) throws ExecutionException {
-        return projectToDTO(postProject(project, currentUser));
+    public ProjectDTO postProjectDTO(Project project,
+                                     User currentUser) throws ExecutionException {
+
+        return new ProjectDTO(postProject(project, currentUser));
     }
 
     /**
@@ -139,11 +141,11 @@ public class ProjectService {
             updated.setTitle(project.getTitle());
             updated.setDifficulty(project.getDifficulty());
             updated.setDescription(project.getDescription());
-            return projectToDTO(updated);
+            return new ProjectDTO(updated);
         }
 
-        // TODO this is unneeded.
-        return postProjectDTO(project, userService.fetchById(id));
+        // TODO this needs to be cleaned up
+        return postProjectDTO(project, userService.currentUser());
     }
 
     /**
@@ -174,8 +176,8 @@ public class ProjectService {
      * @throws TooManyRequestException  if the last {@link Comment} or {@link Project} posted by the user was under 1 min ago.
      */
     @Transactional(rollbackFor = Exception.class)
-    public Comment postComment(Comment comment, Long projectId,
-                                  User currentUser) throws ExecutionException {
+    public Comment postComment(Comment comment,
+                               Long projectId, User currentUser) throws ExecutionException {
 
         timeOutService.handleIfTimedOut(currentUser.getId());
 
@@ -199,7 +201,6 @@ public class ProjectService {
         final Long userId = currentUser.getId();
 
         timeOutService.handleIfTimedOut(userId);
-
         timeOutService.ensureNotSpamming(userId, commentRepo.fetchLatestPostDateByAuthorId(userId));
 
         Optional<Comment> optionalComment = commentRepo.fetchById(comment.getId());
@@ -223,7 +224,7 @@ public class ProjectService {
      * @throws NotPostAuthorException if the user making the request did not postProject the comment.
      */
     @Transactional(rollbackFor = Exception.class)
-    public void deleteCommentById(Long id) {
+    public void deleteCommentById(@NotNull Long id) {
         Comment comment = commentRepo.fetchById(id).orElseThrow(() -> new CommentNotFoundException(id));
 
         if (!comment.getAuthor().equals(userService.currentUser())) {
@@ -241,7 +242,7 @@ public class ProjectService {
      * @return Page of all comment DTO's for the given project.
      * @see Pageable
      */
-    public Page<CommentDTO> fetchCommentsByProjectId(Long id, Pageable pageable) {
+    public Page<CommentDTO> fetchCommentsByProjectId(@NotNull Long id, Pageable pageable) {
         return commentRepo.fetchDTOPageByProjectId(id, pageable);
     }
 

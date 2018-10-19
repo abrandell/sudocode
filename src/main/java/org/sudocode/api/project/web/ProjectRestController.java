@@ -1,5 +1,6 @@
 package org.sudocode.api.project.web;
 
+import com.google.common.base.Preconditions;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -112,7 +113,9 @@ public final class ProjectRestController {
      * @see ProjectService#update(Long, Project)
      */
     @PutMapping(value = "/{id}", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
-    public ProjectDTO update(@PathVariable("id") Long id, @RequestBody Project project) throws ExecutionException {
+    public ProjectDTO update(@PathVariable("id") Long id,
+                             @RequestBody Project project) throws ExecutionException {
+        Preconditions.checkNotNull(project);
         return projectService.update(id, project);
     }
 
