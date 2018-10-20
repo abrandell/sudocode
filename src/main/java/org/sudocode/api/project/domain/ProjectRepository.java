@@ -32,16 +32,16 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
                 "(p.id, p.title, p.difficulty, p.description, p.datePosted, u.id, u.login, u.avatarUrl) " +
             "FROM Project p " +
             "JOIN p.author AS u " +
-            "WHERE (:title is null or lower(p.title) LIKE concat('%', lower(:title), '%')) " +
+            "WHERE (:title = '' or lower(p.title) LIKE concat('%', lower(:title), '%')) " +
                 "AND (:difficulty is null or p.difficulty = :difficulty) " +
-                "AND (:description is null or lower(p.description) LIKE concat('%', lower(:description), '%'))")
+                "AND (:description = '' or lower(p.description) LIKE concat('%', lower(:description), '%'))")
     Page<ProjectSummaryDTO> fetchAll(@Param("title") String title,
                                      @Param("difficulty") Difficulty difficulty,
                                      @Param("description") String description,
                                      Pageable pageable);
 
     @Query("SELECT max(p.datePosted) FROM Project p WHERE p.author.id = :id")
-    LocalDateTime fetchLatestPostDateByAuthorId(@Param("id") Long id);
+    Optional<LocalDateTime> fetchLatestPostDateByAuthorId(@Param("id") Long id);
 
     @Query("SELECT NEW org.sudocode.api.project.web.ProjectDTO" +
                 "(p.id, p.title, p.difficulty, p.description, p.datePosted, p.lastModifiedDate, " +

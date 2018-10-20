@@ -5,7 +5,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.lang.Nullable;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.sudocode.api.core.TimeOutService;
@@ -23,11 +23,12 @@ import org.sudocode.api.user.domain.User;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
 import static java.lang.String.*;
+import static java.time.LocalDateTime.*;
+import static org.sudocode.api.core.util.Constants.*;
 import static org.sudocode.api.project.domain.Difficulty.*;
 
 /**
@@ -68,7 +69,11 @@ public class ProjectService {
      */
     @Transactional(rollbackFor = Exception.class)
     public Project postProject(@NotNull Project project, @NotNull User currentUser) throws ExecutionException {
-        handleTimeOut(currentUser.getId(), PostType.PROJECT);
+        final Long currentUserId = currentUser.getId();
+        timeOutService.handleTimeOut(
+                currentUserId,
+                getLastPostDateByAuthor(currentUserId)
+        );
 
         project.setAuthor(currentUser);
         return projectRepo.save(project);
@@ -91,12 +96,12 @@ public class ProjectService {
      * @see ProjectSummaryDTO
      * @see Difficulty#fromText(String)
      */
-    public Page<ProjectSummaryDTO> fetchAll(@Nullable String title,
-                                            @Nullable String difficulty,
-                                            @Nullable String description,
-                                            Pageable pageable) {
+    public Page<ProjectSummaryDTO> fetchAll(@NonNull String title,
+                                            @NonNull String difficulty,
+                                            @NonNull String description,
+                                            @NonNull Pageable pageable) {
 
-        Difficulty difficultyEnum = (difficulty != null && !difficulty.isEmpty()) ? fromText(difficulty) : null;
+        Difficulty difficultyEnum = !difficulty.isEmpty() ? fromText(difficulty) : null;
 
         return projectRepo.fetchAll(title, difficultyEnum, description, pageable);
     }
@@ -170,9 +175,9 @@ public class ProjectService {
     @Transactional(rollbackFor = Exception.class)
     public Comment postComment(Comment comment, Long projectId, User currentUser) throws ExecutionException {
         final Long userId = currentUser.getId();
-        handleTimeOut(userId, PostType.COMMENT);
+        timeOutService.handleTimeOut(userId, getLastPostDateByAuthor(userId));
 
-        LOG.info("Posting comment by " + userId + " at " + LocalDateTime.now());
+        LOG.info("Posting comment by " + userId + " at " + now());
 
         comment.setProject(
                 projectRepo.findById(projectId).orElseThrow(() -> new ProjectNotFoundException(projectId)));
@@ -185,8 +190,6 @@ public class ProjectService {
     @Transactional(rollbackFor = Exception.class)
     public Comment updateComment(Comment comment, Long commentId,
                                  Long projectId, User currentUser) throws ExecutionException {
-
-        handleTimeOut(currentUser.getId(), PostType.COMMENT);
         comment.setId(commentId);
 
         Optional<Comment> optionalComment = commentRepo.fetchById(comment.getId());
@@ -194,7 +197,7 @@ public class ProjectService {
             Comment updated = optionalComment.get();
 
             if (updated.getAuthor().equals(currentUser)) {
-                LOG.info(format("Updating comment by %d at %ts", currentUser.getId(), LocalDateTime.now()));
+                LOG.info(format("Updating comment by %d at %ts", currentUser.getId(), now()));
 
                 updated.setId(comment.getId());
                 updated.setBody(comment.getBody());
@@ -234,13 +237,20 @@ public class ProjectService {
         return commentRepo.fetchAllByProjectId(id, pageable);
     }
 
-    private void handleTimeOut(Long userId, PostType type) throws ExecutionException {
-        timeOutService.handleIfTimedOut(userId);
-        timeOutService.ensureNotSpamming(userId,
-                type == PostType.COMMENT
-                        ? commentRepo.fetchLatestPostDateByAuthorId(userId)
-                        : projectRepo.fetchLatestPostDateByAuthorId(userId)
-        );
+    /**
+     * Searches for the latest post date for both comments and projects made by a user.
+     *
+     * If none were made, it'll set them to {@link LocalDateTime#MIN}.
+     *
+     * @param id ID of the user
+     * @return The latest post date between the two.
+     */
+    //FIXME. Making queries everytime due to this and not relying on cache.
+    public LocalDateTime getLastPostDateByAuthor(Long id) {
+        var lastCommentDate = commentRepo.fetchLatestPostDateByAuthorId(id).orElse(DEFAULT_LOCAL_DATE_TIME);
+        var lastPostDate = projectRepo.fetchLatestPostDateByAuthorId(id).orElse(DEFAULT_LOCAL_DATE_TIME);
+
+        return lastCommentDate.compareTo(lastPostDate) > 0 ? lastCommentDate : lastPostDate;
     }
 
     /**

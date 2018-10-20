@@ -4,11 +4,13 @@ import com.google.common.cache.LoadingCache;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -33,9 +35,7 @@ public class TimeOutService {
 
     public boolean isTimedOut(Long id) throws ExecutionException {
         LocalDateTime lastPosted = loadingCache.get(id);
-        if (lastPosted == null) {
-            return false;
-        }
+
         return Duration.between(lastPosted, LocalDateTime.now()).toSeconds() <= 30;
     }
 
@@ -50,18 +50,21 @@ public class TimeOutService {
     }
 
     // TODO rename me. Checks last time posted and times out the user for 5 mins if it was under 30 sec ago.
-    public void ensureNotSpamming(Long userId, @Nullable LocalDateTime lastPostDate) throws ExecutionException {
+    public void ensureNotSpamming(Long userId, @NonNull LocalDateTime lastPostDate) throws ExecutionException {
 
-        if (lastPostDate != null) {
-            long secPassed = Duration.between(lastPostDate, LocalDateTime.now()).toSeconds();
-            LOG.info(String.format("User: %d waited %d seconds before attempting to post again.", userId, secPassed));
+        long secPassed = Duration.between(lastPostDate, LocalDateTime.now()).toSeconds();
+        LOG.info(String.format("User: %d waited %d seconds before attempting to post again.", userId, secPassed));
 
-            if (secPassed < 10) {
-                timeOutUser(userId);
-                throw new TooManyRequestException();
-            }
-
+        if (secPassed < 10) {
+            timeOutUser(userId);
+            throw new TooManyRequestException();
         }
+
+    }
+
+    public void handleTimeOut(Long userId, LocalDateTime lastPostDate) throws ExecutionException {
+        handleIfTimedOut(userId);
+        ensureNotSpamming(userId, lastPostDate);
     }
 }
 

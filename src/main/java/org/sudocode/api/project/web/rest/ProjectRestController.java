@@ -59,9 +59,9 @@ public final class ProjectRestController {
      * @see ProjectService#fetchAll(String, String, String, Pageable)
      */
     @GetMapping(produces = JSON)
-    public Page<ProjectSummaryDTO> fetchAll(@RequestParam(value = "title", required = false) String title,
-                                            @RequestParam(value = "difficulty", required = false) String difficulty,
-                                            @RequestParam(value = "description", required = false) String description,
+    public Page<ProjectSummaryDTO> fetchAll(@RequestParam(value = "title", defaultValue = "") String title,
+                                            @RequestParam(value = "difficulty", defaultValue = "") String difficulty,
+                                            @RequestParam(value = "description", defaultValue = "") String description,
                                             Pageable pageable) throws InvalidDifficultyException {
 
         return service.fetchAll(title, difficulty, description, pageable);

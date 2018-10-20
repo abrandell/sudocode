@@ -2,6 +2,7 @@ package org.sudocode.api.core.util;
 
 import org.springframework.http.MediaType;
 
+import java.time.LocalDateTime;
 import java.util.regex.Pattern;
 
 public class Constants {
@@ -17,4 +18,6 @@ public class Constants {
             "https?://(www\\.)?[-a-zA-Z0-9@:%._+~#=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%_+.~#?&/=]*)";
 
     public static final Pattern URL_REGEX_PATTERN = Pattern.compile(URL_REGEX);
+
+    public static final LocalDateTime DEFAULT_LOCAL_DATE_TIME = LocalDateTime.MIN;
 }
