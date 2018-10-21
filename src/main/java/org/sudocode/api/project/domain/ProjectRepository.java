@@ -32,9 +32,9 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
                 "(p.id, p.title, p.difficulty, p.description, p.datePosted, u.id, u.login, u.avatarUrl) " +
             "FROM Project p " +
             "JOIN p.author AS u " +
-            "WHERE (:title = '' or lower(p.title) LIKE concat('%', lower(:title), '%')) " +
+            "WHERE (:title is null or lower(p.title) LIKE concat('%', lower(:title), '%')) " +
                 "AND (:difficulty is null or p.difficulty = :difficulty) " +
-                "AND (:description = '' or lower(p.description) LIKE concat('%', lower(:description), '%'))")
+                "AND (:description is null or lower(p.description) LIKE concat('%', lower(:description), '%'))")
     Page<ProjectSummaryDTO> fetchAll(@Param("title") String title,
                                      @Param("difficulty") Difficulty difficulty,
                                      @Param("description") String description,

@@ -6,8 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.sudocode.api.core.TooManyRequestException;
 import org.sudocode.api.project.comment.Comment;
@@ -18,10 +19,10 @@ import org.sudocode.api.project.domain.Project;
 import org.sudocode.api.project.domain.ProjectRepository;
 import org.sudocode.api.project.web.ProjectPostForm;
 import org.sudocode.api.project.web.ProjectSummaryDTO;
-import org.sudocode.api.user.UserService;
 import org.sudocode.api.user.domain.User;
 
-import javax.validation.constraints.NotNull;
+import java.util.HashMap;
+import java.util.Map;
 
 import static java.time.LocalDateTime.now;
 import static org.sudocode.api.project.domain.Difficulty.fromText;
@@ -35,7 +36,8 @@ import static org.sudocode.api.project.domain.Difficulty.fromText;
 @Service
 @Transactional(
         readOnly = true,
-        rollbackFor = Exception.class
+        rollbackFor = Exception.class,
+        propagation = Propagation.REQUIRED
 )
 public class ProjectService {
 
@@ -58,7 +60,7 @@ public class ProjectService {
      * @see ProjectPostForm
      */
     @Transactional(rollbackFor = Exception.class)
-    public Project postProject(@NotNull Project project, @NonNull User currentUser) {
+    public Project postProject(Project project, User currentUser) {
         project.setAuthor(currentUser);
         return projectRepo.save(project);
     }
@@ -80,10 +82,12 @@ public class ProjectService {
      * @see ProjectSummaryDTO
      * @see Difficulty#fromText(String)
      */
-    public Page<ProjectSummaryDTO> fetchAll(String title, String difficulty, String description, Pageable pageable) {
+    public Page<ProjectSummaryDTO> fetchAll(@Nullable String title,
+                                            @Nullable String difficulty,
+                                            @Nullable String description, Pageable pageable) {
 
-        Difficulty difficultyEnum = !difficulty.isEmpty() ? fromText(difficulty) : null;
-        return projectRepo.fetchAll(title, difficultyEnum, description, pageable);
+        Difficulty diffEnum = (difficulty != null && !difficulty.isEmpty()) ? fromText(difficulty) : null;
+        return projectRepo.fetchAll(title, diffEnum, description, pageable);
     }
 
     /**
@@ -116,14 +120,15 @@ public class ProjectService {
                               return project;
                           })
                           .orElseGet(() -> {
-                              newProject.setId(!projectRepo.existsById(id) ? id : null);
+                              newProject.setId(projectRepo.existsById(id) ? null : id);
                               return postProject(newProject, currentUser);
                           });
     }
 
     @Modifying
     @Transactional(rollbackFor = Exception.class)
-    public Comment updateComment(Comment newComment, Long commentId, Long projectId, User currentUser) {
+    public Comment updateComment(Comment newComment, Long commentId,
+                                 Long projectId, User currentUser) {
         return commentRepo.fetchById(commentId)
                           .filter(comment -> newComment.getAuthor().equals(currentUser))
                           .map(comment -> {
@@ -131,7 +136,7 @@ public class ProjectService {
                               return comment;
                           })
                           .orElseGet(() -> {
-                              newComment.setId(!commentRepo.existsById(commentId) ? commentId : null);
+                              newComment.setId(commentRepo.existsById(commentId) ? null : commentId);
                               return postComment(newComment, projectId, currentUser);
                           });
     }
@@ -149,11 +154,13 @@ public class ProjectService {
             if (!project.getAuthor().equals(currentUser)) {
                 throw new NotPostAuthorException("Not author of comment");
             }
-            // Two different queries so we don't have to make the relationship bi-directional.
+            // Two different queries to avoid a bi-directional mapping.
             commentRepo.deleteCommentsByProjectId(id);
             projectRepo.delete(project);
+
             LOGGER.info("Deleted comment " + id + " by " + currentUser.getLogin());
         });
+
     }
 
 
@@ -167,11 +174,18 @@ public class ProjectService {
      * @throws TooManyRequestException  if the last {@link Comment} or {@link Project} posted by the user was under 1 min ago.
      */
     @Transactional(rollbackFor = Exception.class)
-    public Comment postComment(@NonNull Comment comment, @NonNull Long projectId, @NonNull User user) {
-        LOGGER.info("Posting comment by " + user.getId() + " at " + now());
+    public Comment postComment(Comment comment, Long projectId, User user) {
 
-        comment.setProject(projectRepo.findById(projectId)
-                                      .orElseThrow(() -> new ProjectNotFoundException(projectId)));
+        final Long commentId = comment.getId();
+
+        if (commentId != null) {
+            comment.setId(commentRepo.existsById(commentId) ? null : commentId);
+        }
+        comment.setProject(
+                projectRepo.findById(projectId)
+                           .orElseThrow(() -> new ProjectNotFoundException(projectId))
+        );
+        LOGGER.info("Posting comment by " + user.getId() + " at " + now());
         comment.setAuthor(user);
         return commentRepo.save(comment);
     }
@@ -184,7 +198,7 @@ public class ProjectService {
      * @throws NotPostAuthorException if the user making the request did not postProject the comment.
      */
     @Transactional(rollbackFor = Exception.class)
-    public void deleteCommentById(@NonNull Long id, @NonNull User currentUser) {
+    public void deleteCommentById(Long id, User currentUser) {
         commentRepo.fetchById(id).ifPresent(comment -> {
             if (!comment.getAuthor().equals(currentUser)) {
                 throw new NotPostAuthorException("Not author of comment");
@@ -201,7 +215,7 @@ public class ProjectService {
      * @return Page builder all comment DTO's for the given project.
      * @see Pageable
      */
-    public Page<Comment> fetchCommentsByProjectId(@NonNull Long id, Pageable pageable) {
+    public Page<Comment> fetchCommentsByProjectId(Long id, Pageable pageable) {
         return commentRepo.fetchAllByProjectId(id, pageable);
     }
 

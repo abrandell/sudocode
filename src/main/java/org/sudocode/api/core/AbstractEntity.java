@@ -1,8 +1,6 @@
 package org.sudocode.api.core;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.springframework.data.annotation.AccessType;
 
@@ -11,9 +9,7 @@ import javax.persistence.Transient;
 import java.io.Serializable;
 import java.util.Objects;
 
-import static com.fasterxml.jackson.annotation.JsonInclude.Include.*;
-import static com.fasterxml.jackson.databind.PropertyNamingStrategy.*;
-import static org.springframework.data.annotation.AccessType.*;
+import static org.springframework.data.annotation.AccessType.Type;
 
 /**
  * This class exists in the case you need to compare <b>detached or un-managed entities</b>.
@@ -30,7 +26,8 @@ public abstract class AbstractEntity implements Serializable {
     private static final long serialVersionUID = 33L;
 
     @JsonIgnore
-    private final String UUID = java.util.UUID.randomUUID().toString();;
+    private final String UUID = java.util.UUID.randomUUID().toString();
+    ;
 
     /**
      * @return The UUID in the form of a {@literal String}.

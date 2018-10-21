@@ -1,6 +1,6 @@
 package org.sudocode.api.project.domain;
 
-import lombok.AllArgsConstructor;
+import com.google.common.collect.ImmutableMap;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -15,8 +15,7 @@ import org.sudocode.api.core.AbstractAuditableEntity;
 import org.sudocode.api.user.domain.User;
 
 import javax.persistence.*;
-
-import static java.time.LocalDateTime.now;
+import java.util.Map;
 
 @Entity
 @Getter
@@ -77,6 +76,17 @@ public class Project extends AbstractAuditableEntity implements Persistable<Long
                 .toString();
     }
 
+    @Transient
+    public Map<Object, Object> getAttributes() {
+        return ImmutableMap.of(
+                "id", this.id,
+                "title", this.title,
+                "difficulty", this.difficulty,
+                "description", this.description,
+                "author", this.author
+        );
+    }
+
     /**
      * Builder for a more fluid api.
      */
@@ -92,7 +102,7 @@ public class Project extends AbstractAuditableEntity implements Persistable<Long
             this.author = author;
         }
 
-        public Builder id(Long id) {
+        public Builder id(@Nullable Long id) {
             this.id = id;
             return this;
         }

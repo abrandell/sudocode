@@ -55,6 +55,7 @@ public final class ProjectRestController {
     @PostMapping(consumes = JSON, produces = JSON)
     public ProjectDTO post(@RequestBody Project project, @AuthenticationPrincipal User currentUser)
             throws ExecutionException {
+        project.setId(null);
 
         timeOutService.handleTimeOut(currentUser.getId());
         return projectMapper.toDTO(projectService.postProject(project, currentUser));
@@ -67,9 +68,9 @@ public final class ProjectRestController {
      */
     @GetMapping(produces = JSON)
     public Page<ProjectSummaryDTO> fetchAll(
-            @RequestParam(value = "title", defaultValue = "") String title,
-            @RequestParam(value = "difficulty", defaultValue = "") String difficulty,
-            @RequestParam(value = "description", defaultValue = "") String description,
+            @RequestParam(value = "title", required = false) String title,
+            @RequestParam(value = "difficulty", required = false) String difficulty,
+            @RequestParam(value = "description", required = false) String description,
             Pageable pageable) throws InvalidDifficultyException {
 
         return projectService.fetchAll(title, difficulty, description, pageable);
@@ -101,9 +102,9 @@ public final class ProjectRestController {
      * @see ProjectService#postComment(Comment, Long, User)
      */
     @PostMapping(value = "/{id}/comments", consumes = JSON, produces = JSON)
-    public CommentDTO postComment(@PathVariable("id") Long projectId,
-                                  @RequestBody Comment comment,
+    public CommentDTO postComment(@PathVariable("id") Long projectId, @RequestBody Comment comment,
                                   @AuthenticationPrincipal User user) throws ExecutionException {
+        comment.setId(null);
         timeOutService.handleTimeOut(user.getId());
         return commentMapper.toDTO(projectService.postComment(comment, projectId, user));
     }
@@ -148,7 +149,7 @@ public final class ProjectRestController {
     /**
      * DELETE /api/projects/:id
      *
-     * @see ProjectService#deleteProjectById(Long, User) d(Long)
+     * @see ProjectService#deleteProjectById(Long, User)
      */
     @DeleteMapping(value = "/{id}")
     public void delete(@PathVariable("id") Long id, @AuthenticationPrincipal User user) {
