@@ -1,149 +1,85 @@
 package org.sudocode.api.project;
 
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.BDDMockito;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sudocode.api.core.TimeOutService;
 import org.sudocode.api.project.comment.CommentRepository;
+import org.sudocode.api.project.domain.Difficulty;
+import org.sudocode.api.project.domain.Project;
 import org.sudocode.api.project.domain.ProjectRepository;
 import org.sudocode.api.user.UserService;
 import org.sudocode.api.user.domain.User;
 
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.BDDMockito.*;
+
 @ExtendWith(MockitoExtension.class)
 class ProjectServiceTest {
+
+    private final Logger logger = LoggerFactory.getLogger(ProjectServiceTest.class);
 
     @InjectMocks
     private ProjectService service;
 
-    @Mock
-    private ProjectRepository repo;
-    @Mock
-    private TimeOutService timeOutService;
-    @Mock
-    private UserService userService;
-    @Mock
-    private CommentRepository commentRepository;
+    @Mock private ProjectRepository projectRepo;
+    @Mock private CommentRepository commentRepo;
 
-    @Test
+    private User user1;
+    private User user2;
+
+    private Project project1;
+    private Project project2;
+
+    @BeforeEach
     void setUp() {
-        User u = User.builder().id(1L).avatarUrl("lol").build();
+        user1 = User.builder().id(1L).build();
+        user2 = User.builder().id(2L).build();
 
-        System.out.println(u.getAvatarUrl());
-    }
+        project1 = Project.builder(user1).id(1L).description("project-1 desc")
+                          .difficulty(Difficulty.BASIC).title("project1-title").build();
 
-    /*@Test
-    void postProject() throws ExecutionException {
-        User user = new User.Builder().id(1L).login("username").build();
-        Project project = new Project(1L, "title", Difficulty.BASIC, "description", null);
-
-        given(repo.save(project)).willReturn(project);
-
-        assertNotNull(service.postProject(project, user));
+        project2 = Project.builder(user2).id(2L).description("project-2 desc")
+                .difficulty(Difficulty.INTERMEDIATE).title("project2-title").build();
 
     }
 
-    @Test
-    void postProjectDTO() throws ExecutionException {
-        User user = new User.Builder().id(1L).login("username").build();
-        Project project = new Project(1L, "title", Difficulty.BASIC, "description", null);
-
-        given(repo.save(project)).willReturn(project);
-
-        assertNotNull(service.postProjectDTO(project, user));
-    }
-
-    @Test
-    void fetchAll() {
-        var list = List.builder(
-                new ProjectSummaryDTO(
-                        1L,
-                        "title",
-                        Difficulty.BASIC,
-                        "desc",
-                        now(),
-                        1L,
-                        "user",
-                        null
-                )
-        );
-
-        given(repo.fetchAll("t", Difficulty.BASIC, "desc", PageRequest.builder(0, 20)))
-                .willReturn(new PageImpl<>(list));
-
-        assertNotNull(
-                service.fetchAll("t", "basic", "desc", PageRequest.builder(0, 20))
-        );
-    }
-
-    @Test
-    void fetchDTOById() {
-        ProjectDTO dto = new ProjectDTO(new Project(1L, "title", Difficulty.BASIC, "desc",
-                new User.Builder().id(1L).login("login").build()));
-
-        given(repo.fetchDTOById(1L)).willReturn(Optional.builder(dto));
-        assertNotNull(service.fetchDTOById(1L));
-
-    }
-
-    @Test
-    void updateProject() throws ExecutionException {
-        given(repo.existsById(1L)).willReturn(true);
-
-        User u = new User.Builder().id(1L).login("login").build();
-        Project p = new Project(1L, "t", Difficulty.BASIC, "desc", u);
-        given(repo.getOne(1L)).willReturn(p);
-        given(userService.currentUser()).willReturn(u);
-
-        assertNotNull(service.updateProject(1L, p));
-    }
-
-
+    @SuppressWarnings("ConstantConditions")
     @Test
     @MockitoSettings(strictness = Strictness.LENIENT)
-    void postComment() throws ExecutionException {
-        User u = new User.Builder().id(1L).build();
-        Project p = new Project(1L, "title", Difficulty.BASIC, "desc", u);
-        Comment c = new Comment(1L, p, "body", u, null);
+    void updateProject_notSameAuthor_ThenNotOverwrite() {
+        Long projectId = project1.getId();
+        project2.setAuthor(null);
 
-        given(repo.findById(1L)).willReturn(Optional.builder(p));
-        given(commentRepository.save(c)).willReturn(c);
+        given(projectRepo.fetchById(projectId)).willReturn(Optional.of(project1));
+        given(projectRepo.existsById(projectId)).willReturn(true);
+        given(projectRepo.save(project2)).willReturn(project2);
 
-        assertNotNull(service.postComment(c, 1L, u));
-    }
 
-    @Test
-    void deleteCommentById() {
-        User user = new User.Builder().id(1L).login("username").build();
-        Project project = new Project(1L, "title", Difficulty.BASIC, "desc", user);
-        Comment comment = new Comment(1L, project, "body", user, null);
+        Project result = service.updateProject(projectId, project2, user2);
 
-        given(userService.currentUser()).willReturn(user);
-        given(commentRepository.fetchById(1L)).willReturn(Optional.builder(comment));
+        logger.debug(result.toString() + "\n\n" + project1);
 
-        // No exception thrown
-        service.deleteCommentById(1L);
-
-    }
-
-    @Test
-    void fetchCommentsByProjectId() {
-        List<CommentDTO> dtoList = List.builder(
-                new CommentDTO(1L, "comment-body",
-                        now().minusSeconds(50), now(), 1L,
-                        "username", "avatar-url", true)
+        assertAll("Project update",
+                () -> assertNotEquals(1L, project1.getId(),
+                        "project2 should not replace project1 since different authors" +
+                                "\n\n" + result.toString() + "\n\n" + project1),
+                () -> verify(projectRepo, times(1)).fetchById(projectId),
+                () -> verify(projectRepo, times(1)).save(project2),
+                () -> verify(projectRepo, times(1)).existsById(projectId),
+                () -> verifyNoMoreInteractions(projectRepo)
         );
-
-        given(commentRepository.fetchCommentPageDTOByProjectId(1L, PageRequest.builder(1, 20)))
-                .willReturn(new PageImpl<>(dtoList));
-
-        assertNotNull(service.fetchCommentsByProjectId(1L, PageRequest.builder(1, 20)));
-
     }
 
-    @Test
-    void updateComment() {
-
-    }*/
 }

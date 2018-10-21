@@ -39,14 +39,12 @@ import static org.sudocode.api.project.domain.Difficulty.fromText;
 )
 public class ProjectService {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ProjectService.class);
-    private final UserService userService;
+    private static final Logger LOGGER = LoggerFactory.getLogger(ProjectService.class);
     private final ProjectRepository projectRepo;
     private final CommentRepository commentRepo;
 
     @Autowired
-    public ProjectService(UserService userService, ProjectRepository projectRepo, CommentRepository commentRepo) {
-        this.userService = userService;
+    public ProjectService(ProjectRepository projectRepo, CommentRepository commentRepo) {
         this.projectRepo = projectRepo;
         this.commentRepo = commentRepo;
     }
@@ -154,9 +152,8 @@ public class ProjectService {
             // Two different queries so we don't have to make the relationship bi-directional.
             commentRepo.deleteCommentsByProjectId(id);
             projectRepo.delete(project);
+            LOGGER.info("Deleted comment " + id + " by " + currentUser.getLogin());
         });
-
-        LOG.info("Deleted comment " + id + " by " + currentUser.getLogin());
     }
 
 
@@ -171,7 +168,7 @@ public class ProjectService {
      */
     @Transactional(rollbackFor = Exception.class)
     public Comment postComment(@NonNull Comment comment, @NonNull Long projectId, @NonNull User user) {
-        LOG.info("Posting comment by " + user.getId() + " at " + now());
+        LOGGER.info("Posting comment by " + user.getId() + " at " + now());
 
         comment.setProject(projectRepo.findById(projectId)
                                       .orElseThrow(() -> new ProjectNotFoundException(projectId)));
@@ -187,9 +184,9 @@ public class ProjectService {
      * @throws NotPostAuthorException if the user making the request did not postProject the comment.
      */
     @Transactional(rollbackFor = Exception.class)
-    public void deleteCommentById(@NonNull Long id) {
+    public void deleteCommentById(@NonNull Long id, @NonNull User currentUser) {
         commentRepo.fetchById(id).ifPresent(comment -> {
-            if (!comment.getAuthor().equals(userService.currentUser())) {
+            if (!comment.getAuthor().equals(currentUser)) {
                 throw new NotPostAuthorException("Not author of comment");
             }
             commentRepo.delete(comment);

@@ -123,12 +123,13 @@ public final class ProjectRestController {
     /**
      * DELETE /api/projects/:projectId/comments/:commentId
      *
-     * @see ProjectService#deleteCommentById(Long)
+     * @see ProjectService#deleteCommentById(Long, User)
      */
     @DeleteMapping(value = "/{projectId}/comments/{commentId}")
     public void deleteCommentById(@PathVariable("projectId") Long projectId,
-                                  @PathVariable("commentId") Long commentId) {
-        this.projectService.deleteCommentById(commentId);
+                                  @PathVariable("commentId") Long commentId,
+                                  @AuthenticationPrincipal User currentUser) {
+        this.projectService.deleteCommentById(commentId, currentUser);
     }
 
     /**

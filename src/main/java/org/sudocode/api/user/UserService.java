@@ -3,6 +3,7 @@ package org.sudocode.api.user;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.lang.Nullable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,11 +11,10 @@ import org.sudocode.api.core.SecurityUtils;
 import org.sudocode.api.user.domain.User;
 import org.sudocode.api.user.domain.UserRepository;
 import org.sudocode.api.user.web.UserDTO;
-import org.sudocode.api.user.web.UserMapper;
 
 /**
  * Service for user transactions. Read only by default & rolls back for any exception.
- *
+ * <p>
  * Be sure to include another transactional annotation with the required params for any modifying transaction.
  */
 @Service
@@ -38,15 +38,12 @@ public class UserService {
      * @throws UserNotLoggedInException if the {@code Principal} is null.
      */
     @Transactional(rollbackFor = Exception.class)
-    public User currentUser() {
-
-        User currentUser = SecurityUtils.getCurrentUser();
-
-        if (!userRepo.existsById(currentUser.getId())) {
-            return userRepo.save(currentUser);
+    public User currentUser(@Nullable User user) {
+        if (user == null) {
+            return SecurityUtils.getCurrentUser();
         }
 
-        return currentUser;
+        return userRepo.existsById(user.getId()) ? user : userRepo.save(user);
     }
 
     /**
@@ -93,7 +90,6 @@ public class UserService {
     public void deleteById(Long id) {
         userRepo.deleteById(id);
     }
-
 
 
 }

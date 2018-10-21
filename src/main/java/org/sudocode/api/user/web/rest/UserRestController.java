@@ -3,9 +3,11 @@ package org.sudocode.api.user.web.rest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.sudocode.api.user.UserNotFoundException;
 import org.sudocode.api.user.UserService;
+import org.sudocode.api.user.domain.User;
 import org.sudocode.api.user.web.UserDTO;
 import org.sudocode.api.user.web.UserMapper;
 
@@ -35,8 +37,8 @@ public final class UserRestController {
      * @see UserService#currentUser()
      */
     @GetMapping(value = "/me", produces = JSON)
-    public UserDTO currentUser() {
-        return mapper.toDTO(userService.currentUser());
+    public UserDTO currentUser(@AuthenticationPrincipal User user) {
+        return mapper.toDTO(userService.currentUser(user));
     }
 
     /**
