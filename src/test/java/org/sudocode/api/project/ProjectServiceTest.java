@@ -88,7 +88,7 @@ class ProjectServiceTest {
     }
 
     @Test
-    void update() throws ExecutionException {
+    void updateProject() throws ExecutionException {
         given(repo.existsById(1L)).willReturn(true);
 
         User u = new User.Builder().id(1L).login("login").build();
@@ -96,7 +96,7 @@ class ProjectServiceTest {
         given(repo.getOne(1L)).willReturn(p);
         given(userService.currentUser()).willReturn(u);
 
-        assertNotNull(service.update(1L, p));
+        assertNotNull(service.updateProject(1L, p));
     }
 
 

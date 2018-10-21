@@ -7,12 +7,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import org.sudocode.api.project.*;
+import org.sudocode.api.core.TimeOutService;
+import org.sudocode.api.project.ProjectNotFoundException;
+import org.sudocode.api.project.ProjectService;
 import org.sudocode.api.project.comment.Comment;
+import org.sudocode.api.project.comment.CommentDTO;
 import org.sudocode.api.project.comment.CommentMapper;
 import org.sudocode.api.project.domain.InvalidDifficultyException;
 import org.sudocode.api.project.domain.Project;
-import org.sudocode.api.project.comment.CommentDTO;
 import org.sudocode.api.project.web.ProjectDTO;
 import org.sudocode.api.project.web.ProjectMapper;
 import org.sudocode.api.project.web.ProjectSummaryDTO;
@@ -20,7 +22,7 @@ import org.sudocode.api.user.domain.User;
 
 import java.util.concurrent.ExecutionException;
 
-import static org.sudocode.api.core.util.Constants.*;
+import static org.sudocode.api.core.util.Constants.JSON;
 
 
 /**
@@ -30,14 +32,17 @@ import static org.sudocode.api.core.util.Constants.*;
 @RequestMapping("api/projects")
 public final class ProjectRestController {
 
-    private final ProjectService service;
+    private final ProjectService projectService;
+    private final TimeOutService timeOutService;
     private final ProjectMapper projectMapper;
     private final CommentMapper commentMapper;
     private final Log LOG = LogFactory.getLog(this.getClass());
 
     @Autowired
-    public ProjectRestController(ProjectService service, ProjectMapper projectMapper, CommentMapper commentMapper) {
-        this.service = service;
+    public ProjectRestController(ProjectService projectService, TimeOutService timeOutService,
+                                 ProjectMapper projectMapper, CommentMapper commentMapper) {
+        this.projectService = projectService;
+        this.timeOutService = timeOutService;
         this.projectMapper = projectMapper;
         this.commentMapper = commentMapper;
     }
@@ -48,9 +53,11 @@ public final class ProjectRestController {
      * @see ProjectService#postProject(Project, User)
      */
     @PostMapping(consumes = JSON, produces = JSON)
-    public ProjectDTO post(@RequestBody Project project,
-                           @AuthenticationPrincipal User currentUser) throws ExecutionException {
-        return projectMapper.toDTO(service.postProject(project, currentUser));
+    public ProjectDTO post(@RequestBody Project project, @AuthenticationPrincipal User currentUser)
+            throws ExecutionException {
+
+        timeOutService.handleTimeOut(currentUser.getId());
+        return projectMapper.toDTO(projectService.postProject(project, currentUser));
     }
 
     /**
@@ -59,12 +66,13 @@ public final class ProjectRestController {
      * @see ProjectService#fetchAll(String, String, String, Pageable)
      */
     @GetMapping(produces = JSON)
-    public Page<ProjectSummaryDTO> fetchAll(@RequestParam(value = "title", defaultValue = "") String title,
-                                            @RequestParam(value = "difficulty", defaultValue = "") String difficulty,
-                                            @RequestParam(value = "description", defaultValue = "") String description,
-                                            Pageable pageable) throws InvalidDifficultyException {
+    public Page<ProjectSummaryDTO> fetchAll(
+            @RequestParam(value = "title", defaultValue = "") String title,
+            @RequestParam(value = "difficulty", defaultValue = "") String difficulty,
+            @RequestParam(value = "description", defaultValue = "") String description,
+            Pageable pageable) throws InvalidDifficultyException {
 
-        return service.fetchAll(title, difficulty, description, pageable);
+        return projectService.fetchAll(title, difficulty, description, pageable);
     }
 
     /**
@@ -74,7 +82,7 @@ public final class ProjectRestController {
      */
     @GetMapping(value = "/{id:[\\d]}", produces = JSON)
     public ProjectDTO fetchById(@PathVariable("id") Long id) throws ProjectNotFoundException {
-        return projectMapper.toDTO(service.fetchById(id));
+        return projectMapper.toDTO(projectService.fetchById(id));
     }
 
     /**
@@ -84,7 +92,7 @@ public final class ProjectRestController {
      */
     @GetMapping(value = "/{id}/comments", produces = JSON)
     public Page<CommentDTO> fetchComments(@PathVariable("id") Long id, Pageable pageable) {
-        return service.fetchCommentsByProjectId(id, pageable).map(commentMapper::toDTO);
+        return projectService.fetchCommentsByProjectId(id, pageable).map(commentMapper::toDTO);
     }
 
     /**
@@ -96,8 +104,8 @@ public final class ProjectRestController {
     public CommentDTO postComment(@PathVariable("id") Long projectId,
                                   @RequestBody Comment comment,
                                   @AuthenticationPrincipal User user) throws ExecutionException {
-
-        return commentMapper.toDTO(service.postComment(comment, projectId, user));
+        timeOutService.handleTimeOut(user.getId());
+        return commentMapper.toDTO(projectService.postComment(comment, projectId, user));
     }
 
     @PutMapping(value = "/{projectId}/comments/{commentId}", consumes = JSON, produces = JSON)
@@ -105,8 +113,11 @@ public final class ProjectRestController {
                                     @PathVariable("commentId") Long commentId,
                                     @RequestBody Comment comment,
                                     @AuthenticationPrincipal User user) throws ExecutionException {
+        timeOutService.handleTimeOut(user.getId());
 
-        return commentMapper.toDTO(service.updateComment(comment, commentId, projectId, user));
+        return commentMapper.toDTO(
+                projectService.updateComment(comment, commentId, projectId, user)
+        );
     }
 
     /**
@@ -117,30 +128,30 @@ public final class ProjectRestController {
     @DeleteMapping(value = "/{projectId}/comments/{commentId}")
     public void deleteCommentById(@PathVariable("projectId") Long projectId,
                                   @PathVariable("commentId") Long commentId) {
-        this.service.deleteCommentById(commentId);
+        this.projectService.deleteCommentById(commentId);
     }
 
     /**
      * PUT /api/projects/:id
      *
-     * @see ProjectService#update(Long, Project, User)
+     * @see ProjectService#updateProject(Long, Project, User)
      */
     @PutMapping(value = "/{id}", consumes = JSON, produces = JSON)
     public ProjectDTO update(@PathVariable("id") Long id,
                              @RequestBody Project project,
                              @AuthenticationPrincipal User user) throws ExecutionException {
-
-        return projectMapper.toDTO(service.update(id, project, user));
+        timeOutService.handleTimeOut(user.getId());
+        return projectMapper.toDTO(projectService.updateProject(id, project, user));
     }
 
     /**
      * DELETE /api/projects/:id
      *
-     * @see ProjectService#deleteById(Long, User) d(Long)
+     * @see ProjectService#deleteProjectById(Long, User) d(Long)
      */
     @DeleteMapping(value = "/{id}")
     public void delete(@PathVariable("id") Long id, @AuthenticationPrincipal User user) {
-        service.deleteById(id, user);
+        projectService.deleteProjectById(id, user);
     }
 
 }

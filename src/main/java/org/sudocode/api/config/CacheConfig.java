@@ -50,10 +50,10 @@ public class CacheConfig {
                            .build(new CacheLoader<>() {
                                @Override
                                public LocalDateTime load(@NonNull Long userId) {
-                                   var lastCommentDate = commentRepo.fetchLatestPostDateByAuthorId(userId).orElse(DEFAULT_LOCAL_DATE_TIME);
-                                   var lastPostDate = projectRepo.fetchLatestPostDateByAuthorId(userId).orElse(DEFAULT_LOCAL_DATE_TIME);
+                                   var commentDate = commentRepo.fetchLatestPostDateByAuthorId(userId).orElse(DEFAULT_LOCAL_DATE_TIME);
+                                   var postDate = projectRepo.fetchLatestPostDateByAuthorId(userId).orElse(DEFAULT_LOCAL_DATE_TIME);
 
-                                   return lastCommentDate.compareTo(lastPostDate) > 0 ? lastCommentDate : lastPostDate;
+                                   return commentDate.compareTo(postDate) > 0 ? commentDate : postDate;
                                }
                            });
 

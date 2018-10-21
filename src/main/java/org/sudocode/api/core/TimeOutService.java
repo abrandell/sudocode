@@ -1,70 +1,88 @@
 package org.sudocode.api.core;
 
 import com.google.common.cache.LoadingCache;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
-import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.sudocode.api.project.comment.CommentRepository;
+import org.sudocode.api.project.domain.ProjectRepository;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.Optional;
 import java.util.concurrent.ExecutionException;
+
+import static org.sudocode.api.core.util.Constants.DEFAULT_LOCAL_DATE_TIME;
 
 /**
  * Service for timing out users for spamming and/or posting too often.
  */
 @Service
+@Transactional(readOnly = true)
 public class TimeOutService {
 
     private final LoadingCache<Long, LocalDateTime> loadingCache;
-    private final Log LOG = LogFactory.getLog(TimeOutService.class);
+    private final Logger LOG = LoggerFactory.getLogger(TimeOutService.class);
+    private final CommentRepository commentRepo;
+    private final ProjectRepository projectRepo;
 
     @Autowired
-    public TimeOutService(LoadingCache<Long, LocalDateTime> loadingCache) {
+    public TimeOutService(LoadingCache<Long, LocalDateTime> loadingCache,
+                          CommentRepository commentRepo, ProjectRepository projectRepo) {
         this.loadingCache = loadingCache;
+        this.commentRepo = commentRepo;
+        this.projectRepo = projectRepo;
     }
 
-    public void timeOutUser(Long id) {
-        var currentTime = LocalDateTime.now();
-        LOG.info("TOO MANY REQUESTS --- Timing out user with ID: " + id + " at " + currentTime);
-        loadingCache.put(id, currentTime);
-    }
-
-    public boolean isTimedOut(Long id) throws ExecutionException {
-        LocalDateTime lastPosted = loadingCache.get(id);
-
-        return Duration.between(lastPosted, LocalDateTime.now()).toSeconds() <= 30;
-    }
-
-    /**
-     * @param id of the user to check if timed out. Throws a {@link TooManyRequestException} if true.
-     */
-    public void handleIfTimedOut(Long id) throws ExecutionException {
-        if (isTimedOut(id)) {
-            LOG.info(String.format("Timed out User: %d attempted to make a post.", id));
+    public void handleTimeOut(Long userId) throws ExecutionException {
+        if (isTimedOut(userId)) {
+            LOG.info(String.format("Timed out User: %d attempted to make a post.", userId));
             throw new TooManyRequestException();
         }
-    }
 
-    // TODO rename me. Checks last time posted and times out the user for 5 mins if it was under 30 sec ago.
-    public void ensureNotSpamming(Long userId, @NonNull LocalDateTime lastPostDate) throws ExecutionException {
-
-        long secPassed = Duration.between(lastPostDate, LocalDateTime.now()).toSeconds();
+        LocalDateTime lastDatePosted = lastPostDateByUser(userId);
+        long secPassed = Duration.between(lastDatePosted, LocalDateTime.now()).toSeconds();
         LOG.info(String.format("User: %d waited %d seconds before attempting to post again.", userId, secPassed));
 
         if (secPassed < 10) {
             timeOutUser(userId);
             throw new TooManyRequestException();
         }
-
     }
 
-    public void handleTimeOut(Long userId, LocalDateTime lastPostDate) throws ExecutionException {
-        handleIfTimedOut(userId);
-        ensureNotSpamming(userId, lastPostDate);
+    private void timeOutUser(Long id) {
+        var currentTime = LocalDateTime.now();
+        LOG.info("TOO MANY REQUESTS --- Timing out user with ID: " + id + " at " + currentTime);
+        loadingCache.put(id, currentTime);
+    }
+
+    private boolean isTimedOut(Long id) throws ExecutionException {
+        LocalDateTime lastPosted = loadingCache.get(id);
+
+        return Duration.between(lastPosted, LocalDateTime.now()).toSeconds() <= 30;
+    }
+
+    /**
+     * Searches for the latest post date for both comments and projects made by a user.
+     * <p>
+     * If none were made, it'll set them to {@link LocalDateTime#MIN}.
+     *
+     * @param id ID of the user
+     * @return The latest post date between the two.
+     */
+    protected LocalDateTime lastPostDateByUser(Long id) throws ExecutionException {
+
+        if (!isTimedOut(id)) {
+            LOG.info("---- Line 88: Queries from TimeOutService#getLastPostDateByAuthor");
+            var lastCommentDate = commentRepo.fetchLatestPostDateByAuthorId(id).orElse(DEFAULT_LOCAL_DATE_TIME);
+            var lastPostDate = projectRepo.fetchLatestPostDateByAuthorId(id).orElse(DEFAULT_LOCAL_DATE_TIME);
+
+            return lastCommentDate.compareTo(lastPostDate) > 0 ? lastCommentDate : lastPostDate;
+        }
+
+        return DEFAULT_LOCAL_DATE_TIME;
     }
 }
 

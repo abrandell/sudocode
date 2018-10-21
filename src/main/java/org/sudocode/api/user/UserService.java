@@ -40,7 +40,7 @@ public class UserService {
     @Transactional(rollbackFor = Exception.class)
     public User currentUser() {
 
-        User currentUser = SecurityUtils.getCurrentUser().orElseThrow(UserNotLoggedInException::new);
+        User currentUser = SecurityUtils.getCurrentUser();
 
         if (!userRepo.existsById(currentUser.getId())) {
             return userRepo.save(currentUser);

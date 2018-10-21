@@ -26,7 +26,7 @@ spring:
 spring:
   profiles: dev
   datasource:
-    url: jdbc:postgresql://localhost:5435/sudodev
+    url: jdbc:mysql://localhost:3308/sudodev?useSSL=false
     username: developer
     password: password
   jpa:
@@ -34,7 +34,9 @@ spring:
       ddl-auto: update
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.PostgreSQL81Dialect
+        dialect: org.hibernate.dialect.MySQL5Dialect
+#        temp:
+#          use_jdbc_metadata_defaults: false # Remove this line if using a DB other than postgres
 
 ---
 

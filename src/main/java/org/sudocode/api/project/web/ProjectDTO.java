@@ -40,6 +40,7 @@ public class ProjectDTO {
      *
      * @see org.sudocode.api.project.domain.ProjectRepository
      */
+    @Deprecated
     public ProjectDTO(Long id, String title, Difficulty difficulty, String description,
                       LocalDateTime datePosted, LocalDateTime lastModifiedDate,
                       Long userId, String login, String avatarUrl, boolean hireable) {

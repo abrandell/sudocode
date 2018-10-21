@@ -9,11 +9,23 @@ services:
   postgres-dev:
     image: postgres
     ports:
-    - 5435:5432
+      - 5435:5432
     volumes:
-    - postgres_data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
     environment:
       POSTGRES_USER: 'developer'
       POSTGRES_DB: 'sudodev'
       POSTGRES_PASSWORD: 'password'
 
+  mysql-dev:
+    image: mysql:5.7
+    volumes:
+      - "./my.conf:/etc/mysql/conf.d/config-file.cnf"
+      - "./data:/var/lib/mysql:rw"
+    ports:
+      - 3308:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: sudodev
+      MYSQL_USER: developer
+      MYSQL_PASSWORD: password

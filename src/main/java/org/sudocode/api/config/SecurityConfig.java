@@ -59,4 +59,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private CustomUserTypesOAuth2UserService oAuth2UserService() {
         return new CustomUserTypesOAuth2UserService(Map.of("github", User.class));
     }
+
+
 }

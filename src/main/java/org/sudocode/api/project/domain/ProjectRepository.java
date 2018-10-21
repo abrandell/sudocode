@@ -43,6 +43,7 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
     @Query("SELECT max(p.datePosted) FROM Project p WHERE p.author.id = :id")
     Optional<LocalDateTime> fetchLatestPostDateByAuthorId(@Param("id") Long id);
 
+    @Deprecated
     @Query("SELECT NEW org.sudocode.api.project.web.ProjectDTO" +
                 "(p.id, p.title, p.difficulty, p.description, p.datePosted, p.lastModifiedDate, " +
                 "u.id, u.login, u.avatarUrl, u.hireable) " +
@@ -51,5 +52,6 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
 
     @Query("SELECT p FROM Project p JOIN FETCH p.author WHERE p.id = :id")
     Optional<Project> fetchById(@Param("id") Long id);
+
 
 }

@@ -1,14 +1,14 @@
 package org.sudocode.api.project;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.sudocode.api.core.TimeOutService;
 import org.sudocode.api.core.TooManyRequestException;
 import org.sudocode.api.project.comment.Comment;
 import org.sudocode.api.project.comment.CommentRepository;
@@ -22,14 +22,9 @@ import org.sudocode.api.user.UserService;
 import org.sudocode.api.user.domain.User;
 
 import javax.validation.constraints.NotNull;
-import java.time.LocalDateTime;
-import java.util.Optional;
-import java.util.concurrent.ExecutionException;
 
-import static java.lang.String.*;
-import static java.time.LocalDateTime.*;
-import static org.sudocode.api.core.util.Constants.*;
-import static org.sudocode.api.project.domain.Difficulty.*;
+import static java.time.LocalDateTime.now;
+import static org.sudocode.api.project.domain.Difficulty.fromText;
 
 /**
  * Service for projects (and comments) transactions. Transactions start here for all projects and comments.
@@ -44,19 +39,16 @@ import static org.sudocode.api.project.domain.Difficulty.*;
 )
 public class ProjectService {
 
+    private static final Logger LOG = LoggerFactory.getLogger(ProjectService.class);
     private final UserService userService;
     private final ProjectRepository projectRepo;
     private final CommentRepository commentRepo;
-    private final TimeOutService timeOutService;
-    private final Log LOG = LogFactory.getLog(ProjectService.class);
 
     @Autowired
-    public ProjectService(UserService userService, ProjectRepository projectRepo,
-                          CommentRepository commentRepo, TimeOutService timeOutService) {
+    public ProjectService(UserService userService, ProjectRepository projectRepo, CommentRepository commentRepo) {
         this.userService = userService;
         this.projectRepo = projectRepo;
         this.commentRepo = commentRepo;
-        this.timeOutService = timeOutService;
     }
 
     /**
@@ -68,13 +60,7 @@ public class ProjectService {
      * @see ProjectPostForm
      */
     @Transactional(rollbackFor = Exception.class)
-    public Project postProject(@NotNull Project project, @NotNull User currentUser) throws ExecutionException {
-        final Long currentUserId = currentUser.getId();
-        timeOutService.handleTimeOut(
-                currentUserId,
-                getLastPostDateByAuthor(currentUserId)
-        );
-
+    public Project postProject(@NotNull Project project, @NonNull User currentUser) {
         project.setAuthor(currentUser);
         return projectRepo.save(project);
     }
@@ -96,13 +82,9 @@ public class ProjectService {
      * @see ProjectSummaryDTO
      * @see Difficulty#fromText(String)
      */
-    public Page<ProjectSummaryDTO> fetchAll(@NonNull String title,
-                                            @NonNull String difficulty,
-                                            @NonNull String description,
-                                            @NonNull Pageable pageable) {
+    public Page<ProjectSummaryDTO> fetchAll(String title, String difficulty, String description, Pageable pageable) {
 
         Difficulty difficultyEnum = !difficulty.isEmpty() ? fromText(difficulty) : null;
-
         return projectRepo.fetchAll(title, difficultyEnum, description, pageable);
     }
 
@@ -120,29 +102,40 @@ public class ProjectService {
     /**
      * Updates the given project.
      *
-     * @param id builder the project to update.
+     * @param id builder the project to updateProject.
      * @return {@code ProjectDTO} builder the updated (or new) {@link Project}.
      * @throws NotPostAuthorException if user making the request did not postProject the project.
      */
+    @Modifying
     @Transactional(rollbackFor = Exception.class)
-    public Project update(Long id, Project project, User currentUser) throws ExecutionException {
-        project.setId(id);
+    public Project updateProject(Long id, Project newProject, User currentUser) {
+        return projectRepo.fetchById(id)
+                          .filter(project -> project.getAuthor().equals(currentUser))
+                          .map(project -> {
+                              project.setTitle(newProject.getTitle());
+                              project.setDescription(newProject.getDescription());
+                              project.setDifficulty(project.getDifficulty());
+                              return project;
+                          })
+                          .orElseGet(() -> {
+                              newProject.setId(!projectRepo.existsById(id) ? id : null);
+                              return postProject(newProject, currentUser);
+                          });
+    }
 
-
-        if (projectRepo.existsById(id)) {
-            Project updated = projectRepo.getOne(id);
-
-            if (!updated.getAuthor().equals(currentUser)) {
-                throw new NotPostAuthorException("Not owner builder project.");
-            }
-
-            updated.setTitle(project.getTitle());
-            updated.setDifficulty(project.getDifficulty());
-            updated.setDescription(project.getDescription());
-            return updated;
-        }
-
-        return postProject(project, currentUser);
+    @Modifying
+    @Transactional(rollbackFor = Exception.class)
+    public Comment updateComment(Comment newComment, Long commentId, Long projectId, User currentUser) {
+        return commentRepo.fetchById(commentId)
+                          .filter(comment -> newComment.getAuthor().equals(currentUser))
+                          .map(comment -> {
+                              comment.setBody(newComment.getBody());
+                              return comment;
+                          })
+                          .orElseGet(() -> {
+                              newComment.setId(!commentRepo.existsById(commentId) ? commentId : null);
+                              return postComment(newComment, projectId, currentUser);
+                          });
     }
 
     /**
@@ -151,15 +144,19 @@ public class ProjectService {
      * @param id builder the comment.
      * @throws NotPostAuthorException if the user making the request did not postProject the comment.
      */
+    @Modifying
     @Transactional(rollbackFor = Exception.class)
-    public void deleteById(Long id, User currentUser) {
-        Project found = projectRepo.findById(id).orElseThrow(() -> new ProjectNotFoundException(id));
+    public void deleteProjectById(Long id, User currentUser) {
+        projectRepo.fetchById(id).ifPresent(project -> {
+            if (!project.getAuthor().equals(currentUser)) {
+                throw new NotPostAuthorException("Not author of comment");
+            }
+            // Two different queries so we don't have to make the relationship bi-directional.
+            commentRepo.deleteCommentsByProjectId(id);
+            projectRepo.delete(project);
+        });
 
-        if (!found.getAuthor().equals(currentUser)) {
-            throw new NotPostAuthorException("Not author builder project.");
-        }
-
-        projectRepo.delete(found);
+        LOG.info("Deleted comment " + id + " by " + currentUser.getLogin());
     }
 
 
@@ -173,40 +170,15 @@ public class ProjectService {
      * @throws TooManyRequestException  if the last {@link Comment} or {@link Project} posted by the user was under 1 min ago.
      */
     @Transactional(rollbackFor = Exception.class)
-    public Comment postComment(Comment comment, Long projectId, User currentUser) throws ExecutionException {
-        final Long userId = currentUser.getId();
-        timeOutService.handleTimeOut(userId, getLastPostDateByAuthor(userId));
+    public Comment postComment(@NonNull Comment comment, @NonNull Long projectId, @NonNull User user) {
+        LOG.info("Posting comment by " + user.getId() + " at " + now());
 
-        LOG.info("Posting comment by " + userId + " at " + now());
-
-        comment.setProject(
-                projectRepo.findById(projectId).orElseThrow(() -> new ProjectNotFoundException(projectId)));
-
-        comment.setAuthor(currentUser);
-
+        comment.setProject(projectRepo.findById(projectId)
+                                      .orElseThrow(() -> new ProjectNotFoundException(projectId)));
+        comment.setAuthor(user);
         return commentRepo.save(comment);
     }
 
-    @Transactional(rollbackFor = Exception.class)
-    public Comment updateComment(Comment comment, Long commentId,
-                                 Long projectId, User currentUser) throws ExecutionException {
-        comment.setId(commentId);
-
-        Optional<Comment> optionalComment = commentRepo.fetchById(comment.getId());
-        if (optionalComment.isPresent()) {
-            Comment updated = optionalComment.get();
-
-            if (updated.getAuthor().equals(currentUser)) {
-                LOG.info(format("Updating comment by %d at %ts", currentUser.getId(), now()));
-
-                updated.setId(comment.getId());
-                updated.setBody(comment.getBody());
-                return updated;
-            }
-        }
-
-        return postComment(comment, projectId, currentUser);
-    }
 
     /**
      * Delete a comment.
@@ -215,14 +187,13 @@ public class ProjectService {
      * @throws NotPostAuthorException if the user making the request did not postProject the comment.
      */
     @Transactional(rollbackFor = Exception.class)
-    public void deleteCommentById(@NotNull Long id) {
-        Comment comment = commentRepo.fetchById(id).orElseThrow(() -> new CommentNotFoundException(id));
-
-        if (!comment.getAuthor().equals(userService.currentUser())) {
-            throw new NotPostAuthorException("Not author builder comment.");
-        }
-
-        this.commentRepo.deleteById(id);
+    public void deleteCommentById(@NonNull Long id) {
+        commentRepo.fetchById(id).ifPresent(comment -> {
+            if (!comment.getAuthor().equals(userService.currentUser())) {
+                throw new NotPostAuthorException("Not author of comment");
+            }
+            commentRepo.delete(comment);
+        });
     }
 
     /**
@@ -233,31 +204,9 @@ public class ProjectService {
      * @return Page builder all comment DTO's for the given project.
      * @see Pageable
      */
-    public Page<Comment> fetchCommentsByProjectId(@NotNull Long id, Pageable pageable) {
+    public Page<Comment> fetchCommentsByProjectId(@NonNull Long id, Pageable pageable) {
         return commentRepo.fetchAllByProjectId(id, pageable);
     }
 
-    /**
-     * Searches for the latest post date for both comments and projects made by a user.
-     *
-     * If none were made, it'll set them to {@link LocalDateTime#MIN}.
-     *
-     * @param id ID of the user
-     * @return The latest post date between the two.
-     */
-    //FIXME. Making queries everytime due to this and not relying on cache.
-    public LocalDateTime getLastPostDateByAuthor(Long id) {
-        var lastCommentDate = commentRepo.fetchLatestPostDateByAuthorId(id).orElse(DEFAULT_LOCAL_DATE_TIME);
-        var lastPostDate = projectRepo.fetchLatestPostDateByAuthorId(id).orElse(DEFAULT_LOCAL_DATE_TIME);
-
-        return lastCommentDate.compareTo(lastPostDate) > 0 ? lastCommentDate : lastPostDate;
-    }
-
-    /**
-     * Simple helper enum for typesafe post types.
-     */
-    private enum PostType {
-        COMMENT, PROJECT
-    }
 
 }
