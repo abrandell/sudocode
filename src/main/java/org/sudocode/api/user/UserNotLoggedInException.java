@@ -1,6 +1,17 @@
 package org.sudocode.api.user;
 
-public class UserNotLoggedInException extends RuntimeException {
+import org.springframework.security.core.AuthenticatedPrincipal;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.oauth2.core.user.OAuth2User;
+
+/**
+ * Thrown for when a request to get the current user {@link OAuth2User} fails due to not being logged in.
+ * @see AuthenticatedPrincipal
+ * @see OAuth2User
+ * @see Authentication
+ */
+public class UserNotLoggedInException extends AuthenticationException {
 
     private static final long serialVersionUID = 1L;
 

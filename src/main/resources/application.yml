@@ -35,8 +35,6 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL5Dialect
-#        temp:
-#          use_jdbc_metadata_defaults: false # Remove this line if using a DB other than postgres
 
 ---
 
