@@ -116,28 +116,13 @@ public class ProjectService {
                           .map(project -> {
                               project.setTitle(newProject.getTitle());
                               project.setDescription(newProject.getDescription());
-                              project.setDifficulty(project.getDifficulty());
+                              project.setDifficulty(newProject.getDifficulty());
                               return project;
                           })
                           .orElseGet(() -> {
+                              // Make sure not to replace an already existing project
                               newProject.setId(projectRepo.existsById(id) ? null : id);
                               return postProject(newProject, currentUser);
-                          });
-    }
-
-    @Modifying
-    @Transactional(rollbackFor = Exception.class)
-    public Comment updateComment(Comment newComment, Long commentId,
-                                 Long projectId, User currentUser) {
-        return commentRepo.fetchById(commentId)
-                          .filter(comment -> newComment.getAuthor().equals(currentUser))
-                          .map(comment -> {
-                              comment.setBody(newComment.getBody());
-                              return comment;
-                          })
-                          .orElseGet(() -> {
-                              newComment.setId(commentRepo.existsById(commentId) ? null : commentId);
-                              return postComment(newComment, projectId, currentUser);
                           });
     }
 
@@ -188,6 +173,22 @@ public class ProjectService {
         LOGGER.info("Posting comment by " + user.getId() + " at " + now());
         comment.setAuthor(user);
         return commentRepo.save(comment);
+    }
+
+    @Modifying
+    @Transactional(rollbackFor = Exception.class)
+    public Comment updateComment(Comment newComment, Long commentId, Long projectId, User currentUser) {
+        return commentRepo.fetchById(commentId)
+                          .filter(comment -> comment.getAuthor().equals(currentUser))
+                          .map(comment -> {
+                              comment.setBody(newComment.getBody());
+                              return comment;
+                          })
+                          .orElseGet(() -> {
+                              // Make sure not to replace an already existing comment
+                              newComment.setId(commentRepo.existsById(commentId) ? null : commentId);
+                              return postComment(newComment, projectId, currentUser);
+                          });
     }
 
 
