@@ -1,6 +1,7 @@
 package org.sudocode.api.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -8,6 +9,8 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.oauth2.client.userinfo.CustomUserTypesOAuth2UserService;
+import org.springframework.security.web.DefaultRedirectStrategy;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.sudocode.api.core.OAuth2LoginUtils;
 import org.sudocode.api.user.domain.User;
@@ -54,15 +57,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .authenticated()
                     .and()
                 .oauth2Login()
-                    .loginPage("/")
-                    .successHandler(oauth2LoginUtils.successHandler())
                     .userInfoEndpoint()
                     .customUserType(User.class, "github")
-                    .userService(oAuth2UserService());
+                    .userService(oAuth2UserService())
+                    .and()
+                .successHandler(oauth2LoginUtils.successHandler());
     }
 
     private CustomUserTypesOAuth2UserService oAuth2UserService() {
         return new CustomUserTypesOAuth2UserService(Map.of("github", User.class));
     }
+
 
 }
