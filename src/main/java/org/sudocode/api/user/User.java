@@ -46,10 +46,6 @@ public class User implements OAuth2User {
     @Column(nullable = false)
     private boolean hireable;
 
-//    @ElementCollection
-//    @Column(nullable = false)
-//    private Set<GrantedAuthority> authorities;
-
     /**
      * Required for principal. Returns ID since that never changes (unless Github decides to change it).
      */
@@ -97,11 +93,6 @@ public class User implements OAuth2User {
 
     @Override
     public Collection<GrantedAuthority> getAuthorities() {
-//        if (authorities == null) {
-//            authorities = new HashSet<>();
-//            authorities.add((GrantedAuthority) () -> "ROLE_USER");
-//        }
-
         return AuthorityUtils.createAuthorityList("ROLE_USER");
     }
 

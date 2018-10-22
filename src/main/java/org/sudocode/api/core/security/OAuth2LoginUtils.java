@@ -20,7 +20,7 @@ public class OAuth2LoginUtils {
     /**
      * Saves or updates the user that successfully logged in.
      * Redirects back to the origin of the where the user logged in.
-     * Useful for dev purposes such as when writing the front end on a different port.
+     * Redirect is useful for developing the front end on a different port.
      */
     public AuthenticationSuccessHandler successHandler() {
         return (request, response, authentication) -> {
@@ -28,14 +28,13 @@ public class OAuth2LoginUtils {
 
             String origin = request.getHeader("Referer");
 
-            // Quick hack until I figure out why Referer is null when logging in while not authenticated with github already
+            // Temp fix.
+            // 'Referer' is null if logging into app while already authenticated with github.
             if (origin == null || origin.isEmpty()) {
                 origin = "http://localhost:4200";
             }
 
             new DefaultRedirectStrategy().sendRedirect(request, response, origin);
         };
-
     }
-
 }

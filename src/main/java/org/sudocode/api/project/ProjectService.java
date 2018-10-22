@@ -129,11 +129,11 @@ public class ProjectService {
             if (!project.getAuthor().equals(currentUser)) {
                 throw new NotPostAuthorException("Not author of comment");
             }
-            // Two different queries to avoid a bi-directional mapping.
+            // Two different queries to avoid a bi-directional relationship.
             commentRepo.deleteCommentsByProjectId(id);
             projectRepo.delete(project);
 
-            LOGGER.info("Deleted comment " + id + " by " + currentUser.getLogin());
+            LOGGER.info("Deleted project " + id + " by " + currentUser.getLogin());
         });
 
     }

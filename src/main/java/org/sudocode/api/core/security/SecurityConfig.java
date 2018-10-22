@@ -52,7 +52,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .anyRequest()
                     .authenticated()
                     .and()
-                .oauth2Login()
+                .oauth2Login().loginPage("/")
                     .userInfoEndpoint()
                     .customUserType(User.class, "github")
                     .userService(oAuth2UserService())
