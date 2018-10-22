@@ -14,7 +14,7 @@ spring:
       hibernate:
         format_sql: true
     open-in-view: false
-    show-sql: true
+    show-sql: false
   jackson:
     property-naming-strategy: SNAKE_CASE
     date-format: com.fasterxml.jackson.databind.util.ISO8601DateFormat

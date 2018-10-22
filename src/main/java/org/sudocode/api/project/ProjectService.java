@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.lang.Nullable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -133,6 +134,7 @@ public class ProjectService {
      * @throws NotPostAuthorException if the user making the request did not postProject the comment.
      */
     @Modifying
+    @PreAuthorize("principal.equals(#currentUser)")
     @Transactional(rollbackFor = Exception.class)
     public void deleteProjectById(Long id, User currentUser) {
         projectRepo.fetchById(id).ifPresent(project -> {
@@ -160,16 +162,15 @@ public class ProjectService {
      */
     @Transactional(rollbackFor = Exception.class)
     public Comment postComment(Comment comment, Long projectId, User user) {
-
         final Long commentId = comment.getId();
 
         if (commentId != null) {
             comment.setId(commentRepo.existsById(commentId) ? null : commentId);
         }
-        comment.setProject(
-                projectRepo.findById(projectId)
-                           .orElseThrow(() -> new ProjectNotFoundException(projectId))
-        );
+
+        comment.setProject(projectRepo.findById(projectId)
+                           .orElseThrow(() -> new ProjectNotFoundException(projectId)));
+
         LOGGER.info("Posting comment by " + user.getId() + " at " + now());
         comment.setAuthor(user);
         return commentRepo.save(comment);

@@ -76,17 +76,6 @@ public class Project extends AbstractAuditableEntity implements Persistable<Long
                 .toString();
     }
 
-    @Transient
-    public Map<Object, Object> getAttributes() {
-        return ImmutableMap.of(
-                "id", this.id,
-                "title", this.title,
-                "difficulty", this.difficulty,
-                "description", this.description,
-                "author", this.author
-        );
-    }
-
     /**
      * Builder for a more fluid api.
      */

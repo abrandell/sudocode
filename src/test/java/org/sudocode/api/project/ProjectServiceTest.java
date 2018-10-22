@@ -78,7 +78,7 @@ class ProjectServiceTest {
 
                 // No ID since not testing persistence
                 () -> assertNull(result.getId(),
-                "ID should be null. Make sure commentRepo.existsById was called before setting."),
+                        "ID should be null. Make sure commentRepo.existsById was called before setting."),
 
                 () -> assertEquals(project1, result.getProject(),
                         "Make sure the project gets set in postComment"),

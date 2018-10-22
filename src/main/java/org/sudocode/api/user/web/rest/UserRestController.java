@@ -3,15 +3,27 @@ package org.sudocode.api.user.web.rest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
+import org.sudocode.api.core.SecurityUtils;
 import org.sudocode.api.user.UserNotFoundException;
 import org.sudocode.api.user.UserService;
 import org.sudocode.api.user.domain.User;
 import org.sudocode.api.user.web.UserDTO;
 import org.sudocode.api.user.web.UserMapper;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import java.security.Principal;
+
 import static org.springframework.http.MediaType.*;
+import static org.sudocode.api.core.SecurityUtils.*;
 import static org.sudocode.api.core.util.Constants.JSON;
 
 /**
@@ -19,7 +31,7 @@ import static org.sudocode.api.core.util.Constants.JSON;
  */
 @RestController
 @RequestMapping("api/users")
-public final class UserRestController {
+public class UserRestController {
 
     private final UserService userService;
     private final UserMapper mapper;
@@ -32,13 +44,20 @@ public final class UserRestController {
 
     /**
      * GET /api/users/me
+     * Used for the client to check if a user is logged in.
+     * Returns an empty string if not authenticated so no exception gets thrown
      *
      * @return Currently logged in user in DTO form.
-     * @see UserService#currentUser()
+     * @see UserService#currentUser(User)
      */
     @GetMapping(value = "/me", produces = JSON)
-    public UserDTO currentUser(@AuthenticationPrincipal User user) {
-        return mapper.toDTO(userService.currentUser(user));
+    public ResponseEntity<?> currentUser(Principal principal) {
+        if (principal == null) {
+            return ResponseEntity.ok().build();
+        }
+        return ResponseEntity.ok(
+                mapper.toDTO(userService.currentUser(getCurrentUser()))
+        );
     }
 
     /**
@@ -77,10 +96,15 @@ public final class UserRestController {
         return userService.fetchAll(pageable).map(mapper::toDTO);
     }
 
+
     @DeleteMapping(value = "/{id}", produces = JSON)
     public void deleteById(@PathVariable("id") Long id) {
         userService.deleteById(id);
     }
 
+    @PostMapping(value = "/logout")
+    public void logout(HttpServletRequest request) {
+        request.getSession(false).invalidate();
+    }
 
 }

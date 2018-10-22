@@ -20,7 +20,7 @@ public class SecurityUtils {
      */
     public static User getCurrentUser() {
         var auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth == null) {
+        if (!auth.isAuthenticated()) {
             throw new UserNotLoggedInException();
         }
 

@@ -1,24 +1,23 @@
 package org.sudocode.api.user.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.base.Preconditions;
 import lombok.*;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.springframework.data.annotation.AccessType;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.util.Assert;
+import org.sudocode.api.core.security.Authority;
+import org.sudocode.api.core.security.UserRole;
 
 import javax.persistence.*;
 import javax.validation.constraints.Pattern;
 
-import java.util.Collection;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import static org.springframework.data.annotation.AccessType.*;
 import static org.sudocode.api.core.util.Constants.*;
@@ -48,6 +47,10 @@ public class User implements OAuth2User {
 
     @Column(nullable = false)
     private boolean hireable;
+
+    @OneToMany(fetch = FetchType.EAGER)
+    @Column(nullable = false)
+    private Set<Authority> authorities;
 
     /**
      * Required for principal. Returns ID since that never changes (unless Github decides to change it).
@@ -95,8 +98,13 @@ public class User implements OAuth2User {
     }
 
     @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return AuthorityUtils.createAuthorityList("ROLE_USER");
+    public Set<Authority> getAuthorities() {
+        if (authorities == null) {
+            this.authorities = new HashSet<>();
+            authorities.add(new Authority(UserRole.USER));
+        }
+
+        return authorities;
     }
 
     /**

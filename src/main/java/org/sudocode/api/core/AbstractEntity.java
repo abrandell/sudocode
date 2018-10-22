@@ -27,7 +27,6 @@ public abstract class AbstractEntity implements Serializable {
 
     @JsonIgnore
     private final String UUID = java.util.UUID.randomUUID().toString();
-    ;
 
     /**
      * @return The UUID in the form of a {@literal String}.
