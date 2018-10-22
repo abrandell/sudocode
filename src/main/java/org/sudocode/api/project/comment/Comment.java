@@ -1,25 +1,18 @@
 package org.sudocode.api.project.comment;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.google.common.base.Preconditions;
 import lombok.*;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 import org.sudocode.api.core.AbstractAuditableEntity;
-import org.sudocode.api.core.AbstractEntity;
-import org.sudocode.api.project.domain.Project;
-import org.sudocode.api.user.domain.User;
+import org.sudocode.api.project.Project;
+import org.sudocode.api.user.User;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-import java.time.LocalDateTime;
 
 import static java.time.LocalDateTime.now;
 

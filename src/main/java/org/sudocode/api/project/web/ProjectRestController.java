@@ -1,4 +1,4 @@
-package org.sudocode.api.project.web.rest;
+package org.sudocode.api.project.web;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -8,17 +8,15 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.sudocode.api.core.TimeOutService;
+import org.sudocode.api.core.security.CurrentUser;
 import org.sudocode.api.project.ProjectNotFoundException;
 import org.sudocode.api.project.ProjectService;
 import org.sudocode.api.project.comment.Comment;
 import org.sudocode.api.project.comment.CommentDTO;
 import org.sudocode.api.project.comment.CommentMapper;
-import org.sudocode.api.project.domain.InvalidDifficultyException;
-import org.sudocode.api.project.domain.Project;
-import org.sudocode.api.project.web.ProjectDTO;
-import org.sudocode.api.project.web.ProjectMapper;
-import org.sudocode.api.project.web.ProjectSummaryDTO;
-import org.sudocode.api.user.domain.User;
+import org.sudocode.api.project.InvalidDifficultyException;
+import org.sudocode.api.project.Project;
+import org.sudocode.api.user.User;
 
 import java.util.concurrent.ExecutionException;
 
@@ -26,7 +24,7 @@ import static org.sudocode.api.core.util.Constants.JSON;
 
 
 /**
- * RestController for {@link org.sudocode.api.project.domain.Project}.
+ * RestController for {@link Project}.
  */
 @RestController
 @RequestMapping("api/projects")
@@ -53,7 +51,7 @@ public final class ProjectRestController {
      * @see ProjectService#postProject(Project, User)
      */
     @PostMapping(consumes = JSON, produces = JSON)
-    public ProjectDTO post(@RequestBody Project project, @AuthenticationPrincipal User currentUser)
+    public ProjectDTO post(@RequestBody Project project, @CurrentUser User currentUser)
             throws ExecutionException {
         project.setId(null);
 
@@ -103,7 +101,7 @@ public final class ProjectRestController {
      */
     @PostMapping(value = "/{id}/comments", consumes = JSON, produces = JSON)
     public CommentDTO postComment(@PathVariable("id") Long projectId, @RequestBody Comment comment,
-                                  @AuthenticationPrincipal User user) throws ExecutionException {
+                                  @CurrentUser User user) throws ExecutionException {
         comment.setId(null);
         timeOutService.handleTimeOut(user.getId());
         return commentMapper.toDTO(projectService.postComment(comment, projectId, user));
@@ -113,7 +111,7 @@ public final class ProjectRestController {
     public CommentDTO updateComment(@PathVariable("projectId") Long projectId,
                                     @PathVariable("commentId") Long commentId,
                                     @RequestBody Comment comment,
-                                    @AuthenticationPrincipal User user) throws ExecutionException {
+                                    @CurrentUser User user) throws ExecutionException {
         timeOutService.handleTimeOut(user.getId());
 
         return commentMapper.toDTO(
@@ -129,7 +127,7 @@ public final class ProjectRestController {
     @DeleteMapping(value = "/{projectId}/comments/{commentId}")
     public void deleteCommentById(@PathVariable("projectId") Long projectId,
                                   @PathVariable("commentId") Long commentId,
-                                  @AuthenticationPrincipal User currentUser) {
+                                  @CurrentUser User currentUser) {
         this.projectService.deleteCommentById(commentId, currentUser);
     }
 
@@ -141,7 +139,7 @@ public final class ProjectRestController {
     @PutMapping(value = "/{id}", consumes = JSON, produces = JSON)
     public ProjectDTO update(@PathVariable("id") Long id,
                              @RequestBody Project project,
-                             @AuthenticationPrincipal User user) throws ExecutionException {
+                             @CurrentUser User user) throws ExecutionException {
         timeOutService.handleTimeOut(user.getId());
         return projectMapper.toDTO(projectService.updateProject(id, project, user));
     }
@@ -152,7 +150,7 @@ public final class ProjectRestController {
      * @see ProjectService#deleteProjectById(Long, User)
      */
     @DeleteMapping(value = "/{id}")
-    public void delete(@PathVariable("id") Long id, @AuthenticationPrincipal User user) {
+    public void delete(@PathVariable("id") Long id, @CurrentUser User user) {
         projectService.deleteProjectById(id, user);
     }
 

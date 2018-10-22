@@ -12,15 +12,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sudocode.api.project.comment.Comment;
 import org.sudocode.api.project.comment.CommentRepository;
-import org.sudocode.api.project.domain.Project;
-import org.sudocode.api.project.domain.ProjectRepository;
-import org.sudocode.api.user.domain.User;
+import org.sudocode.api.user.User;
 
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
-import static org.sudocode.api.project.domain.Difficulty.*;
+import static org.sudocode.api.project.Difficulty.*;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)

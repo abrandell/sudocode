@@ -3,7 +3,7 @@ package org.sudocode.api.project.web;
 import lombok.Getter;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.sudocode.api.project.domain.Difficulty;
+import org.sudocode.api.project.Difficulty;
 import org.sudocode.api.user.web.UserSummaryDTO;
 
 import java.time.LocalDateTime;

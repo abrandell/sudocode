@@ -7,28 +7,25 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.lang.NonNull;
+import org.springframework.stereotype.Service;
 import org.sudocode.api.project.ProjectService;
 import org.sudocode.api.project.comment.Comment;
-import org.sudocode.api.project.comment.CommentRepository;
-import org.sudocode.api.project.domain.Project;
-import org.sudocode.api.project.domain.ProjectRepository;
+import org.sudocode.api.project.Project;
 
 import java.time.LocalDateTime;
 import java.util.concurrent.TimeUnit;
 
 import static org.sudocode.api.core.util.Constants.DEFAULT_LOCAL_DATE_TIME;
 
-@Configuration
-public class CacheConfig {
+@Service
+public class CacheService {
 
 
-    private final CommentRepository commentRepo;
-    private final ProjectRepository projectRepo;
+    private final ProjectService projectService;
 
     @Autowired
-    public CacheConfig(CommentRepository commentRepo, ProjectRepository projectRepo) {
-        this.commentRepo = commentRepo;
-        this.projectRepo = projectRepo;
+    public CacheService(ProjectService projectService) {
+        this.projectService = projectService;
     }
 
 
@@ -50,12 +47,7 @@ public class CacheConfig {
                            .build(new CacheLoader<>() {
                                @Override
                                public LocalDateTime load(@NonNull Long userId) {
-                                   var commentDate = commentRepo.fetchLatestPostDateByAuthorId(userId)
-                                                                .orElse(DEFAULT_LOCAL_DATE_TIME);
-                                   var postDate = projectRepo.fetchLatestPostDateByAuthorId(userId)
-                                                             .orElse(DEFAULT_LOCAL_DATE_TIME);
-
-                                   return commentDate.compareTo(postDate) > 0 ? commentDate : postDate;
+                                   return projectService.fetchLatestPostDateByAuthorId(userId);
                                }
                            });
 

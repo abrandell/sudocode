@@ -1,6 +1,5 @@
-package org.sudocode.api.project.domain;
+package org.sudocode.api.project;
 
-import com.google.common.collect.ImmutableMap;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,10 +11,9 @@ import org.springframework.data.domain.Persistable;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.sudocode.api.core.AbstractAuditableEntity;
-import org.sudocode.api.user.domain.User;
+import org.sudocode.api.user.User;
 
 import javax.persistence.*;
-import java.util.Map;
 
 @Entity
 @Getter

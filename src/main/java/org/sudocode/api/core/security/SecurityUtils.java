@@ -1,9 +1,9 @@
-package org.sudocode.api.core;
+package org.sudocode.api.core.security;
 
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.sudocode.api.user.UserNotLoggedInException;
-import org.sudocode.api.user.domain.User;
+import org.sudocode.api.user.User;
 
 import java.security.Principal;
 

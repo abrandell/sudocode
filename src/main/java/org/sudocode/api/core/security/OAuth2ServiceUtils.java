@@ -1,4 +1,4 @@
-package org.sudocode.api.core;
+package org.sudocode.api.core.security;
 
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;

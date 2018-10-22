@@ -1,4 +1,4 @@
-package org.sudocode.api.project.domain;
+package org.sudocode.api.project;
 
 public class InvalidDifficultyException extends RuntimeException {
 

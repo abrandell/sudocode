@@ -1,12 +1,7 @@
 package org.sudocode.api.user.web;
 
-import com.google.common.base.Preconditions;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
-import org.sudocode.api.user.domain.User;
-import org.sudocode.api.user.web.UserDTO;
-import org.sudocode.api.user.web.UserSummaryDTO;
+import org.sudocode.api.user.User;
 
 import static com.google.common.base.Preconditions.*;
 

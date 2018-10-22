@@ -2,8 +2,8 @@ package org.sudocode.api.project.web;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.sudocode.api.project.domain.Project;
-import org.sudocode.api.user.domain.User;
+import org.sudocode.api.project.Project;
+import org.sudocode.api.user.User;
 import org.sudocode.api.user.web.UserMapper;
 
 @Component

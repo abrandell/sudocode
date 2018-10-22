@@ -1,7 +1,7 @@
 package org.sudocode.api.user.web;
 
 import lombok.*;
-import org.sudocode.api.user.domain.User;
+import org.sudocode.api.user.User;
 
 /**
  * DTO/Value Object for returning serialized User entities.

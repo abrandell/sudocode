@@ -6,20 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.lang.NonNull;
-import org.springframework.lang.Nullable;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.sudocode.api.core.SecurityUtils;
-import org.sudocode.api.user.domain.User;
-import org.sudocode.api.user.domain.UserRepository;
 import org.sudocode.api.user.web.UserDTO;
-import org.sudocode.api.user.web.UserSummaryDTO;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import java.util.Optional;
 
 /**
  * Service for user transactions. Read only by default & rolls back for any exception.

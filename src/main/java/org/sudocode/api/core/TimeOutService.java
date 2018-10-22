@@ -4,11 +4,10 @@ import com.google.common.cache.LoadingCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.sudocode.api.project.ProjectService;
 import org.sudocode.api.project.comment.CommentRepository;
-import org.sudocode.api.project.domain.ProjectRepository;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -25,15 +24,12 @@ public class TimeOutService {
 
     private final LoadingCache<Long, LocalDateTime> loadingCache;
     private final Logger LOG = LoggerFactory.getLogger(TimeOutService.class);
-    private final CommentRepository commentRepo;
-    private final ProjectRepository projectRepo;
+    private final ProjectService projectService;
 
     @Autowired
-    public TimeOutService(LoadingCache<Long, LocalDateTime> loadingCache,
-                          CommentRepository commentRepo, ProjectRepository projectRepo) {
+    public TimeOutService(LoadingCache<Long, LocalDateTime> loadingCache, ProjectService projectService) {
         this.loadingCache = loadingCache;
-        this.commentRepo = commentRepo;
-        this.projectRepo = projectRepo;
+        this.projectService = projectService;
     }
 
     public void handleTimeOut(Long userId) throws ExecutionException {
@@ -74,12 +70,9 @@ public class TimeOutService {
      */
     protected LocalDateTime lastPostDateByUser(Long id) throws ExecutionException {
 
+        // To not make more queries than needed.
         if (!isTimedOut(id)) {
-            LOG.info("---- Line 88: Queries from TimeOutService#getLastPostDateByAuthor");
-            var lastCommentDate = commentRepo.fetchLatestPostDateByAuthorId(id).orElse(DEFAULT_LOCAL_DATE_TIME);
-            var lastPostDate = projectRepo.fetchLatestPostDateByAuthorId(id).orElse(DEFAULT_LOCAL_DATE_TIME);
-
-            return lastCommentDate.compareTo(lastPostDate) > 0 ? lastCommentDate : lastPostDate;
+            return projectService.fetchLatestPostDateByAuthorId(id);
         }
 
         return DEFAULT_LOCAL_DATE_TIME;

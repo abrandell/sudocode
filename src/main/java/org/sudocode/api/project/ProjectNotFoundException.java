@@ -1,7 +1,5 @@
 package org.sudocode.api.project;
 
-import org.sudocode.api.project.domain.Project;
-
 /**
  * Thrown when a {@link Project} couldn't be found in the DB.
  */

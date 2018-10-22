@@ -1,4 +1,4 @@
-package org.sudocode.api.user.domain;
+package org.sudocode.api.user;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;

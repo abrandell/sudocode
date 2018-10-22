@@ -1,4 +1,4 @@
-package org.sudocode.api.project.domain;
+package org.sudocode.api.project;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,7 +25,7 @@ import java.util.Optional;
         propagation = Propagation.MANDATORY,
         rollbackFor = Exception.class
 )
-public interface ProjectRepository extends JpaRepository<Project, Long> {
+interface ProjectRepository extends JpaRepository<Project, Long> {
 
     @Query("SELECT NEW " +
             "org.sudocode.api.project.web.ProjectSummaryDTO" +

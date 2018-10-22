@@ -1,7 +1,5 @@
-package org.sudocode.api.user.domain;
+package org.sudocode.api.user;
 
-import com.fasterxml.jackson.databind.util.ClassUtil;
-import org.apache.commons.lang3.ClassUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -25,7 +23,7 @@ import java.util.Optional;
         propagation = Propagation.MANDATORY,
         rollbackFor = Exception.class
 )
-public interface UserRepository extends JpaRepository<User, Long> {
+interface UserRepository extends JpaRepository<User, Long> {
 
     static String USER_DTO_PATH = "org.sudocode.api.user.web.UserDTO";
 

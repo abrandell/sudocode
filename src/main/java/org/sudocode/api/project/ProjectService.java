@@ -14,19 +14,14 @@ import org.springframework.transaction.annotation.Transactional;
 import org.sudocode.api.core.TooManyRequestException;
 import org.sudocode.api.project.comment.Comment;
 import org.sudocode.api.project.comment.CommentRepository;
-import org.sudocode.api.project.domain.Difficulty;
-import org.sudocode.api.project.domain.InvalidDifficultyException;
-import org.sudocode.api.project.domain.Project;
-import org.sudocode.api.project.domain.ProjectRepository;
-import org.sudocode.api.project.web.ProjectPostForm;
 import org.sudocode.api.project.web.ProjectSummaryDTO;
-import org.sudocode.api.user.domain.User;
+import org.sudocode.api.user.User;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.time.LocalDateTime;
 
 import static java.time.LocalDateTime.now;
-import static org.sudocode.api.project.domain.Difficulty.fromText;
+import static org.sudocode.api.core.util.Constants.DEFAULT_LOCAL_DATE_TIME;
+import static org.sudocode.api.project.Difficulty.fromText;
 
 /**
  * Service for projects (and comments) transactions. Transactions start here for all projects and comments.
@@ -52,14 +47,7 @@ public class ProjectService {
         this.commentRepo = commentRepo;
     }
 
-    /**
-     * Post a new project.
-     *
-     * @param project the project to post
-     * @return DTO builder the newly posted project.
-     * @see Project
-     * @see ProjectPostForm
-     */
+
     @Transactional(rollbackFor = Exception.class)
     public Project postProject(Project project, User currentUser) {
         project.setAuthor(currentUser);
@@ -219,6 +207,13 @@ public class ProjectService {
      */
     public Page<Comment> fetchCommentsByProjectId(Long id, Pageable pageable) {
         return commentRepo.fetchAllByProjectId(id, pageable);
+    }
+
+    public LocalDateTime fetchLatestPostDateByAuthorId(Long id) {
+        var lastCommentDate = commentRepo.fetchLatestPostDateByAuthorId(id).orElse(DEFAULT_LOCAL_DATE_TIME);
+        var lastPostDate = projectRepo.fetchLatestPostDateByAuthorId(id).orElse(DEFAULT_LOCAL_DATE_TIME);
+
+        return lastCommentDate.compareTo(lastPostDate) > 0 ? lastCommentDate : lastPostDate;
     }
 
 

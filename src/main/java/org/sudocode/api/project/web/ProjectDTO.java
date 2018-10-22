@@ -3,8 +3,8 @@ package org.sudocode.api.project.web;
 import lombok.Getter;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.sudocode.api.project.domain.Difficulty;
-import org.sudocode.api.project.domain.Project;
+import org.sudocode.api.project.Difficulty;
+import org.sudocode.api.project.Project;
 import org.sudocode.api.user.web.UserDTO;
 
 import java.time.LocalDateTime;
@@ -38,7 +38,7 @@ public class ProjectDTO {
      *
      * Not to be used directly.
      *
-     * @see org.sudocode.api.project.domain.ProjectRepository
+     * @see ProjectRepository
      */
     @Deprecated
     public ProjectDTO(Long id, String title, Difficulty difficulty, String description,
