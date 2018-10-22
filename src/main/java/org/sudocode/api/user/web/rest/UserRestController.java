@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +20,7 @@ import org.sudocode.api.user.web.UserMapper;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import java.security.Principal;
 
@@ -45,19 +47,16 @@ public class UserRestController {
     /**
      * GET /api/users/me
      * Used for the client to check if a user is logged in.
-     * Returns an empty string if not authenticated so no exception gets thrown
+     * Returns an empty body if not authenticated so no exception gets thrown
      *
      * @return Currently logged in user in DTO form.
-     * @see UserService#currentUser(User)
      */
     @GetMapping(value = "/me", produces = JSON)
-    public ResponseEntity<?> currentUser(Principal principal) {
-        if (principal == null) {
+    public ResponseEntity<?> currentUser(Authentication auth) {
+        if (auth == null) {
             return ResponseEntity.ok().build();
         }
-        return ResponseEntity.ok(
-                mapper.toDTO(userService.currentUser(getCurrentUser()))
-        );
+        return ResponseEntity.ok((User) auth.getPrincipal());
     }
 
     /**

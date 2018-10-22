@@ -7,17 +7,15 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.springframework.data.annotation.AccessType;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.util.Assert;
-import org.sudocode.api.core.security.Authority;
-import org.sudocode.api.core.security.UserRole;
 
 import javax.persistence.*;
 import javax.validation.constraints.Pattern;
 
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static org.springframework.data.annotation.AccessType.*;
 import static org.sudocode.api.core.util.Constants.*;
@@ -48,9 +46,9 @@ public class User implements OAuth2User {
     @Column(nullable = false)
     private boolean hireable;
 
-    @OneToMany(fetch = FetchType.EAGER)
-    @Column(nullable = false)
-    private Set<Authority> authorities;
+//    @ElementCollection
+//    @Column(nullable = false)
+//    private Set<GrantedAuthority> authorities;
 
     /**
      * Required for principal. Returns ID since that never changes (unless Github decides to change it).
@@ -98,13 +96,13 @@ public class User implements OAuth2User {
     }
 
     @Override
-    public Set<Authority> getAuthorities() {
-        if (authorities == null) {
-            this.authorities = new HashSet<>();
-            authorities.add(new Authority(UserRole.USER));
-        }
+    public Collection<GrantedAuthority> getAuthorities() {
+//        if (authorities == null) {
+//            authorities = new HashSet<>();
+//            authorities.add((GrantedAuthority) () -> "ROLE_USER");
+//        }
 
-        return authorities;
+        return AuthorityUtils.createAuthorityList("ROLE_USER");
     }
 
     /**

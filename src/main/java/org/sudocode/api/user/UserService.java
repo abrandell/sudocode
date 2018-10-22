@@ -1,8 +1,11 @@
 package org.sudocode.api.user;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -12,8 +15,10 @@ import org.sudocode.api.core.SecurityUtils;
 import org.sudocode.api.user.domain.User;
 import org.sudocode.api.user.domain.UserRepository;
 import org.sudocode.api.user.web.UserDTO;
+import org.sudocode.api.user.web.UserSummaryDTO;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.Optional;
 
 /**
@@ -29,25 +34,17 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository userRepo;
+    private final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     @Autowired
     UserService(UserRepository userRepo) {
         this.userRepo = userRepo;
     }
 
-    /**
-     * Get the currently logged in user.
-     *
-     * @return the currently logged in user.
-     * @throws UserNotLoggedInException if the {@code Principal} is null.
-     */
     @Transactional(rollbackFor = Exception.class)
-    public User currentUser(@Nullable User user) {
-        if (user == null) {
-            return SecurityUtils.getCurrentUser();
-        }
-
-        return userRepo.existsById(user.getId()) ? user : userRepo.save(user);
+    public User saveUser(@NonNull User user) {
+        logger.info("Saving user to database {}", user);
+        return userRepo.save(user);
     }
 
     /**
@@ -89,7 +86,7 @@ public class UserService {
      *
      * @param id builder the user to delete.
      */
-    @PreAuthorize("#id.equals(principal.id)")
+    @PreAuthorize("#id.equals(principal.id) || hasRole('ROLE_ADMIN')")
     @Transactional(rollbackFor = Exception.class)
     public void deleteById(Long id) {
         userRepo.deleteById(id);
