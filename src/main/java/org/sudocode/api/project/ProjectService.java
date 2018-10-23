@@ -132,7 +132,7 @@ public class ProjectService {
             commentRepo.deleteCommentsByProjectId(id);
             projectRepo.delete(project);
 
-            LOGGER.info("Deleted project " + id + " by " + currentUser.getLogin());
+            LOGGER.info("Deleted project ID: {} by {}", id ,currentUser.getLogin());
         });
 
     }
@@ -158,7 +158,7 @@ public class ProjectService {
         comment.setProject(projectRepo.findById(projectId)
                            .orElseThrow(() -> new ProjectNotFoundException(projectId)));
 
-        LOGGER.info("Posting comment by " + user.getId() + " at " + now());
+        LOGGER.info("Posting comment by user ID: {} at {}", user.getId(), now());
         return commentRepo.save(comment);
     }
 
