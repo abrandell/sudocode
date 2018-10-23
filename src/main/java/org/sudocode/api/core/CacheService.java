@@ -20,7 +20,6 @@ import static org.sudocode.api.core.util.Constants.DEFAULT_LOCAL_DATE_TIME;
 @Service
 public class CacheService {
 
-
     private final ProjectService projectService;
 
     @Autowired
@@ -38,6 +37,7 @@ public class CacheService {
      * @return LoadingCache that fetches both dates (if they exist) for the last {@link Project} and {@link Comment} posted.
      *         The load function returns the latest.
      * @see LoadingCache
+     * @see ProjectService#fetchLatestPostDateByAuthorId(Long)
      */
     @Bean
     public LoadingCache<Long, LocalDateTime> loadingCache() {
