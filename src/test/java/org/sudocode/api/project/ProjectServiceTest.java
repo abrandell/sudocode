@@ -193,8 +193,6 @@ class ProjectServiceTest {
 
         assertAll("Posting comment with project ID found",
                 () -> assertNotNull(result),
-                () -> assertEquals(user1, result.getAuthor(),
-                        "Author was not set in the method postComment"),
                 () -> assertEquals(comment1, result,
                         "Comment and result should equal"),
                 () -> verify(commentRepo, times(1)).existsById(comment1.getId()),

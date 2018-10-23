@@ -50,7 +50,6 @@ public class ProjectService {
 
     @Transactional(rollbackFor = Exception.class)
     public Project postProject(Project project, User currentUser) {
-        project.setAuthor(currentUser);
         return projectRepo.save(project);
     }
 
@@ -160,7 +159,6 @@ public class ProjectService {
                            .orElseThrow(() -> new ProjectNotFoundException(projectId)));
 
         LOGGER.info("Posting comment by " + user.getId() + " at " + now());
-        comment.setAuthor(user);
         return commentRepo.save(comment);
     }
 

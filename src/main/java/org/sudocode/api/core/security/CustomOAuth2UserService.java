@@ -12,8 +12,9 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.OAuth2Error;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 import org.sudocode.api.user.User;
+
+import static org.springframework.http.HttpHeaders.*;
 
 @Service
 public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
@@ -33,11 +34,12 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
         final String accessToken = userRequest.getAccessToken().getTokenValue();
 
-        RestTemplate restTemplate = new RestTemplateBuilder().interceptors(
-                (ClientHttpRequestInterceptor) (request, body, execution) -> {
-                    request.getHeaders().add(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
-                    return execution.execute(request, body);
-                }).build();
+        var restTemplate = new RestTemplateBuilder()
+                .interceptors((ClientHttpRequestInterceptor)
+                        (request, body, execution) -> {
+                            request.getHeaders().add(AUTHORIZATION, "Bearer " + accessToken);
+                            return execution.execute(request, body);
+                        }).build();
 
         final String userInfoEndpoint = userRequest.getClientRegistration().
                 getProviderDetails().getUserInfoEndpoint().getUri();

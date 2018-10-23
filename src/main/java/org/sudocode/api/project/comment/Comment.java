@@ -5,6 +5,7 @@ import lombok.*;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.validator.constraints.Length;
+import org.springframework.data.annotation.CreatedBy;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
@@ -35,6 +36,7 @@ public class Comment extends AbstractAuditableEntity {
     @Length(min = 3, max = 255)
     private String body;
 
+    @CreatedBy
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     private User author;
 

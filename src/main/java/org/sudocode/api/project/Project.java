@@ -7,6 +7,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.validator.constraints.Length;
+import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.domain.Persistable;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
@@ -35,6 +36,7 @@ public class Project extends AbstractAuditableEntity implements Persistable<Long
     @Length(min = 8, max = 255)
     private String description;
 
+    @CreatedBy
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_fk")
     private User author;

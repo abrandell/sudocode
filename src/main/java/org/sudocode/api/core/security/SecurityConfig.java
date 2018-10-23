@@ -16,7 +16,7 @@ import java.util.Map;
 import static org.springframework.http.HttpMethod.*;
 
 @Configuration
-@EnableWebSecurity(debug = true)
+@EnableWebSecurity(debug = false)
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
@@ -52,10 +52,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .anyRequest()
                     .authenticated()
                     .and()
-                .oauth2Login().loginPage("/")
+                .oauth2Login()
+                    .loginPage("/")
                     .userInfoEndpoint()
-                    .customUserType(User.class, "github")
-                    .userService(oAuth2UserService())
+                    .userService(new CustomOAuth2UserService())
                     .and()
                 .successHandler(oauth2LoginUtils.successHandler());
     }
