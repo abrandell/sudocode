@@ -44,12 +44,12 @@ public final class ProjectRestController {
     /**
      * POST /api/projects
      *
-     * @see ProjectService#postProject(Project, User)
+     * @see ProjectService#postProject(Project)
      */
     @PostMapping(consumes = JSON, produces = JSON)
-    public ProjectDTO post(@RequestBody Project project, @CurrentUser User currentUser) {
+    public ProjectDTO post(@RequestBody Project project) {
         project.setId(null);
-        return projectMapper.toDTO(projectService.postProject(project, currentUser));
+        return projectMapper.toDTO(projectService.postProject(project));
     }
 
     /**

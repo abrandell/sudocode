@@ -38,7 +38,7 @@ public class ProjectDTO {
      *
      * Not to be used directly.
      *
-     * @see ProjectRepository
+     * @see org.sudocode.api.project.ProjectRepository
      */
     @Deprecated
     public ProjectDTO(Long id, String title, Difficulty difficulty, String description,
