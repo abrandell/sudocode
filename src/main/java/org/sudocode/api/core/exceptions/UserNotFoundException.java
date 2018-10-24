@@ -1,4 +1,4 @@
-package org.sudocode.api.user;
+package org.sudocode.api.core.exceptions;
 
 /**
  * Thrown when a user couldn't be found by the given param in the DB.

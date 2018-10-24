@@ -50,23 +50,23 @@ public class ProjectService {
 
 
     @Transactional(rollbackFor = Exception.class)
-    public Project postProject(Project project, User currentUser) {
+    public Project postProject(Project project) {
         return projectRepo.save(project);
     }
 
 
     /**
-     * Returns a page builder ProjectSummaryDTO's based on the given criteria. Converts the difficulty string (if not null or
-     * empty) to the enum value.
+     * Returns a page of {@link ProjectSummaryDTO} based on the given criteria.
+     * Converts the difficulty string (if not null or empty) to the {@link Difficulty} enum.
      * <br>
      * Casing does not matter.
      *
      * @param title       Title to search for.
-     * @param difficulty  String value builder the difficulty to search for.
+     * @param difficulty  String value of the difficulty to search for.
      * @param description Description to search for.
      * @param pageable    Pageable params.
-     * @return Page builder ProjectSummaryDTO's.
-     * @throws InvalidDifficultyException if the String provided isn't a a {@link Difficulty} enum value.
+     * @return Page of {@link ProjectSummaryDTO}s.
+     * @throws InvalidDifficultyException if the difficulty param string isn't a a {@link Difficulty} enum value.
      * @see Pageable
      * @see ProjectSummaryDTO
      * @see Difficulty#fromText(String)
@@ -79,11 +79,10 @@ public class ProjectService {
     }
 
     /**
-     * Searches for and returns a DTO builder project based on id.
+     * Searches for and returns a project based on id.
      *
      * @param id builder the project to fetch.
-     * @return ProjectDTO builder the project found.
-     * @throws  if the project couldn't be found, or if id was null.
+     * @return the project if found.
      */
     public Project fetchById(Long id) {
         return projectRepo.fetchById(id).orElseThrow(() -> new ProjectNotFoundException(id));
@@ -92,8 +91,8 @@ public class ProjectService {
     /**
      * Updates the given project.
      *
-     * @param id builder the project to updateProject.
-     * @return {@code ProjectDTO} builder the updated (or new) {@link Project}.
+     * @param id of the project to update..
+     * @return The updated (or new) {@link Project}.
      */
     @Modifying
     @Transactional(rollbackFor = Exception.class)
@@ -109,7 +108,7 @@ public class ProjectService {
                           .orElseGet(() -> {
                               // Make sure not to replace an already existing project
                               newProject.setId(projectRepo.existsById(id) ? null : id);
-                              return postProject(newProject, currentUser);
+                              return postProject(newProject);
                           });
     }
 
@@ -141,10 +140,9 @@ public class ProjectService {
      * Post a comment.
      *
      * @param comment
-     * @param projectId id builder the project to comment on.
-     * @return DTO builder newly created comment.
+     * @param projectId id of the project to comment on.
+     * @return The newly created comment.
      * @throws ProjectNotFoundException if the {@literal projectId} does not match any project id in the DB.
-     * @throws TooManyRequestException  if the last {@link Comment} or {@link Project} posted by the user was under 1 min ago.
      */
     @Transactional(rollbackFor = Exception.class)
     public Comment postComment(Comment comment, Long projectId, User user) {
@@ -194,11 +192,11 @@ public class ProjectService {
     }
 
     /**
-     * Fetches a page with all Comment DTO's for the given project.
+     * Fetches a page with all comments for the given project.
      *
-     * @param id       builder the project to fetch comments for.
+     * @param id       id of the project to fetch comments for.
      * @param pageable the Page request.
-     * @return Page builder all comment DTO's for the given project.
+     * @return Page of all comments for the given project.
      * @see Pageable
      */
     public Page<Comment> fetchCommentsByProjectId(Long id, Pageable pageable) {

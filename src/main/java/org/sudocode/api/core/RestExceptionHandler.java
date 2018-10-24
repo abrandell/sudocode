@@ -4,8 +4,8 @@ import org.springframework.hateoas.VndErrors;
 import org.springframework.web.bind.annotation.*;
 
 import org.sudocode.api.core.exceptions.*;
-import org.sudocode.api.user.UserNotFoundException;
-import org.sudocode.api.user.UserNotLoggedInException;
+import org.sudocode.api.core.exceptions.UserNotFoundException;
+import org.sudocode.api.core.exceptions.UserNotLoggedInException;
 
 import static org.springframework.hateoas.MediaTypes.*;
 import static org.springframework.http.HttpStatus.*;

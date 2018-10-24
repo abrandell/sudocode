@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import org.springframework.web.client.RestTemplate;
+import org.sudocode.api.core.exceptions.UserNotFoundException;
 import org.sudocode.api.user.web.UserDTO;
 
 /**

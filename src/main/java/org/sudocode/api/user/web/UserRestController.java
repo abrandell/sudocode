@@ -6,7 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-import org.sudocode.api.user.UserNotFoundException;
+import org.sudocode.api.core.exceptions.UserNotFoundException;
 import org.sudocode.api.user.UserService;
 import org.sudocode.api.user.User;
 

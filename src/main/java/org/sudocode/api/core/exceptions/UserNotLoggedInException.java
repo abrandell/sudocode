@@ -1,4 +1,4 @@
-package org.sudocode.api.user;
+package org.sudocode.api.core.exceptions;
 
 import org.springframework.security.core.AuthenticatedPrincipal;
 import org.springframework.security.core.Authentication;

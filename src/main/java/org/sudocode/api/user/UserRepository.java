@@ -20,11 +20,12 @@ import java.util.Optional;
 @Repository
 @Transactional(
         readOnly = true,
-        rollbackFor = Exception.class
+        rollbackFor = Exception.class,
+        propagation = Propagation.MANDATORY
 )
 interface UserRepository extends JpaRepository<User, Long> {
 
-    static String USER_DTO_PATH = "org.sudocode.api.user.web.UserDTO";
+    String USER_DTO_PATH = "org.sudocode.api.user.web.UserDTO";
 
     @Deprecated
     @Query("SELECT NEW " +
