@@ -133,6 +133,10 @@ public class User implements OAuth2User {
         }
 
 
+        /**
+         * Optional. Defaults to a placeholder image.
+         * @return Builder
+         */
         public Builder avatarUrl(String avatarUrl) {
             if (URL_REGEX_PATTERN.matcher(avatarUrl).matches()) {
                 this.avatarUrl = avatarUrl;

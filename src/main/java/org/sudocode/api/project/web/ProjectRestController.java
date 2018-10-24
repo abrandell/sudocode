@@ -2,6 +2,8 @@ package org.sudocode.api.project.web;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -31,7 +33,7 @@ public final class ProjectRestController {
     private final ProjectService projectService;
     private final ProjectMapper projectMapper;
     private final CommentMapper commentMapper;
-    private final Log LOG = LogFactory.getLog(this.getClass());
+    private final Logger logger = LoggerFactory.getLogger(ProjectRestController.class);
 
     @Autowired
     public ProjectRestController(ProjectService projectService,
@@ -94,7 +96,7 @@ public final class ProjectRestController {
      */
     @PostMapping(value = "/{id}/comments", consumes = JSON, produces = JSON)
     public CommentDTO postComment(@PathVariable("id") Long projectId, @RequestBody Comment comment,
-                                  @CurrentUser User user) throws ExecutionException {
+                                  @CurrentUser User user) {
         comment.setId(null);
         return commentMapper.toDTO(projectService.postComment(comment, projectId, user));
     }
@@ -143,5 +145,4 @@ public final class ProjectRestController {
     public void delete(@PathVariable("id") Long id, @CurrentUser User user) {
         projectService.deleteProjectById(id, user);
     }
-
 }

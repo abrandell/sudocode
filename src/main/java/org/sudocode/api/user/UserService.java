@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
@@ -20,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import org.springframework.web.client.RestTemplate;
 import org.sudocode.api.core.exceptions.UserNotFoundException;
+import org.sudocode.api.core.security.SecurityUtils;
 import org.sudocode.api.user.web.UserDTO;
 
 /**
@@ -88,7 +90,6 @@ public class UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2U
      *
      * @param id builder the user to delete.
      */
-    @PreAuthorize("#id.equals(principal.id) || hasRole('ROLE_ADMIN')")
     @Transactional(rollbackFor = Exception.class)
     public void deleteById(Long id) {
         userRepo.deleteById(id);
@@ -104,7 +105,7 @@ public class UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2U
      * @see OAuth2UserService
      */
     @Transactional(rollbackFor = Exception.class)
-    public User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
+    public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         if (userRequest.getAccessToken() == null) {
             throw new OAuth2AuthenticationException(
                     new OAuth2Error("access_token_null"), "Missing required OAuth2AccessToken");
@@ -116,9 +117,9 @@ public class UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2U
 
         RestTemplate template = new RestTemplateBuilder()
                 .interceptors((ClientHttpRequestInterceptor) (request, body, execution) -> {
-                            request.getHeaders().add(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
-                            return execution.execute(request, body);
-                        })
+                    request.getHeaders().add(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
+                    return execution.execute(request, body);
+                })
                 .build();
 
         final String userInfoEndpoint = userRequest.getClientRegistration().getProviderDetails()

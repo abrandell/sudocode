@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.sudocode.api.core.exceptions.UserNotFoundException;
@@ -82,6 +83,7 @@ public class UserRestController {
     }
 
 
+    @PreAuthorize("#id.equals(principal.id) || hasRole('ROLE_ADMIN')")
     @DeleteMapping(value = "/{id}", produces = JSON)
     public void deleteById(@PathVariable("id") Long id) {
         userService.deleteById(id);

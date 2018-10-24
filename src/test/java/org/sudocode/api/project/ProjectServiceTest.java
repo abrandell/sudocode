@@ -37,6 +37,7 @@ class ProjectServiceTest {
 
     @Mock
     private ProjectRepository projectRepo;
+
     @Mock
     private CommentRepository commentRepo;
 
