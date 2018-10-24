@@ -1,17 +1,24 @@
-package org.sudocode.api.core;
+package org.sudocode.api.core.security.timeout;
 
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.sudocode.api.core.exceptions.TooManyRequestException;
+import org.sudocode.api.project.Project;
 import org.sudocode.api.project.ProjectService;
+import org.sudocode.api.project.comment.Comment;
+import org.sudocode.api.user.User;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 import static org.sudocode.api.core.util.Constants.DEFAULT_LOCAL_DATE_TIME;
 
@@ -20,19 +27,17 @@ import static org.sudocode.api.core.util.Constants.DEFAULT_LOCAL_DATE_TIME;
  */
 @Service
 @Transactional(readOnly = true)
-public class TimeOutService {
+class TimeOutService {
 
-    private final LoadingCache<Long, LocalDateTime> loadingCache;
     private final Logger LOG = LoggerFactory.getLogger(TimeOutService.class);
     private final ProjectService projectService;
 
     @Autowired
-    public TimeOutService(LoadingCache<Long, LocalDateTime> loadingCache, ProjectService projectService) {
-        this.loadingCache = loadingCache;
+    public TimeOutService(ProjectService projectService) {
         this.projectService = projectService;
     }
 
-    public void handleTimeOut(Long userId) throws ExecutionException {
+    public void handleTimeOut(Long userId) {
         if (isTimedOut(userId)) {
             LOG.info(String.format("Timed out User: %d attempted to make a post.", userId));
             throw new TooManyRequestException();
@@ -51,11 +56,11 @@ public class TimeOutService {
     private void timeOutUser(Long id) {
         var currentTime = LocalDateTime.now();
         LOG.info("TOO MANY REQUESTS --- Timing out user with ID: " + id + " at " + currentTime);
-        loadingCache.put(id, currentTime);
+        loadingCache().put(id, currentTime);
     }
 
-    private boolean isTimedOut(Long id) throws ExecutionException {
-        LocalDateTime lastPosted = loadingCache.get(id);
+    private boolean isTimedOut(Long id) {
+        LocalDateTime lastPosted = loadingCache().getUnchecked(id);
 
         return Duration.between(lastPosted, LocalDateTime.now()).toSeconds() <= 30;
     }
@@ -68,7 +73,7 @@ public class TimeOutService {
      * @param id ID of the user
      * @return The latest post date between the two.
      */
-    protected LocalDateTime lastPostDateByUser(Long id) throws ExecutionException {
+    protected LocalDateTime lastPostDateByUser(Long id) {
 
         // To not make more queries than needed.
         if (!isTimedOut(id)) {
@@ -77,6 +82,33 @@ public class TimeOutService {
 
         return DEFAULT_LOCAL_DATE_TIME;
     }
+
+    /**
+     * LoadingCache that fetches the last {@link LocalDateTime} builder the most recent postProject a user made by their ID.<br>
+     * Returns the most recent date between both the latest {@link Project} and {@link Comment} made.<br>
+     * <p>
+     * This is mainly to check if a user is spamming/posting too often.
+     *
+     * @return LoadingCache that fetches both dates (if they exist) for the last {@link Project} and {@link Comment} posted.
+     *         The load function returns the latest.
+     * @see LoadingCache
+     * @see ProjectService#fetchLatestPostDateByAuthorId(Long)
+     */
+    @Bean
+    public LoadingCache<Long, LocalDateTime> loadingCache() {
+        return CacheBuilder.newBuilder()
+                           .expireAfterWrite(6, TimeUnit.MINUTES)
+                           .maximumSize(100)
+                           .build(new CacheLoader<>() {
+                               @Override
+                               public LocalDateTime load(@NonNull Long userId) {
+                                   return projectService.fetchLatestPostDateByAuthorId(userId);
+                               }
+                           });
+
+    }
+
+
 }
 
 

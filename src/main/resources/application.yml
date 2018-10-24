@@ -37,9 +37,10 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL5Dialect
-#logging:
-#  level:
-##    ROOT: trace
+logging:
+  level:
+    org.springframework.web: debug
+    com.fasterxml.jackson.databind: debug
 ---
 
 spring:

@@ -1,4 +1,4 @@
-package org.sudocode.api.config;
+package org.sudocode.api.core;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -17,12 +17,10 @@ import java.util.concurrent.TimeUnit;
 
 import static org.sudocode.api.core.util.Constants.DEFAULT_LOCAL_DATE_TIME;
 
-@Service
 public class CacheService {
 
     private final ProjectService projectService;
 
-    @Autowired
     public CacheService(ProjectService projectService) {
         this.projectService = projectService;
     }
@@ -39,7 +37,6 @@ public class CacheService {
      * @see LoadingCache
      * @see ProjectService#fetchLatestPostDateByAuthorId(Long)
      */
-    @Bean
     public LoadingCache<Long, LocalDateTime> loadingCache() {
         return CacheBuilder.newBuilder()
                            .expireAfterWrite(6, TimeUnit.MINUTES)

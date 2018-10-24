@@ -23,6 +23,8 @@ import javax.persistence.*;
 @Table(name = "projects")
 public class Project extends AbstractAuditableEntity implements Persistable<Long> {
 
+    // So the generator picks IDENTITY instead of TABLE
+    // https://vladmihalcea.com/9-high-performance-tips-when-using-mysql-with-jpa-and-hibernate/#more-7915
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
     @GenericGenerator(name = "native", strategy = "native")
@@ -38,7 +40,7 @@ public class Project extends AbstractAuditableEntity implements Persistable<Long
     private String description;
 
     @CreatedBy
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_fk")
     private User author;
 

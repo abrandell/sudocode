@@ -3,25 +3,36 @@ package org.sudocode.api.user;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.lang.NonNull;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
+import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
+import org.springframework.security.oauth2.core.OAuth2Error;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
+import org.springframework.web.client.RestTemplate;
 import org.sudocode.api.user.web.UserDTO;
 
 /**
- * Service for user transactions. Read only by default & rolls back for any exception.
+ * Service for user transactions and logging in via OAuth2. Read only by default & rolls back for any exception.
  * <p>
  * Be sure to include another transactional annotation with the required params for any modifying transaction.
+ * @see OAuth2UserService
  */
 @Service
 @Transactional(
         readOnly = true,
         rollbackFor = Exception.class
 )
-public class UserService {
+public class UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
 
     private final UserRepository userRepo;
     private final Logger logger = LoggerFactory.getLogger(UserService.class);
@@ -83,4 +94,38 @@ public class UserService {
     }
 
 
+    /**
+     * Get the user upon login from the Github OAuth2 response.
+     * Saves the user if not found in the database.
+     *
+     * @return The newly logged in user.
+     * @throws OAuth2AuthenticationException if the access token is null.
+     * @see OAuth2UserService
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
+        if (userRequest.getAccessToken() == null) {
+            throw new OAuth2AuthenticationException(
+                    new OAuth2Error("access_token_null"), "Missing required OAuth2AccessToken");
+        }
+
+        logger.debug("Access token expires in {}", userRequest.getAccessToken().getExpiresAt());
+
+        final String accessToken = userRequest.getAccessToken().getTokenValue();
+
+        RestTemplate template = new RestTemplateBuilder()
+                .interceptors((ClientHttpRequestInterceptor) (request, body, execution) -> {
+                            request.getHeaders().add(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
+                            return execution.execute(request, body);
+                        })
+                .build();
+
+        final String userInfoEndpoint = userRequest.getClientRegistration().getProviderDetails()
+                                                   .getUserInfoEndpoint().getUri();
+
+        final User user = template.getForObject(userInfoEndpoint, User.class);
+
+        Assert.notNull(user, "User cannot be null.");
+        return userRepo.findById(user.getId()).orElseGet(() -> saveUser(user));
+    }
 }

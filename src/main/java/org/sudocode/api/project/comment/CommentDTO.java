@@ -18,7 +18,6 @@ public class CommentDTO {
     private final LocalDateTime datePosted;
     private final LocalDateTime lastModifiedDate;
 
-    @JsonIgnore
     private Project project;
 
     public CommentDTO(Comment comment) {

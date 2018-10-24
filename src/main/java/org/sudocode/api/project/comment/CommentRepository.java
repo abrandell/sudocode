@@ -20,7 +20,7 @@ import java.util.Optional;
 )
 public interface CommentRepository extends JpaRepository<Comment, Long> {
 
-    @Query(value = "SELECT c FROM Comment c JOIN c.project JOIN FETCH c.author WHERE c.project.id = :id",
+    @Query(value = "SELECT c FROM Comment c JOIN FETCH c.project JOIN FETCH c.author WHERE c.project.id = :id",
         countQuery = "SELECT count(c) FROM Comment c WHERE c.project.id = :id")
     Page<Comment> fetchAllByProjectId(@Param("id") Long id, Pageable pageable);
 

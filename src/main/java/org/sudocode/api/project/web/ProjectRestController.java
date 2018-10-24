@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
-import org.sudocode.api.core.TimeOutService;
 import org.sudocode.api.core.exceptions.InvalidDifficultyException;
 import org.sudocode.api.core.exceptions.ProjectNotFoundException;
 import org.sudocode.api.core.security.CurrentUser;
@@ -30,16 +29,14 @@ import static org.sudocode.api.core.util.Constants.JSON;
 public final class ProjectRestController {
 
     private final ProjectService projectService;
-    private final TimeOutService timeOutService;
     private final ProjectMapper projectMapper;
     private final CommentMapper commentMapper;
     private final Log LOG = LogFactory.getLog(this.getClass());
 
     @Autowired
-    public ProjectRestController(ProjectService projectService, TimeOutService timeOutService,
+    public ProjectRestController(ProjectService projectService,
                                  ProjectMapper projectMapper, CommentMapper commentMapper) {
         this.projectService = projectService;
-        this.timeOutService = timeOutService;
         this.projectMapper = projectMapper;
         this.commentMapper = commentMapper;
     }
@@ -50,11 +47,8 @@ public final class ProjectRestController {
      * @see ProjectService#postProject(Project, User)
      */
     @PostMapping(consumes = JSON, produces = JSON)
-    public ProjectDTO post(@RequestBody Project project, @CurrentUser User currentUser)
-            throws ExecutionException {
+    public ProjectDTO post(@RequestBody Project project, @CurrentUser User currentUser) {
         project.setId(null);
-
-        timeOutService.handleTimeOut(currentUser.getId());
         return projectMapper.toDTO(projectService.postProject(project, currentUser));
     }
 
@@ -78,9 +72,9 @@ public final class ProjectRestController {
      *
      * @see ProjectService#fetchById(Long)
      */
-    @GetMapping(value = "/{id:[\\d]}", produces = JSON)
-    public ProjectDTO fetchById(@PathVariable("id") Long id) throws ProjectNotFoundException {
-        return projectMapper.toDTO(projectService.fetchById(id));
+    @GetMapping(value = "/{id}", produces = JSON)
+    public Project fetchById(@PathVariable("id") Long id) throws ProjectNotFoundException {
+        return projectService.fetchById(id);
     }
 
     /**
@@ -90,7 +84,7 @@ public final class ProjectRestController {
      */
     @GetMapping(value = "/{id}/comments", produces = JSON)
     public Page<CommentDTO> fetchComments(@PathVariable("id") Long id, Pageable pageable) {
-        return projectService.fetchCommentsByProjectId(id, pageable).map(commentMapper::toDTO);
+        return projectService.fetchCommentsByProjectId(id, pageable).map(CommentDTO::new);
     }
 
     /**
@@ -101,7 +95,6 @@ public final class ProjectRestController {
     @PostMapping(value = "/{id}/comments", consumes = JSON, produces = JSON)
     public CommentDTO postComment(@PathVariable("id") Long projectId, @RequestBody Comment comment,
                                   @CurrentUser User user) throws ExecutionException {
-        timeOutService.handleTimeOut(user.getId());
         comment.setId(null);
         return commentMapper.toDTO(projectService.postComment(comment, projectId, user));
     }
@@ -111,7 +104,6 @@ public final class ProjectRestController {
                                     @PathVariable("commentId") Long commentId,
                                     @RequestBody Comment comment,
                                     @CurrentUser User user) throws ExecutionException {
-        timeOutService.handleTimeOut(user.getId());
 
         return commentMapper.toDTO(
                 projectService.updateComment(comment, commentId, projectId, user)
@@ -139,7 +131,6 @@ public final class ProjectRestController {
     public ProjectDTO update(@PathVariable("id") Long id,
                              @RequestBody Project project,
                              @CurrentUser User user) throws ExecutionException {
-        timeOutService.handleTimeOut(user.getId());
         return projectMapper.toDTO(projectService.updateProject(id, project, user));
     }
 

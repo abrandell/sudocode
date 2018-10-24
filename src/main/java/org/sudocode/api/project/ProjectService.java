@@ -34,8 +34,7 @@ import static org.sudocode.api.project.Difficulty.fromText;
 @Service
 @Transactional(
         readOnly = true,
-        rollbackFor = Exception.class,
-        propagation = Propagation.REQUIRED
+        rollbackFor = Exception.class
 )
 public class ProjectService {
 
@@ -157,7 +156,6 @@ public class ProjectService {
 
         comment.setProject(projectRepo.findById(projectId)
                            .orElseThrow(() -> new ProjectNotFoundException(projectId)));
-
         LOGGER.info("Posting comment by user ID: {} at {}", user.getId(), now());
         return commentRepo.save(comment);
     }

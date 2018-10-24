@@ -50,7 +50,7 @@ interface ProjectRepository extends JpaRepository<Project, Long> {
             "FROM Project p JOIN p.author AS u WHERE p.id = :id")
     Optional<ProjectDTO> fetchDTOById(@Param("id") Long id);
 
-    @Query("SELECT p FROM Project p JOIN FETCH p.author WHERE p.id = :id")
+    @Query("SELECT p FROM Project p JOIN FETCH  p.author WHERE p.id = :id")
     Optional<Project> fetchById(@Param("id") Long id);
 
 
