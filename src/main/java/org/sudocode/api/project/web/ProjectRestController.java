@@ -73,8 +73,8 @@ public final class ProjectRestController {
      * @see ProjectService#fetchById(Long)
      */
     @GetMapping(value = "/{id}", produces = JSON)
-    public Project fetchById(@PathVariable("id") Long id) throws ProjectNotFoundException {
-        return projectService.fetchById(id);
+    public ProjectDTO fetchById(@PathVariable("id") Long id) throws ProjectNotFoundException {
+        return projectMapper.toDTO(projectService.fetchById(id));
     }
 
     /**

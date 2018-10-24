@@ -22,7 +22,6 @@ import java.util.Optional;
 @Repository
 @Transactional(
         readOnly = true,
-        propagation = Propagation.MANDATORY,
         rollbackFor = Exception.class
 )
 interface ProjectRepository extends JpaRepository<Project, Long> {

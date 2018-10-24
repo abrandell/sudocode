@@ -39,8 +39,9 @@ spring:
         dialect: org.hibernate.dialect.MySQL5Dialect
 logging:
   level:
-    org.springframework.web: debug
-    com.fasterxml.jackson.databind: debug
+    org.springframework.web.mvc: debug
+    com.fasterxml.jackson.databind: info
+
 ---
 
 spring:

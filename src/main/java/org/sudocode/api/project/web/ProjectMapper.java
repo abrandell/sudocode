@@ -20,10 +20,8 @@ public class ProjectMapper {
         return new ProjectDTO(project);
     }
 
-    @Deprecated
     public Project toEntity(ProjectDTO dto) {
         User author = userMapper.toEntity(dto.getAuthor());
-
         return Project.builder(author)
                       .id(dto.getId())
                       .description(dto.getDescription())

@@ -5,11 +5,13 @@ import lombok.Getter;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.sudocode.api.project.Project;
+import org.sudocode.api.project.web.ProjectDTO;
 import org.sudocode.api.user.web.UserDTO;
 
 import java.time.LocalDateTime;
 
 @Getter
+
 public class CommentDTO {
 
     private final Long id;
@@ -18,6 +20,7 @@ public class CommentDTO {
     private final LocalDateTime datePosted;
     private final LocalDateTime lastModifiedDate;
 
+    @JsonIgnore
     private Project project;
 
     public CommentDTO(Comment comment) {
