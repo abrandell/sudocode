@@ -18,8 +18,10 @@ import org.sudocode.api.project.comment.Comment;
 import org.sudocode.api.project.comment.CommentRepository;
 import org.sudocode.api.user.User;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
+import static java.time.LocalDateTime.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 import static org.sudocode.api.project.Difficulty.*;
@@ -291,5 +293,24 @@ class ProjectServiceTest {
     @Test
     void testFetchAll_validDifficulty() {
         service.fetchAll("title", "basic", "desc", PageRequest.of(0, 20));
+    }
+
+    @Test
+    void fetchLatestPostDateByAuthorId_noLastPost() {
+        given(projectRepo.fetchLatestPostDateByAuthorId(any())).willReturn(Optional.empty());
+        given(commentRepo.fetchLatestPostDateByAuthorId(any())).willReturn(Optional.empty());
+
+        assertEquals(MIN, service.fetchLatestPostDateByAuthorId(1L));
+    }
+
+    @Test
+    void fetchLatestDate_lastPostAvailable() {
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime earlier = now.minusSeconds(30);
+
+        given(projectRepo.fetchLatestPostDateByAuthorId(1L)).willReturn(Optional.of(now));
+        given(commentRepo.fetchLatestPostDateByAuthorId(1L)).willReturn(Optional.of(earlier));
+
+        assertEquals(now, service.fetchLatestPostDateByAuthorId(1L));
     }
 }
