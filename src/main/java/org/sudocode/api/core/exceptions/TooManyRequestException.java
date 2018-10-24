@@ -1,4 +1,4 @@
-package org.sudocode.api.core;
+package org.sudocode.api.core.exceptions;
 
 
 /**

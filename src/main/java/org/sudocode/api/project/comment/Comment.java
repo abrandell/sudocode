@@ -22,6 +22,7 @@ import static java.time.LocalDateTime.now;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "comments")
 public class Comment extends AbstractAuditableEntity {
 
     @Id

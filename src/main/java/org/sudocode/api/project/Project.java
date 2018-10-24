@@ -20,6 +20,7 @@ import javax.persistence.*;
 @Getter
 @Setter
 @NoArgsConstructor
+@Table(name = "projects")
 public class Project extends AbstractAuditableEntity implements Persistable<Long> {
 
     @Id

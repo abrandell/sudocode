@@ -37,9 +37,9 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL5Dialect
-logging:
-  level:
-#    ROOT: trace
+#logging:
+#  level:
+##    ROOT: trace
 ---
 
 spring:

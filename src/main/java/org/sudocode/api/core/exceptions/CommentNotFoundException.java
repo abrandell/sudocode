@@ -1,4 +1,4 @@
-package org.sudocode.api.project.exceptions;
+package org.sudocode.api.core.exceptions;
 
 /**
  * Exception for when a {@link org.sudocode.api.project.comment.Comment} could not be found in the DB.

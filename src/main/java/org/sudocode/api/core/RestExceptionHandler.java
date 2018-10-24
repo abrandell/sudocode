@@ -2,10 +2,8 @@ package org.sudocode.api.core;
 
 import org.springframework.hateoas.VndErrors;
 import org.springframework.web.bind.annotation.*;
-import org.sudocode.api.project.CommentNotFoundException;
-import org.sudocode.api.project.NotPostAuthorException;
-import org.sudocode.api.project.InvalidDifficultyException;
-import org.sudocode.api.project.ProjectNotFoundException;
+
+import org.sudocode.api.core.exceptions.*;
 import org.sudocode.api.user.UserNotFoundException;
 import org.sudocode.api.user.UserNotLoggedInException;
 

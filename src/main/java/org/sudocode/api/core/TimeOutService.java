@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.sudocode.api.core.exceptions.TooManyRequestException;
 import org.sudocode.api.project.ProjectService;
 import org.sudocode.api.project.comment.CommentRepository;
 

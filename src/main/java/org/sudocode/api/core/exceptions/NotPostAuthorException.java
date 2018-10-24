@@ -1,4 +1,4 @@
-package org.sudocode.api.project.exceptions;
+package org.sudocode.api.core.exceptions;
 
 public class NotPostAuthorException extends RuntimeException {
 

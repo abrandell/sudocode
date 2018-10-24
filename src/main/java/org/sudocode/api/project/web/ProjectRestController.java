@@ -5,17 +5,16 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.sudocode.api.core.TimeOutService;
+import org.sudocode.api.core.exceptions.InvalidDifficultyException;
+import org.sudocode.api.core.exceptions.ProjectNotFoundException;
 import org.sudocode.api.core.security.CurrentUser;
-import org.sudocode.api.project.ProjectNotFoundException;
+import org.sudocode.api.project.Project;
 import org.sudocode.api.project.ProjectService;
 import org.sudocode.api.project.comment.Comment;
 import org.sudocode.api.project.comment.CommentDTO;
 import org.sudocode.api.project.comment.CommentMapper;
-import org.sudocode.api.project.InvalidDifficultyException;
-import org.sudocode.api.project.Project;
 import org.sudocode.api.user.User;
 
 import java.util.concurrent.ExecutionException;
@@ -102,8 +101,8 @@ public final class ProjectRestController {
     @PostMapping(value = "/{id}/comments", consumes = JSON, produces = JSON)
     public CommentDTO postComment(@PathVariable("id") Long projectId, @RequestBody Comment comment,
                                   @CurrentUser User user) throws ExecutionException {
-        comment.setId(null);
         timeOutService.handleTimeOut(user.getId());
+        comment.setId(null);
         return commentMapper.toDTO(projectService.postComment(comment, projectId, user));
     }
 

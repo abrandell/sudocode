@@ -10,6 +10,8 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.sudocode.api.core.exceptions.NotPostAuthorException;
+import org.sudocode.api.core.exceptions.ProjectNotFoundException;
 import org.sudocode.api.project.comment.Comment;
 import org.sudocode.api.project.comment.CommentRepository;
 import org.sudocode.api.user.User;

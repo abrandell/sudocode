@@ -11,7 +11,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import org.sudocode.api.core.TooManyRequestException;
+import org.sudocode.api.core.exceptions.InvalidDifficultyException;
+import org.sudocode.api.core.exceptions.NotPostAuthorException;
+import org.sudocode.api.core.exceptions.ProjectNotFoundException;
 import org.sudocode.api.project.comment.Comment;
 import org.sudocode.api.project.comment.CommentRepository;
 import org.sudocode.api.project.web.ProjectSummaryDTO;
@@ -73,7 +75,6 @@ public class ProjectService {
     public Page<ProjectSummaryDTO> fetchAll(@Nullable String title,
                                             @Nullable String difficulty,
                                             @Nullable String description, Pageable pageable) {
-
         Difficulty diffEnum = (difficulty != null && !difficulty.isEmpty()) ? fromText(difficulty) : null;
         return projectRepo.fetchAll(title, diffEnum, description, pageable);
     }
@@ -83,7 +84,7 @@ public class ProjectService {
      *
      * @param id builder the project to fetch.
      * @return ProjectDTO builder the project found.
-     * @throws ProjectNotFoundException if the project couldn't be found, or if id was null.
+     * @throws  if the project couldn't be found, or if id was null.
      */
     public Project fetchById(Long id) {
         return projectRepo.fetchById(id).orElseThrow(() -> new ProjectNotFoundException(id));
@@ -94,7 +95,6 @@ public class ProjectService {
      *
      * @param id builder the project to updateProject.
      * @return {@code ProjectDTO} builder the updated (or new) {@link Project}.
-     * @throws NotPostAuthorException if user making the request did not postProject the project.
      */
     @Modifying
     @Transactional(rollbackFor = Exception.class)
