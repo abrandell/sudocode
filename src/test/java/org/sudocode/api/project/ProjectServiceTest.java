@@ -10,6 +10,7 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.PageRequest;
 import org.sudocode.api.core.exceptions.InvalidDifficultyException;
 import org.sudocode.api.core.exceptions.NotPostAuthorException;
 import org.sudocode.api.core.exceptions.ProjectNotFoundException;
@@ -285,5 +286,10 @@ class ProjectServiceTest {
         assertThrows(InvalidDifficultyException.class,
                 () -> service.fetchAll("title", "invalid-diff", null, null)
         );
+    }
+
+    @Test
+    void testFetchAll_validDifficulty() {
+        service.fetchAll("title", "basic", "desc", PageRequest.of(0, 20));
     }
 }
