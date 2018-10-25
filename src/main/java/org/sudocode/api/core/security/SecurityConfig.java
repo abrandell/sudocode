@@ -66,10 +66,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     }
 
-    private CustomUserTypesOAuth2UserService oAuth2UserService() {
-        return new CustomUserTypesOAuth2UserService(Map.of("github", User.class));
-    }
-
     /**
      * Saves or updates the user that successfully logged in.
      * Redirects back to the origin of the where the user logged in.

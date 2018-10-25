@@ -36,9 +36,11 @@ import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 import org.sudocode.api.ServerApplication;
 import org.sudocode.api.core.RestExceptionHandler;
 import org.sudocode.api.project.Difficulty;
+import org.sudocode.api.project.Project;
 import org.sudocode.api.project.ProjectRepository;
 import org.sudocode.api.project.ProjectService;
 import org.sudocode.api.project.comment.CommentMapper;
+import org.sudocode.api.user.User;
 import org.sudocode.api.user.UserRepository;
 import org.sudocode.api.user.UserService;
 
@@ -46,6 +48,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 
 import static java.time.LocalDateTime.*;
 import static org.mockito.BDDMockito.*;
@@ -88,7 +91,7 @@ public class ProjectRestControllerTest {
     @Mock
     private RestExceptionHandler exceptionHandler;
 
-    private JacksonTester<Page<ProjectSummaryDTO>> jsonSummaryPage;
+    private JacksonTester<ProjectDTO> jsonProjectDTO;
 
     @BeforeEach
     public void setUp() {
@@ -98,8 +101,8 @@ public class ProjectRestControllerTest {
                                       .setControllerAdvice(exceptionHandler)
                                       .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
                                       .setViewResolvers((ViewResolver)
-                                              (viewName, locale) -> new MappingJackson2JsonView()
-                                      ).build();
+                                              (viewName, locale) -> new MappingJackson2JsonView())
+                                      .build();
     }
 
     @Test
@@ -130,7 +133,24 @@ public class ProjectRestControllerTest {
     }
 
     @Test
-    void fetchById() {
+    void fetchById() throws Exception {
+        User user = User.builder().id(1L).login("mockLogin").build();
+        Project project = Project.builder(user).id(1L).title("mockTitle").build();
+
+        ProjectDTO dto = new ProjectDTO(project);
+
+        given(projectService.fetchById(project.getId())).willReturn(project);
+        given(projectMapper.toDTO(project)).willReturn(dto);
+
+        MockHttpServletResponse response = mockMvc.perform(get("/api/projects/1"))
+                                                  .andReturn().getResponse();
+        String jsonResponse = jsonProjectDTO.write(dto).getJson();
+
+        assertAll("GET /api/projects/:id",
+                () -> assertEquals(HttpStatus.OK.value(), response.getStatus()),
+                () -> assertNotNull(response.getContentAsString()),
+                () -> assertEquals(response.getContentAsString(), jsonResponse)
+        );
     }
 
     @Test

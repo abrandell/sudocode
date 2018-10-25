@@ -4,15 +4,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.lang.NonNull;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
+import org.springframework.security.oauth2.core.OAuth2AccessToken;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.OAuth2Error;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -21,13 +20,13 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import org.springframework.web.client.RestTemplate;
 import org.sudocode.api.core.exceptions.UserNotFoundException;
-import org.sudocode.api.core.security.SecurityUtils;
 import org.sudocode.api.user.web.UserDTO;
 
 /**
  * Service for user transactions and logging in via OAuth2. Read only by default & rolls back for any exception.
  * <p>
  * Be sure to include another transactional annotation with the required params for any modifying transaction.
+ *
  * @see OAuth2UserService
  */
 @Service
@@ -97,30 +96,39 @@ public class UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2U
 
 
     /**
-     * Get the user upon login from the Github OAuth2 response.
-     * Saves the user if not found in the database.
+     * Fetches the {@link OAuth2User} from the Github UserInfoEndpoint using their access token.
+     *
+     * <pre>
+     * Adds the header {@literal "Bearer: Authorization: <access-token>"} to the http GET request.
+     * Searches for the ueser in the database by id and no record exists, returns the newly persisted {@link User}
+     * </pre>
      *
      * @return The newly logged in user.
      * @throws OAuth2AuthenticationException if the access token is null.
      * @see OAuth2UserService
+     * @see OAuth2UserRequest
      */
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         if (userRequest.getAccessToken() == null) {
             throw new OAuth2AuthenticationException(
-                    new OAuth2Error("access_token_null"), "Missing required OAuth2AccessToken");
+                    new OAuth2Error("access_token_null"), "Missing required OAuth2AccessToken"
+            );
         }
 
-        logger.debug("Access token expires in {}", userRequest.getAccessToken().getExpiresAt());
+        final OAuth2AccessToken accessToken = userRequest.getAccessToken();
 
-        final String accessToken = userRequest.getAccessToken().getTokenValue();
+        logger.debug("AccessToken issued at {} and expires in {}", accessToken.getIssuedAt(),
+                accessToken.getExpiresAt());
 
-        RestTemplate template = new RestTemplateBuilder()
-                .interceptors((ClientHttpRequestInterceptor) (request, body, execution) -> {
-                    request.getHeaders().add(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
+        final String accessTokenValue = userRequest.getAccessToken().getTokenValue();
+
+        RestTemplate template = new RestTemplateBuilder().interceptors(
+                (ClientHttpRequestInterceptor) (request, body, execution) -> {
+                    request.getHeaders().add(HttpHeaders.AUTHORIZATION, "Bearer " + accessTokenValue);
                     return execution.execute(request, body);
-                })
-                .build();
+                }).build();
 
         final String userInfoEndpoint = userRequest.getClientRegistration().getProviderDetails()
                                                    .getUserInfoEndpoint().getUri();
