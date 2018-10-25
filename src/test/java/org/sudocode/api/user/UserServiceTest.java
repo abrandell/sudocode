@@ -26,7 +26,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 @ExtendWith(SpringExtension.class)
-@ActiveProfiles("dev")
+@ActiveProfiles("test")
 class UserServiceTest {
 
     private final Logger logger = LoggerFactory.getLogger(UserServiceTest.class);
@@ -60,7 +60,7 @@ class UserServiceTest {
         Page<User> actual = userService.fetchAll(PageRequest.of(1, 1));
 
         assertAll("FetchAll",
-                () -> actual.getContent().get(0).getId().equals(userMock.getId()));
+                () -> assertEquals(actual.getContent().get(0).getId(), userMock.getId()));
     }
 
     @Test
