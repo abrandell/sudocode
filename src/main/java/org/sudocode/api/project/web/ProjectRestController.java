@@ -50,7 +50,6 @@ public final class ProjectRestController {
      */
     @PostMapping(consumes = JSON, produces = JSON)
     public ProjectDTO post(@RequestBody Project project) {
-        project.setId(null);
         return projectMapper.toDTO(projectService.postProject(project));
     }
 
@@ -86,7 +85,7 @@ public final class ProjectRestController {
      */
     @GetMapping(value = "/{id}/comments", produces = JSON)
     public Page<CommentDTO> fetchComments(@PathVariable("id") Long id, Pageable pageable) {
-        return projectService.fetchCommentsByProjectId(id, pageable).map(CommentDTO::new);
+        return projectService.fetchCommentsByProjectId(id, pageable).map(commentMapper::toDTO);
     }
 
     /**

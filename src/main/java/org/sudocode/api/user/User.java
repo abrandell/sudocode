@@ -1,5 +1,6 @@
 package org.sudocode.api.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -91,6 +92,7 @@ public class User implements OAuth2User {
                 .toString();
     }
 
+    @JsonIgnore
     @Override
     public Collection<GrantedAuthority> getAuthorities() {
         return AuthorityUtils.createAuthorityList("ROLE_USER");
