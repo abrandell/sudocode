@@ -23,7 +23,7 @@ import java.util.Optional;
         rollbackFor = Exception.class,
         propagation = Propagation.MANDATORY
 )
-interface UserRepository extends JpaRepository<User, Long> {
+public interface UserRepository extends JpaRepository<User, Long> {
 
     String USER_DTO_PATH = "org.sudocode.api.user.web.UserDTO";
 

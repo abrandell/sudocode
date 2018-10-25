@@ -25,7 +25,7 @@ import java.util.Optional;
         rollbackFor = Exception.class,
         propagation = Propagation.MANDATORY
 )
-interface ProjectRepository extends JpaRepository<Project, Long> {
+public interface ProjectRepository extends JpaRepository<Project, Long> {
 
     @Query("SELECT NEW " +
             "org.sudocode.api.project.web.ProjectSummaryDTO" +
