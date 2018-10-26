@@ -90,7 +90,8 @@ class ProjectServiceTest {
 
                 () -> verify(commentRepo, times(1)).fetchById(comment1.getId()),
                 () -> verify(commentRepo, times(1)).existsById(comment1.getId()),
-                () -> verify(projectRepo, times(1)).findById(project1.getId())
+                () -> verify(projectRepo, times(1)).findById(project1.getId()),
+                () -> verify(commentRepo, times(1)).save(newComment)
         );
 
     }
@@ -130,23 +131,32 @@ class ProjectServiceTest {
     void updateProject_sameAuthor_thenUpdate() {
         final Long originalId = this.project1.getId();
 
+        final Project original = Project.builder(project1.getAuthor())
+                                               .id(project1.getId())
+                                               .description(project1.getDescription())
+                                               .difficulty(project1.getDifficulty())
+                                               .title(project1.getTitle()).build();
+
         given(projectRepo.fetchById(originalId)).willReturn(Optional.of(this.project1));
 
-        Project result = service.updateProject(
+        final Project result = service.updateProject(
                 originalId,
-                Project.builder(user1).description("new description").difficulty(EXPERT).build(),
+                Project.builder(user1).title("new title").description("new description").difficulty(EXPERT).build(),
                 this.user1
         );
 
         assertAll("Project update -- same author",
-                () -> assertEquals(project1.getId(), result.getId(),
+                () -> assertEquals(original.getId(), result.getId(),
                         "ID's should match."),
                 () -> assertEquals(user1, result.getAuthor(),
                         "Users should match"),
-                () -> assertEquals(project1.getDescription(), result.getDescription(),
-                        "Desc should match"),
-                () -> assertNotEquals(project1.getDescription(), result.getDifficulty(),
+                () -> assertNotEquals(original.getDescription(), result.getDescription(),
+                        "Description should update"),
+                () -> assertNotEquals(original.getDifficulty(), result.getDifficulty(),
                         "Difficulty should not match"),
+                () -> assertNotEquals(original.getTitle(), result.getTitle(),
+                        "Title should update"),
+
                 () -> verify(projectRepo, never()).save(any()),
                 () -> verify(projectRepo, times(1)).fetchById(originalId),
                 () -> verifyNoMoreInteractions(projectRepo),
