@@ -1,8 +1,6 @@
 spring:
   banner:
     location: banner.txt
-  profiles:
-    active: ${ACTIVE_PROFILE}
   security:
     oauth2:
       client:

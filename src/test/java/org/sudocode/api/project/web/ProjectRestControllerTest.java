@@ -4,45 +4,53 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.domain.AuditorAware;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.config.EnableSpringDataWebSupport;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.sudocode.api.project.Project;
 import org.sudocode.api.project.ProjectService;
+import org.sudocode.api.project.comment.Comment;
+import org.sudocode.api.project.comment.CommentDTO;
 import org.sudocode.api.project.comment.CommentMapper;
 import org.sudocode.api.user.User;
+import org.sudocode.api.user.web.UserDTO;
 import org.sudocode.api.user.web.UserMapper;
 
+import java.io.IOException;
 import java.util.List;
 
 import static java.time.LocalDateTime.now;
 import static org.mockito.BDDMockito.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.sudocode.api.project.Difficulty.EXPERT;
 
-@ExtendWith(SpringExtension.class)
+@ExtendWith({SpringExtension.class, MockitoExtension.class})
 @WebMvcTest(value = ProjectRestController.class, secure = false)
 @EnableSpringDataWebSupport
+@MockitoSettings(strictness = Strictness.STRICT_STUBS)
 public class ProjectRestControllerTest {
 
-    @Autowired
-    PageableHandlerMethodArgumentResolver pageableHandlerMethodArgumentResolver;
+
     @Autowired
     private MockMvc mockMvc;
+
     @Autowired
     private ObjectMapper objectMapper;
     @MockBean
@@ -50,11 +58,7 @@ public class ProjectRestControllerTest {
     @MockBean
     private ProjectMapper projectMapper;
     @MockBean
-    private AuditorAware<User> mockAuditorAware;
-
-    @MockBean
     private CommentMapper commentMapper;
-
     @MockBean
     private UserMapper userMapper;
 
@@ -62,33 +66,42 @@ public class ProjectRestControllerTest {
     private JacksonTester<Project> jsonProject;
     private JacksonTester<Page<ProjectSummaryDTO>> jsonSummaryPage;
     private JacksonTester<ProjectSummaryDTO> jsonSummaryDTO;
+    private JacksonTester<Page<CommentDTO>> jsonCommentDTOPage;
+
+
+    private User user;
+    private UserDTO userDTO;
+    private Project project;
+    private ProjectDTO projectDTO;
+    private ProjectSummaryDTO projectSummaryDTO;
+    private Page<ProjectSummaryDTO> projectSummaryDTOPage;
 
     @BeforeEach
     public void setUp() {
         JacksonTester.initFields(this, objectMapper);
+
+        this.projectSummaryDTO = new ProjectSummaryDTO(
+                1L, "title", EXPERT, "mock-description", now(), 5L, "mock-username", "fake-avatar-url"
+        );
+        user = User.builder().id(1L).login("mockLogin").build();
+        userDTO = new UserDTO(user);
+        project = Project.builder(user).id(1L).title("mockTitle").build();
+        projectDTO = new ProjectDTO(project);
+
+        List<ProjectSummaryDTO> dtoList = List.of(projectSummaryDTO);
+        projectSummaryDTOPage = new PageImpl<>(List.of(projectSummaryDTO), PageRequest.of(0, 20), dtoList.size());
+
+
+        given(projectService.fetchById(project.getId())).willReturn(project);
+        given(projectMapper.toDTO(project)).willReturn(projectDTO);
     }
 
 
     @Test
     void fetchAll() throws Exception {
+        String expectedJsonResponse = jsonSummaryPage.write(projectSummaryDTOPage).getJson();
 
-        ProjectSummaryDTO projectSummaryDTO =
-                new ProjectSummaryDTO(1L,
-                        "title",
-                        EXPERT,
-                        "mock-description",
-                        now(),
-                        5L,
-                        "mock-username",
-                        "fake-avatar-url"
-                );
-
-        List<ProjectSummaryDTO> dtoList = List.of(projectSummaryDTO);
-        Page<ProjectSummaryDTO> dtoPage = new PageImpl<>(dtoList, PageRequest.of(0, 20), dtoList.size());
-
-        String expectedJsonResponse = jsonSummaryPage.write(dtoPage).getJson();
-
-        given(projectService.fetchAll(any(), any(), any(), any())).willReturn(dtoPage);
+        given(projectService.fetchAll(any(), any(), any(), any())).willReturn(projectSummaryDTOPage);
 
         mockMvc.perform(get("/api/projects"))
                .andExpect(status().isOk())
@@ -100,14 +113,7 @@ public class ProjectRestControllerTest {
 
     @Test
     void fetchById() throws Exception {
-        User user = User.builder().id(1L).login("mockLogin").build();
-        Project project = Project.builder(user).id(1L).title("mockTitle").build();
-        ProjectDTO dto = new ProjectDTO(project);
-
-        given(projectService.fetchById(project.getId())).willReturn(project);
-        given(projectMapper.toDTO(project)).willReturn(dto);
-
-        String expectedJsonResponse = jsonProjectDTO.write(dto).getJson();
+        String expectedJsonResponse = jsonProjectDTO.write(projectDTO).getJson();
 
         mockMvc.perform(get("/api/projects/1")
                 .accept(MediaType.APPLICATION_JSON))
@@ -118,7 +124,39 @@ public class ProjectRestControllerTest {
     }
 
     @Test
-    void fetchComments() {
+    void postProject() throws Exception {
+        User user = User.builder().id(1L).build();
+        Project submission = Project.builder(user).build();
+
+        given(projectService.postProject(any(Project.class))).willReturn(Project.builder(user).id(1L).build());
+        given(projectMapper.toDTO(any(Project.class))).willReturn(new ProjectDTO(submission));
+
+        String jsonSubmission = jsonProject.write(submission).getJson();
+
+        mockMvc.perform(post("/api/projects")
+                .content(jsonSubmission)
+                .contentType(MediaType.APPLICATION_JSON))
+               .andExpect(status().isOk())
+               .andExpect(content().json(jsonSubmission));
+    }
+
+    @Test
+    void fetchComments() throws Exception {
+        Comment comment = new Comment(1L, project, "Hello", user, null);
+        List<Comment> commentList = List.of(comment);
+        PageImpl<Comment> commentPage = new PageImpl<>(commentList, PageRequest.of(0, 20), commentList.size());
+        Page<CommentDTO> commentDTOPage = commentPage.map(CommentDTO::new);
+
+        given(commentMapper.toDTO(comment)).willReturn(new CommentDTO(comment));
+        given(projectService.fetchCommentsByProjectId(any(), any(Pageable.class))).willReturn(commentPage);
+
+        String expectedResponse = jsonCommentDTOPage.write(commentDTOPage).getJson();
+
+        mockMvc.perform(get("/api/projects/1/comments"))
+               .andExpect(status().isOk()).andExpect(content().json(expectedResponse)).andDo(print());
+
+
+
     }
 
     @Test

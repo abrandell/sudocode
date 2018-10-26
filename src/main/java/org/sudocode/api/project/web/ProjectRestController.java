@@ -50,6 +50,7 @@ public final class ProjectRestController {
      */
     @PostMapping(consumes = JSON, produces = JSON)
     public ProjectDTO post(@RequestBody Project project) {
+        project.setId(null);
         return projectMapper.toDTO(projectService.postProject(project));
     }
 

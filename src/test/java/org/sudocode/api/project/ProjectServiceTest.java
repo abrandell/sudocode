@@ -27,7 +27,7 @@ import static org.mockito.BDDMockito.*;
 import static org.sudocode.api.project.Difficulty.*;
 
 @ExtendWith(MockitoExtension.class)
-@MockitoSettings(strictness = Strictness.LENIENT)
+@MockitoSettings(strictness = Strictness.STRICT_STUBS)
 class ProjectServiceTest {
 
     private final Logger logger = LoggerFactory.getLogger(ProjectServiceTest.class);
