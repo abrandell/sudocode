@@ -126,7 +126,6 @@ class ProjectServiceTest {
         );
     }
 
-    @SuppressWarnings("ConstantConditions")
     @Test
     void updateProject_sameAuthor_thenUpdate() {
         final Long originalId = this.project1.getId();
