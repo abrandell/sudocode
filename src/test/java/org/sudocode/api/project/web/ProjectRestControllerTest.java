@@ -27,6 +27,7 @@ import org.sudocode.api.project.comment.CommentMapper;
 import org.sudocode.api.user.User;
 import org.sudocode.api.user.web.UserDTO;
 import org.sudocode.api.user.web.UserMapper;
+import testingutils.WithMockOAuth2User;
 
 import java.io.IOException;
 import java.util.List;
@@ -47,27 +48,20 @@ import static org.sudocode.api.project.Difficulty.EXPERT;
 @MockitoSettings(strictness = Strictness.STRICT_STUBS)
 public class ProjectRestControllerTest {
 
-
-    @Autowired
-    private MockMvc mockMvc;
-
-    @Autowired
-    private ObjectMapper objectMapper;
-    @MockBean
-    private ProjectService projectService;
-    @MockBean
-    private ProjectMapper projectMapper;
-    @MockBean
-    private CommentMapper commentMapper;
-    @MockBean
-    private UserMapper userMapper;
+    @Autowired private MockMvc mockMvc;
+    @Autowired private ObjectMapper objectMapper;
+    @MockBean private ProjectService projectService;
+    @MockBean private ProjectMapper projectMapper;
+    @MockBean private CommentMapper commentMapper;
+    @MockBean private UserMapper userMapper;
 
     private JacksonTester<ProjectDTO> jsonProjectDTO;
     private JacksonTester<Project> jsonProject;
     private JacksonTester<Page<ProjectSummaryDTO>> jsonSummaryPage;
     private JacksonTester<ProjectSummaryDTO> jsonSummaryDTO;
     private JacksonTester<Page<CommentDTO>> jsonCommentDTOPage;
-
+    private JacksonTester<CommentDTO> jsonCommentDTO;
+    private JacksonTester<Comment> jsonComment;
 
     private User user;
     private UserDTO userDTO;
@@ -126,18 +120,19 @@ public class ProjectRestControllerTest {
     @Test
     void postProject() throws Exception {
         User user = User.builder().id(1L).build();
-        Project submission = Project.builder(user).build();
+        Project project = Project.builder(user).build();
+        ProjectDTO projectDTO = new ProjectDTO(project);
 
-        given(projectService.postProject(any(Project.class))).willReturn(Project.builder(user).id(1L).build());
-        given(projectMapper.toDTO(any(Project.class))).willReturn(new ProjectDTO(submission));
+        given(projectService.postProject(any(Project.class))).willReturn(project);
+        given(projectMapper.toDTO(project)).willReturn(projectDTO);
 
-        String jsonSubmission = jsonProject.write(submission).getJson();
+        String jsonSubmission = jsonProject.write(project).getJson();
 
         mockMvc.perform(post("/api/projects")
                 .content(jsonSubmission)
-                .contentType(MediaType.APPLICATION_JSON))
+                .contentType(MediaType.APPLICATION_JSON_VALUE))
                .andExpect(status().isOk())
-               .andExpect(content().json(jsonSubmission));
+               .andExpect(content().json(jsonProjectDTO.write(projectDTO).getJson()));
     }
 
     @Test
@@ -154,13 +149,25 @@ public class ProjectRestControllerTest {
 
         mockMvc.perform(get("/api/projects/1/comments"))
                .andExpect(status().isOk()).andExpect(content().json(expectedResponse)).andDo(print());
-
-
-
     }
 
     @Test
-    void postComment() {
+
+    void postComment() throws Exception {
+        Comment comment = new Comment(1L, project, "I'm posting a comment", user, null);
+        CommentDTO commentDTO = new CommentDTO(comment);
+
+        given(projectService.postComment(any(Comment.class), any(Long.class), any(User.class))).willReturn(comment);
+        given(commentMapper.toDTO(comment)).willReturn(commentDTO);
+
+        String commentJson = jsonComment.write(comment).getJson();
+
+        mockMvc.perform(post("/api/projects/1/comments")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content(commentJson))
+               .andExpect(status().isOk())
+               .andExpect(content().json(jsonCommentDTO.write(commentDTO).getJson()));
+
     }
 
     @Test
