@@ -4,6 +4,8 @@ import lombok.Getter;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.sudocode.api.project.Difficulty;
+import org.sudocode.api.project.Project;
+import org.sudocode.api.user.User;
 import org.sudocode.api.user.web.UserSummaryDTO;
 
 import java.time.LocalDateTime;
@@ -11,11 +13,11 @@ import java.time.LocalDateTime;
 @Getter
 public class ProjectSummaryDTO {
 
-    private final Long id;
-    private final String title;
-    private final Difficulty difficulty;
-    private final String description;
-    private final LocalDateTime datePosted;
+    private Long id;
+    private String title;
+    private Difficulty difficulty;
+    private String description;
+    private LocalDateTime datePosted;
     private UserSummaryDTO author;
 
     public ProjectSummaryDTO(Long id, String title, Difficulty difficulty, String description, LocalDateTime datePosted,
@@ -29,6 +31,20 @@ public class ProjectSummaryDTO {
                                     .id(userId)
                                     .login(login)
                                     .avatarUrl(avatarUrl)
+                                    .build();
+    }
+
+    public ProjectSummaryDTO(Project project) {
+        User author = project.getAuthor();
+
+        this.id = project.getId();
+        this.title = project.getTitle();
+        this.difficulty = project.getDifficulty();
+        this.description = project.getDescription();
+        this.author = UserSummaryDTO.builder()
+                                    .id(author.getId())
+                                    .login(author.getLogin())
+                                    .avatarUrl(author.getAvatarUrl())
                                     .build();
     }
 

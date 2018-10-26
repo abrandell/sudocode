@@ -46,6 +46,7 @@ class ProjectServiceTest {
 
     private Project project1;
     private Project project2;
+
     private Comment comment1;
     private Comment comment2;
 
@@ -157,7 +158,7 @@ class ProjectServiceTest {
                         "Title should update"),
 
                 () -> verify(projectRepo, never()).save(any()),
-                () -> verify(projectRepo, times(1)).fetchById(originalId),
+                () -> verify(projectRepo, times(1)).fetchById(any()),
                 () -> verifyNoMoreInteractions(projectRepo),
                 () -> verifyZeroInteractions(commentRepo)
         );

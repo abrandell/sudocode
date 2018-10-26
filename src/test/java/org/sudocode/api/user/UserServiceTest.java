@@ -65,7 +65,7 @@ class UserServiceTest {
 
     @Test
     void fetchById() {
-        assertThrows(UserNotFoundException.class, () -> userService.fetchById(99L));
+        assertThrows(UserNotFoundException.class, () -> userService.fetchById(-1L));
     }
 
     @Test
