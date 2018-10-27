@@ -83,7 +83,6 @@ public class UserRestController {
     }
 
 
-    @PreAuthorize("#id.equals(principal.id) || hasRole('ROLE_ADMIN')")
     @DeleteMapping(value = "/{id}", produces = JSON)
     public void deleteById(@PathVariable("id") Long id) {
         userService.deleteById(id);
