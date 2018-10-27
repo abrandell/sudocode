@@ -11,6 +11,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.sudocode.api.core.exceptions.InvalidDifficultyException;
 import org.sudocode.api.core.exceptions.NotPostAuthorException;
 import org.sudocode.api.core.exceptions.ProjectNotFoundException;
@@ -49,6 +50,7 @@ public class ProjectService {
     }
 
 
+    @ResponseStatus()
     @Transactional(rollbackFor = Exception.class)
     public Project postProject(Project project) {
         return projectRepo.save(project);

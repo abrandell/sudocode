@@ -1,12 +1,11 @@
 package org.sudocode.api.project.web;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.sudocode.api.core.exceptions.InvalidDifficultyException;
 import org.sudocode.api.core.exceptions.ProjectNotFoundException;
@@ -117,6 +116,7 @@ public final class ProjectRestController {
      *
      * @see ProjectService#deleteCommentById(Long, User)
      */
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
     @DeleteMapping(value = "/{projectId}/comments/{commentId}")
     public void deleteCommentById(@PathVariable("projectId") Long projectId,
                                   @PathVariable("commentId") Long commentId,
@@ -130,9 +130,9 @@ public final class ProjectRestController {
      * @see ProjectService#updateProject(Long, Project, User)
      */
     @PutMapping(value = "/{id}", consumes = JSON, produces = JSON)
-    public ProjectDTO update(@PathVariable("id") Long id,
-                             @RequestBody Project project,
-                             @CurrentUser User user) throws ExecutionException {
+    public ProjectDTO updateProject(@PathVariable("id") Long id,
+                                    @RequestBody Project project,
+                                    @CurrentUser User user) {
         return projectMapper.toDTO(projectService.updateProject(id, project, user));
     }
 
@@ -142,7 +142,8 @@ public final class ProjectRestController {
      * @see ProjectService#deleteProjectById(Long, User)
      */
     @DeleteMapping(value = "/{id}")
-    public void delete(@PathVariable("id") Long id, @CurrentUser User user) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteProject(@PathVariable("id") Long id, @CurrentUser User user) {
         projectService.deleteProjectById(id, user);
     }
 }

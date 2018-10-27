@@ -18,8 +18,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.config.EnableSpringDataWebSupport;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.sudocode.api.project.Project;
 import org.sudocode.api.project.ProjectService;
 import org.sudocode.api.project.comment.Comment;
@@ -33,10 +38,15 @@ import java.io.IOException;
 import java.util.List;
 
 import static java.time.LocalDateTime.now;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.BDDMockito.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doNothing;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -46,6 +56,7 @@ import static org.sudocode.api.project.Difficulty.EXPERT;
 @WebMvcTest(value = ProjectRestController.class, secure = false)
 @EnableSpringDataWebSupport
 @MockitoSettings(strictness = Strictness.STRICT_STUBS)
+@ActiveProfiles("test")
 class ProjectRestControllerTest {
 
     @Autowired private MockMvc mockMvc;
@@ -141,7 +152,7 @@ class ProjectRestControllerTest {
 
         mockMvc.perform(post("/api/projects")
                 .content(jsonSubmission)
-                .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .contentType(MediaType.APPLICATION_JSON))
                .andExpect(status().isOk())
                .andExpect(content().json(projectDTO_expectedJson));
     }
@@ -163,7 +174,7 @@ class ProjectRestControllerTest {
         String commentJson = jsonComment.write(comment).getJson();
 
         mockMvc.perform(post("/api/projects/1/comments")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .contentType(MediaType.APPLICATION_JSON)
                 .content(commentJson))
                .andExpect(status().isOk())
                .andExpect(content().json(jsonCommentDTO.write(commentDTO).getJson()));
@@ -171,18 +182,37 @@ class ProjectRestControllerTest {
     }
 
     @Test
-    void response_UpdateComment() {
+    void response_UpdateComment() throws Exception {
+        given(projectService.updateComment(any(Comment.class), any(Long.class), any(Long.class), any(User.class))).willReturn(comment);
+
+        mockMvc.perform(put("/api/projects/1/comments/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonComment.write(comment).getJson()))
+               .andExpect(status().is2xxSuccessful())
+               .andExpect(content().json(jsonCommentDTO.write(commentDTO).getJson()))
+               .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8));
     }
 
     @Test
-    void deleteCommentById() {
+    void deleteCommentById_noException_thenNoContent204() throws Exception {
+        doNothing().when(projectService).deleteCommentById(any(), any());
+
+        mockMvc.perform(delete("/api/projects/1/comments/1"))
+               .andExpect(status().isNoContent());
     }
 
     @Test
-    void update() {
+    void updateProject() throws Exception {
+        given(projectService.updateProject(any(), any(Project.class), any(User.class))).willReturn(project);
+        mockMvc.perform(put("/api/projects/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonProject.write(project).getJson()))
+               .andExpect(status().is2xxSuccessful())
+               .andExpect(content().json(projectDTO_expectedJson))
+               .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8));
     }
 
     @Test
-    void delete() {
+    void deleteProject() {
     }
 }

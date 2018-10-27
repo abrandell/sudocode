@@ -21,6 +21,8 @@ spring:
     default-property-inclusion: non_empty
     serialization:
       fail-on-empty-beans: false
+  profiles:
+    active: ${ACTIVE_PROFILE}
 ---
 
 spring:
