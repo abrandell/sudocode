@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.sudocode.api.project.web.ProjectDTO;
 import org.sudocode.api.project.web.ProjectSummaryDTO;
+import org.sudocode.api.project.web.ProjectView;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -53,5 +54,14 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
     @Query("SELECT p FROM Project p JOIN FETCH  p.author WHERE p.id = :id")
     Optional<Project> fetchById(@Param("id") Long id);
 
+    @Query("SELECT "
+            + "p.id AS id, "
+            + "p.title AS title, "
+            + "p.difficulty AS difficulty, "
+            + "p.description AS description, "
+            + "p.datePosted AS datePosted, "
+            + "p.author AS author" +
+            " FROM Project p WHERE p.id = :id")
+    Optional<ProjectView> fetchViewById(@Param("id") Long id);
 
 }
