@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.sudocode.api.user.web.UserDTO;
+import org.sudocode.api.user.web.UserView;
 
 import java.util.Optional;
 
@@ -25,30 +26,9 @@ import java.util.Optional;
 )
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    String USER_DTO_PATH = "org.sudocode.api.user.web.UserDTO";
-
-    @Deprecated
-    @Query("SELECT NEW " +
-                USER_DTO_PATH +
-                "(u.id, u.login, u.avatarUrl, u.hireable) " +
-            "FROM User u")
-    Page<UserDTO> fetchAllDTO(Pageable pageable);
-
     Optional<User> findByLogin(String login);
 
-    @Deprecated
-    @Query("SELECT NEW " +
-                USER_DTO_PATH +
-                "(u.id, u.login, u.avatarUrl, u.hireable) " +
-            "FROM User u " +
-            "WHERE u.login = :login")
-    Optional<UserDTO> fetchDTOByLogin(@Param("login") String login);
+    @Query("select u.id as id, u.login as login, u.avatarUrl as avatarUrl, u.hireable as hireable from User u where u.id = :id")
+    Optional<UserView> fetchById(@Param("id") Long id);
 
-    @Deprecated
-    @Query("SELECT NEW " +
-                USER_DTO_PATH +
-                "(u.id, u.login, u.avatarUrl, u.hireable) " +
-            "FROM User u " +
-            "WHERE u.id = :id")
-    Optional<UserDTO> fetchDTOById(@Param("id") Long id);
 }
