@@ -59,7 +59,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .and()
                 .oauth2Login()
                     .userInfoEndpoint()
-                    .userService(userService)
+                    .userService(new CustomUserTypesOAuth2UserService(Map.of("github", User.class)))
                     .and()
                 .successHandler(successHandler());
 
@@ -75,7 +75,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return (request, response, authentication) -> {
 
             // Update the user upon login.
-            userService.saveUser((User) authentication.getPrincipal());
+            userService.updateUser((User) authentication.getPrincipal());
 
             String origin = request.getHeader("Referer");
 

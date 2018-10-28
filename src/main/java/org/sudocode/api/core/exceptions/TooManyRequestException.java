@@ -3,7 +3,7 @@ package org.sudocode.api.core.exceptions;
 
 
 /**
- * Exception thrown if a user makes too many requests in too short builder a time.
+ * Exception thrown if a user makes too many requests in too short of a time.
  *
  * @see org.sudocode.api.core.security.timeout.TimeOutService
  */

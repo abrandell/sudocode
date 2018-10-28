@@ -1,27 +1,20 @@
 package org.sudocode.api.user;
 
+import com.google.common.base.Preconditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.client.ClientHttpRequestInterceptor;
+import org.springframework.data.util.Optionals;
 import org.springframework.lang.NonNull;
-import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
-import org.springframework.security.oauth2.core.OAuth2AccessToken;
-import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
-import org.springframework.security.oauth2.core.OAuth2Error;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
-import org.springframework.web.client.RestTemplate;
 import org.sudocode.api.core.annotation.ModifyingTX;
 import org.sudocode.api.core.exceptions.UserNotFoundException;
+
+import static com.google.common.base.Preconditions.*;
 
 /**
  * Service for user transactions and logging in via OAuth2. Read only by default & rolls back for any exception.
@@ -35,7 +28,7 @@ import org.sudocode.api.core.exceptions.UserNotFoundException;
         readOnly = true,
         rollbackFor = Exception.class
 )
-public class UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
+public class UserService {
 
     private final UserRepository userRepo;
     private final Logger logger = LoggerFactory.getLogger(UserService.class);
@@ -47,12 +40,27 @@ public class UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2U
 
     /**
      * Save a {@link User}
+     *
      * @return The newly persisted {@link User}
      */
     @ModifyingTX
     public User saveUser(@NonNull User user) {
         logger.info("Saving user to database {}", user);
         return userRepo.save(user);
+    }
+
+    @ModifyingTX
+    public User updateUser(User user) {
+        checkNotNull(user);
+
+        return userRepo.findById(user.getId())
+                       .map(updated -> {
+                           updated.setLogin(user.getLogin());
+                           updated.setAvatarUrl(user.getAvatarUrl());
+                           updated.setHireable(user.isHireable());
+                           return updated;
+                       })
+                       .orElseGet(() -> saveUser(user));
     }
 
     /**
@@ -100,46 +108,4 @@ public class UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2U
     }
 
 
-    /**
-     * Fetches the {@link OAuth2User} from the Github UserInfoEndpoint using their access token.
-     *
-     * <pre>
-     * Adds the header {@literal "Bearer: Authorization: <access-token>"} to the http GET request.
-     * Searches for the {@link User} in the database by id and no record exists, returns the newly persisted {@link User}
-     * </pre>
-     *
-     * @return The newly logged in user.
-     * @throws OAuth2AuthenticationException if the access token is null.
-     * @see OAuth2UserService
-     * @see OAuth2UserRequest
-     */
-    @ModifyingTX
-    public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
-        if (userRequest.getAccessToken() == null) {
-            throw new OAuth2AuthenticationException(
-                    new OAuth2Error("access_token_null"), "Missing required OAuth2AccessToken"
-            );
-        }
-
-        final OAuth2AccessToken accessToken = userRequest.getAccessToken();
-
-        logger.debug("AccessToken issued at {} and expires in {}", accessToken.getIssuedAt(),
-                accessToken.getExpiresAt());
-
-        final String accessTokenValue = userRequest.getAccessToken().getTokenValue();
-
-        RestTemplate template = new RestTemplateBuilder().interceptors(
-                (ClientHttpRequestInterceptor) (request, body, execution) -> {
-                    request.getHeaders().add(HttpHeaders.AUTHORIZATION, "Bearer " + accessTokenValue);
-                    return execution.execute(request, body);
-                }).build();
-
-        final String userInfoEndpoint = userRequest.getClientRegistration().getProviderDetails()
-                                                   .getUserInfoEndpoint().getUri();
-
-        final User user = template.getForObject(userInfoEndpoint, User.class);
-
-        Assert.notNull(user, "User cannot be null.");
-        return userRepo.findById(user.getId()).orElseGet(() -> saveUser(user));
-    }
 }

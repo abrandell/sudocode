@@ -17,7 +17,7 @@ public class ClientRegistrationMock {
                                       .authorizationUri("localhost/login/oauth/authorize")
                                       .tokenUri("localhost/login/oauth/access_token")
                                       .jwkSetUri("localhost/oauth2/jwk")
-                                      .userInfoUri("mock-user-info-endpoint")
+                                      .userInfoUri("https://api.github.com/users/octocat")
                                       .userNameAttributeName("id")
                                       .clientName("client-mock")
                                       .clientId("client-id")

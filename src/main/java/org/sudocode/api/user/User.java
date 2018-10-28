@@ -25,6 +25,7 @@ import static org.sudocode.api.core.util.Constants.*;
 @Table(name = "users")
 @AccessType(Type.FIELD)
 @Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User implements OAuth2User {
 
