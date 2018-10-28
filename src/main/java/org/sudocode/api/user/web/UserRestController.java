@@ -23,12 +23,10 @@ import static org.sudocode.api.core.util.Constants.JSON;
 public class UserRestController {
 
     private final UserService userService;
-    private final UserMapper mapper;
 
     @Autowired
-    UserRestController(UserService userService, UserMapper mapper) {
+    UserRestController(UserService userService) {
         this.userService = userService;
-        this.mapper = mapper;
     }
 
     /**
@@ -54,22 +52,22 @@ public class UserRestController {
      * @see UserService#fetchById(Long)
      */
     @GetMapping(value = "/{id:[\\d]+}", produces = JSON)
-    public UserDTO fetchById(@PathVariable("id") Long id) throws UserNotFoundException {
-        return mapper.toDTO(userService.fetchById(id));
+    public UserView fetchById(@PathVariable("id") Long id) throws UserNotFoundException {
+        return userService.fetchById(id);
     }
 
     /**
      *
      * GET /api/users/:login
      *
-     * Fetch a user by their login.
+     * Fetch a {@link UserView} projection by their login.
      *
      * @param login login to search for.
      * @return User with the given login in DTO form.
      */
-    @GetMapping(value = "/{login:[A-Za-z]+}")
-    public UserDTO fetchByLogin(@PathVariable String login) {
-        return mapper.toDTO(userService.fetchByLogin(login.toLowerCase()));
+    @GetMapping(value = "/{login:[A-Za-z]+}", produces = JSON)
+    public UserView fetchByLogin(@PathVariable String login) {
+        return userService.fetchByLogin(login.toLowerCase());
     }
 
     /**
@@ -78,8 +76,8 @@ public class UserRestController {
      * @see UserService#fetchAll(Pageable)
      */
     @GetMapping(produces = JSON)
-    public Page<UserDTO> fetchAll(Pageable pageable) {
-        return userService.fetchAll(pageable).map(mapper::toDTO);
+    public Page<UserView> fetchAll(Pageable pageable) {
+        return userService.fetchAll(pageable);
     }
 
 

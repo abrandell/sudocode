@@ -15,6 +15,7 @@ import org.sudocode.api.project.ProjectService;
 import org.sudocode.api.project.comment.Comment;
 import org.sudocode.api.project.comment.CommentDTO;
 import org.sudocode.api.project.comment.CommentMapper;
+import org.sudocode.api.project.comment.CommentView;
 import org.sudocode.api.user.User;
 
 import java.util.concurrent.ExecutionException;
@@ -48,9 +49,9 @@ public final class ProjectRestController {
      * @see ProjectService#postProject(Project)
      */
     @PostMapping(consumes = JSON, produces = JSON)
-    public ProjectDTO post(@RequestBody Project project) {
+    public Project post(@RequestBody Project project) {
         project.setId(null);
-        return projectMapper.toDTO(projectService.postProject(project));
+        return projectService.postProject(project);
     }
 
     /**
@@ -59,7 +60,7 @@ public final class ProjectRestController {
      * @see ProjectService#fetchAll(String, String, String, Pageable)
      */
     @GetMapping(produces = JSON)
-    public Page<ProjectSummaryDTO> fetchAll(
+    public Page<ProjectView> fetchAll(
             @RequestParam(value = "title", required = false) String title,
             @RequestParam(value = "difficulty", required = false) String difficulty,
             @RequestParam(value = "description", required = false) String description,
@@ -74,18 +75,16 @@ public final class ProjectRestController {
      * @see ProjectService#fetchById(Long)
      */
     @GetMapping(value = "/{id}", produces = JSON)
-    public ProjectDTO fetchById(@PathVariable("id") Long id) throws ProjectNotFoundException {
-        return projectMapper.toDTO(projectService.fetchById(id));
+    public ProjectView fetchById(@PathVariable("id") Long id) throws ProjectNotFoundException {
+        return projectService.fetchById(id);
     }
 
     /**
      * GET /api/projects/:id/comments{?page=}&{sort=}
-     *
-     * @see ProjectService#fetchCommentsByProjectId(Long, Pageable)
      */
     @GetMapping(value = "/{id}/comments", produces = JSON)
-    public Page<CommentDTO> fetchComments(@PathVariable("id") Long id, Pageable pageable) {
-        return projectService.fetchCommentsByProjectId(id, pageable).map(commentMapper::toDTO);
+    public Page<CommentView> fetchComments(@PathVariable("id") Long id, Pageable pageable) {
+        return projectService.fetchCommentViewsByProjectId(id, pageable);
     }
 
     /**
@@ -94,21 +93,19 @@ public final class ProjectRestController {
      * @see ProjectService#postComment(Comment, Long, User)
      */
     @PostMapping(value = "/{id}/comments", consumes = JSON, produces = JSON)
-    public CommentDTO postComment(@PathVariable("id") Long projectId, @RequestBody Comment comment,
+    public Comment postComment(@PathVariable("id") Long projectId, @RequestBody Comment comment,
                                   @CurrentUser User user) {
         comment.setId(null);
-        return commentMapper.toDTO(projectService.postComment(comment, projectId, user));
+        return projectService.postComment(comment, projectId, user);
     }
 
     @PutMapping(value = "/{projectId}/comments/{commentId}", consumes = JSON, produces = JSON)
-    public CommentDTO updateComment(@PathVariable("projectId") Long projectId,
+    public Comment updateComment(@PathVariable("projectId") Long projectId,
                                     @PathVariable("commentId") Long commentId,
                                     @RequestBody Comment comment,
                                     @CurrentUser User user) throws ExecutionException {
 
-        return commentMapper.toDTO(
-                projectService.updateComment(comment, commentId, projectId, user)
-        );
+        return projectService.updateComment(comment, commentId, projectId, user);
     }
 
     /**

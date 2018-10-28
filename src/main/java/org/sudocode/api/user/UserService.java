@@ -21,6 +21,7 @@ import org.springframework.util.Assert;
 import org.springframework.web.client.RestTemplate;
 import org.sudocode.api.core.exceptions.UserNotFoundException;
 import org.sudocode.api.user.web.UserDTO;
+import org.sudocode.api.user.web.UserView;
 
 /**
  * Service for user transactions and logging in via OAuth2. Read only by default & rolls back for any exception.
@@ -58,8 +59,8 @@ public class UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2U
      * @see Pageable
      * @see UserDTO
      */
-    public Page<User> fetchAll(Pageable pageable) {
-        return userRepo.findAll(pageable);
+    public Page<UserView> fetchAll(Pageable pageable) {
+        return userRepo.fetchAllUserViews(pageable);
     }
 
     /**
@@ -69,8 +70,8 @@ public class UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2U
      * @return User with the given ID as their PK.
      * @throws UserNotFoundException if the id does not match any persisted user.
      */
-    public User fetchById(Long id) {
-        return userRepo.findById(id).orElseThrow(() -> new UserNotFoundException(id));
+    public UserView fetchById(Long id) {
+        return userRepo.fetchUserViewById(id).orElseThrow(() -> new UserNotFoundException(id));
     }
 
     /**
@@ -80,8 +81,8 @@ public class UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2U
      * @return User with the given login.
      * @throws UserNotFoundException if the login does not match any persisted user.
      */
-    public User fetchByLogin(String login) {
-        return userRepo.findByLogin(login).orElseThrow(() -> new UserNotFoundException(login));
+    public UserView fetchByLogin(String login) {
+        return userRepo.fetchUserViewByLogin(login).orElseThrow(() -> new UserNotFoundException(login));
     }
 
     /**

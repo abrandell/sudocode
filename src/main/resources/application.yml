@@ -1,6 +1,4 @@
 spring:
-  banner:
-    location: banner.txt
   security:
     oauth2:
       client:
@@ -14,12 +12,13 @@ spring:
       hibernate:
         format_sql: true
     open-in-view: false
-    show-sql: false
+    show-sql: true
   jackson:
     property-naming-strategy: SNAKE_CASE
     date-format: com.fasterxml.jackson.databind.util.ISO8601DateFormat
     default-property-inclusion: non_empty
     serialization:
+      indent-output: true
       fail-on-empty-beans: false
   profiles:
     active: ${ACTIVE_PROFILE}

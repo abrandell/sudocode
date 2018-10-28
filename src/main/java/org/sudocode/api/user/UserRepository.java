@@ -28,7 +28,39 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByLogin(String login);
 
-    @Query("select u.id as id, u.login as login, u.avatarUrl as avatarUrl, u.hireable as hireable from User u where u.id = :id")
-    Optional<UserView> fetchById(@Param("id") Long id);
+    /**
+     * Query for fetching a {@link UserView} by id.
+     * @param id THe ID of the user to retrieve.
+     * @return {@link UserView} projection of the user found.
+     */
+    @Query("SELECT " +
+            "u.id AS id, " +
+            "u.login AS login, " +
+            "u.avatarUrl AS avatarUrl, " +
+            "u.hireable AS hireable " +
+            "FROM User u WHERE u.id = :id")
+    Optional<UserView> fetchUserViewById(@Param("id") Long id);
+
+    /**
+     * Query for {@link UserView} projections.
+     * Names must match the property names in {@link UserView}
+     *
+     * @return Page of {@link UserView} projections.
+     */
+    @Query("SELECT " +
+            "u.id AS id, " +
+            "u.login AS login, " +
+            "u.avatarUrl AS avatarUrl, " +
+            "u.hireable AS hireable " +
+            "FROM User u")
+    Page<UserView> fetchAllUserViews(Pageable pageable);
+
+    @Query("SELECT " +
+            "u.id AS id, " +
+            "u.login AS login, " +
+            "u.avatarUrl AS avatarUrl, " +
+            "u.hireable AS hireable " +
+            "FROM User u WHERE u.login = :login")
+    Optional<UserView> fetchUserViewByLogin(@Param("login") String login);
 
 }

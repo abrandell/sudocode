@@ -20,6 +20,7 @@ import java.util.Optional;
 )
 public interface CommentRepository extends JpaRepository<Comment, Long> {
 
+    @Deprecated
     @Query(value = "SELECT c FROM Comment c JOIN FETCH c.project JOIN FETCH c.author WHERE c.project.id = :id",
         countQuery = "SELECT count(c) FROM Comment c WHERE c.project.id = :id")
     Page<Comment> fetchAllByProjectId(@Param("id") Long id, Pageable pageable);
@@ -37,12 +38,23 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
             "WHERE c.project.id = :id")
     Page<CommentDTO> fetchCommentPageDTOByProjectId(@Param("id") Long id, Pageable pageable);
 
+    @Deprecated
     @Query("SELECT c FROM Comment c JOIN c.author AS u WHERE c.project.id = :id")
     Page<Comment> fetchCommentsByProjectId(@Param("id") Long id, Pageable pageable);
 
     @Modifying
-    @Transactional(readOnly = true, propagation = Propagation.MANDATORY)
+    @Transactional(propagation = Propagation.MANDATORY)
     @Query("DELETE FROM Comment c WHERE c.project.id = :id")
     void deleteCommentsByProjectId(@Param("id") Long id);
+
+
+    @Query("SELECT " +
+            "c.id AS id, " +
+            "c.body AS body, " +
+            "c.author AS author, " +
+            "c.datePosted AS datePosted, " +
+            "c.lastModifiedDate AS lastModifiedDate " +
+            "FROM Comment c WHERE c.project.id = :id")
+    Page<CommentView> fetchCommentViewsByProjectId(@Param("id") Long id, Pageable pageable);
 
 }

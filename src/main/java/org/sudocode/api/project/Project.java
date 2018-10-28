@@ -1,5 +1,6 @@
 package org.sudocode.api.project;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -61,6 +62,7 @@ public class Project extends AbstractAuditableEntity implements Persistable<Long
      *
      * @return false if ID is null, true otherwise.
      */
+    @JsonIgnore
     @Override
     public boolean isNew() {
         return id == null;

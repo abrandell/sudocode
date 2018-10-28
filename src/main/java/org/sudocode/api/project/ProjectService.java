@@ -9,15 +9,15 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.lang.Nullable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.sudocode.api.core.exceptions.InvalidDifficultyException;
 import org.sudocode.api.core.exceptions.NotPostAuthorException;
 import org.sudocode.api.core.exceptions.ProjectNotFoundException;
 import org.sudocode.api.project.comment.Comment;
 import org.sudocode.api.project.comment.CommentRepository;
+import org.sudocode.api.project.comment.CommentView;
 import org.sudocode.api.project.web.ProjectSummaryDTO;
+import org.sudocode.api.project.web.ProjectView;
 import org.sudocode.api.user.User;
 
 import java.time.LocalDateTime;
@@ -50,7 +50,6 @@ public class ProjectService {
     }
 
 
-    @ResponseStatus()
     @Transactional(rollbackFor = Exception.class)
     public Project postProject(Project project) {
         return projectRepo.save(project);
@@ -73,11 +72,11 @@ public class ProjectService {
      * @see ProjectSummaryDTO
      * @see Difficulty#fromText(String)
      */
-    public Page<ProjectSummaryDTO> fetchAll(@Nullable String title,
-                                            @Nullable String difficulty,
-                                            @Nullable String description, Pageable pageable) {
+    public Page<ProjectView> fetchAll(@Nullable String title,
+                                      @Nullable String difficulty,
+                                      @Nullable String description, Pageable pageable) {
         Difficulty diffEnum = (difficulty != null && !difficulty.isEmpty()) ? fromText(difficulty) : null;
-        return projectRepo.fetchAll(title, diffEnum, description, pageable);
+        return projectRepo.fetchAllProjections(title, diffEnum, description, pageable);
     }
 
     /**
@@ -86,8 +85,8 @@ public class ProjectService {
      * @param id builder the project to fetch.
      * @return the project if found.
      */
-    public Project fetchById(Long id) {
-        return projectRepo.fetchById(id).orElseThrow(() -> new ProjectNotFoundException(id));
+    public ProjectView fetchById(Long id) {
+        return projectRepo.fetchViewById(id).orElseThrow(() -> new ProjectNotFoundException(id));
     }
 
     /**
@@ -121,7 +120,6 @@ public class ProjectService {
      * @throws NotPostAuthorException if the user making the request did not postProject the comment.
      */
     @Modifying
-    @PreAuthorize("principal.equals(#currentUser)")
     @Transactional(rollbackFor = Exception.class)
     public void deleteProjectById(Long id, User currentUser) {
         projectRepo.fetchById(id).ifPresent(project -> {
@@ -132,7 +130,7 @@ public class ProjectService {
             commentRepo.deleteCommentsByProjectId(id);
             projectRepo.delete(project);
 
-            LOGGER.info("Deleted project ID: {} by {}", id ,currentUser.getLogin());
+            LOGGER.info("Deleted project ID: {} by {}", id, currentUser.getLogin());
         });
 
     }
@@ -155,7 +153,7 @@ public class ProjectService {
         }
 
         comment.setProject(projectRepo.findById(projectId)
-                           .orElseThrow(() -> new ProjectNotFoundException(projectId)));
+                                      .orElseThrow(() -> new ProjectNotFoundException(projectId)));
         LOGGER.info("Posting comment by user ID: {} at {}", user.getId(), now());
         return commentRepo.save(comment);
     }
@@ -201,8 +199,8 @@ public class ProjectService {
      * @return Page of all comments for the given project.
      * @see Pageable
      */
-    public Page<Comment> fetchCommentsByProjectId(Long id, Pageable pageable) {
-        return commentRepo.fetchAllByProjectId(id, pageable);
+    public Page<CommentView> fetchCommentViewsByProjectId(Long id, Pageable pageable) {
+        return commentRepo.fetchCommentViewsByProjectId(id, pageable);
     }
 
     public LocalDateTime fetchLatestPostDateByAuthorId(Long id) {
