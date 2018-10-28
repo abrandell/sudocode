@@ -36,10 +36,10 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
             "WHERE (:title is null or lower(p.title) LIKE concat('%', lower(:title), '%')) " +
             "AND (:difficulty is null or p.difficulty = :difficulty) " +
             "AND (:description is null or lower(p.description) LIKE concat('%', lower(:description), '%'))")
-    Page<ProjectView> fetchAllProjections(@Param("title") String title,
-                                          @Param("difficulty") Difficulty difficulty,
-                                          @Param("description") String description,
-                                          Pageable pageable);
+    Page<ProjectView> filterAll(@Param("title") String title,
+                                @Param("difficulty") Difficulty difficulty,
+                                @Param("description") String description,
+                                Pageable pageable);
 
 
     @Query("SELECT max(p.datePosted) FROM Project p WHERE p.author.id = :id")

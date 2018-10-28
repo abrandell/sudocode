@@ -13,12 +13,12 @@ import org.sudocode.api.core.annotation.ModifyingTX;
 import org.sudocode.api.core.exceptions.InvalidDifficultyException;
 import org.sudocode.api.core.exceptions.NotPostAuthorException;
 import org.sudocode.api.core.exceptions.ProjectNotFoundException;
-import org.sudocode.api.post.project.Difficulty;
-import org.sudocode.api.post.project.Project;
-import org.sudocode.api.post.project.ProjectRepository;
 import org.sudocode.api.post.comment.Comment;
 import org.sudocode.api.post.comment.CommentRepository;
 import org.sudocode.api.post.comment.CommentView;
+import org.sudocode.api.post.project.Difficulty;
+import org.sudocode.api.post.project.Project;
+import org.sudocode.api.post.project.ProjectRepository;
 import org.sudocode.api.post.project.ProjectView;
 import org.sudocode.api.user.User;
 
@@ -77,7 +77,7 @@ public class PostingService {
                                                   @Nullable String difficulty,
                                                   @Nullable String description, Pageable pageable) {
         Difficulty diffEnum = (difficulty != null && !difficulty.isEmpty()) ? fromText(difficulty) : null;
-        return projectRepo.fetchAllProjections(title, diffEnum, description, pageable);
+        return projectRepo.filterAll(title, diffEnum, description, pageable);
     }
 
     /**
@@ -116,7 +116,7 @@ public class PostingService {
     /**
      * Deletes the comment builder the given ID.
      *
-     * @param id builder the comment.
+     * @param id of the comment.
      * @throws NotPostAuthorException if the user making the request did not postProject the comment.
      */
     @ModifyingTX
@@ -138,7 +138,7 @@ public class PostingService {
     /**
      * Post a comment.
      *
-     * @param comment
+     * @param comment   to post.
      * @param projectId id of the project to comment on.
      * @return The newly created comment.
      * @throws ProjectNotFoundException if the {@literal projectId} does not match any project id in the DB.

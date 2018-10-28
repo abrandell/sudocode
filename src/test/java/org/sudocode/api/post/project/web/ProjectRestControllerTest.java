@@ -71,7 +71,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 //
 //    @Test
 //    void response_FetchAll() throws Exception {
-////        given(projectService.fetchAllProjections(any(), any(), any(), any())).willReturn(projectSummaryDTOPage);
+////        given(projectService.filterAll(any(), any(), any(), any())).willReturn(projectSummaryDTOPage);
 //
 //        mockMvc.perform(get("/api/projects"))
 //               .andExpect(status().isOk())

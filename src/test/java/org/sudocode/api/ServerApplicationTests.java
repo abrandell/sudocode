@@ -16,7 +16,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.sudocode.api.post.project.Difficulty;
 import org.sudocode.api.post.web.PostingRestController;
-import testingutils.ProjectPostForm;
+import testingutils.ProjectViewMock;
 import testingutils.WithMockOAuth2User;
 
 import static org.hamcrest.Matchers.is;
@@ -43,7 +43,7 @@ class ServerApplicationTests {
     @Autowired
     private PostingRestController postingRestController;
 
-    JacksonTester<ProjectPostForm> jsonProjectPost;
+    JacksonTester<ProjectViewMock> jsonProjectPost;
 
     @BeforeEach
     void setUp() {
@@ -66,18 +66,6 @@ class ServerApplicationTests {
         Assertions.assertNotNull(response);
     }
 
-    @Test
-    @WithMockOAuth2User
-    void postProject() throws Exception {
-        ProjectPostForm postForm = new ProjectPostForm();
-        postForm.setTitle("test-title");
-        postForm.setDescription("test-description");
-        postForm.setDifficulty(Difficulty.BASIC);
-
-        String submittedJson = jsonProjectPost.write(postForm).getJson();
-
-        mockMvc.perform(post("/api/projects").content(submittedJson)).andExpect(status().isOk());
-    }
 
 
 }

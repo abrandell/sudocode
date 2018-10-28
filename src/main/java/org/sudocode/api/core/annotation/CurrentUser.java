@@ -1,4 +1,4 @@
-package org.sudocode.api.core.security;
+package org.sudocode.api.core.annotation;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
