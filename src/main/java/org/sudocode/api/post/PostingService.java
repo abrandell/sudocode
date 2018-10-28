@@ -53,6 +53,7 @@ public class PostingService {
 
     @ModifyingTX
     public Project postProject(Project project) {
+        project.setId(null);
         return projectRepo.save(project);
     }
 
@@ -109,7 +110,7 @@ public class PostingService {
                           .orElseGet(() -> {
                               // Make sure not to replace an already existing project
                               newProject.setId(projectRepo.existsById(id) ? null : id);
-                              return postProject(newProject);
+                              return projectRepo.save(newProject);
                           });
     }
 
