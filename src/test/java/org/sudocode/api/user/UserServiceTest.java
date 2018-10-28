@@ -6,11 +6,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.platform.commons.logging.Logger;
 import org.junit.platform.commons.logging.LoggerFactory;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.sudocode.api.core.exceptions.UserNotFoundException;
+import testingutils.UserViewMock;
 
 import java.util.List;
 import java.util.Optional;
@@ -31,31 +34,33 @@ class UserServiceTest {
     @MockBean(classes = UserRepository.class)
     private UserRepository userRepoMock;
 
-    private User userMock;
+    private User user1;
+    private UserViewMock userViewMock1;
 
     @BeforeEach
     void setUp() {
-        this.userMock = User.builder().id(1L).login("kporzee6").build();
+        this.user1 = User.builder().id(1L).login("porzingod").build();
+        userViewMock1 = UserViewMock.builder().id(1L).login("porzingod").build();
         this.userService = new UserService(userRepoMock);
 
     }
 
     @Test
     void saveUser() {
-        given(userRepoMock.save(userMock)).willReturn(userMock);
-        var result = userService.saveUser(userMock);
+        given(userRepoMock.save(user1)).willReturn(user1);
+        var result = userService.saveUser(user1);
 
-        assertEquals(result, userMock);
+        assertEquals(result, user1);
     }
 
     @Test
     void fetchAll() {
-        given(userRepoMock.findAll(any(Pageable.class))).willReturn(new PageImpl<>(List.of(userMock)));
+        given(userRepoMock.fetchAllUserViews(any(Pageable.class))).willReturn(new PageImpl<>(List.of(userViewMock1)));
 
-//        Page<User> actual = userService.filterAll(PageRequest.of(1, 1));
-//
-//        assertAll("FetchAll",
-//                () -> assertEquals(actual.getContent().get(0).getId(), userMock.getId()));
+        Page<UserView> actual = userService.fetchAllProjections(PageRequest.of(1, 1));
+
+        assertAll("FetchAll",
+                () -> assertEquals(actual.getContent().get(0).getId(), userViewMock1.getId()));
     }
 
     @Test
@@ -65,8 +70,8 @@ class UserServiceTest {
 
     @Test
     void fetchByLogin() {
-        given(userRepoMock.findByLogin("mock-username")).willReturn(Optional.of(userMock));
-        assertEquals(userMock, userService.fetchProjectionByLogin("mock-username"));
+        given(userRepoMock.fetchUserViewByLogin("mock-username")).willReturn(Optional.of(userViewMock1));
+        assertEquals(userViewMock1, userService.fetchProjectionByLogin("mock-username"));
     }
 
 }
