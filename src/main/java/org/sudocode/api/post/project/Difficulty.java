@@ -1,4 +1,4 @@
-package org.sudocode.api.project;
+package org.sudocode.api.post.project;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 import org.sudocode.api.core.exceptions.InvalidDifficultyException;

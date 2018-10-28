@@ -1,4 +1,4 @@
-package org.sudocode.api.user.web;
+package org.sudocode.api.user;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import org.springframework.data.web.ProjectedPayload;

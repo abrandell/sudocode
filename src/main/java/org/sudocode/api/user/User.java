@@ -50,6 +50,7 @@ public class User implements OAuth2User {
     /**
      * Required for principal. Returns ID since that never changes (unless Github decides to change it).
      */
+    @JsonIgnore
     public String getName() {
         return id.toString();
     }

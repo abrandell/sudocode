@@ -1,4 +1,4 @@
-package org.sudocode.api.project.web;
+package org.sudocode.api.post.project.web;
 
 import static java.time.LocalDateTime.now;
 import static org.mockito.ArgumentMatchers.isNull;
@@ -9,7 +9,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 //@ExtendWith({SpringExtension.class, MockitoExtension.class})
-//@WebMvcTest(value = ProjectRestController.class, secure = false)
+//@WebMvcTest(value = PostingRestController.class, secure = false)
 //@EnableSpringDataWebSupport
 //@MockitoSettings(strictness = Strictness.STRICT_STUBS)
 //@ActiveProfiles("test")

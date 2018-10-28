@@ -7,9 +7,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.sudocode.api.core.annotation.Delete;
+import org.sudocode.api.core.annotation.Post;
 import org.sudocode.api.core.exceptions.UserNotFoundException;
+import org.sudocode.api.core.annotation.Get;
 import org.sudocode.api.user.UserService;
 import org.sudocode.api.user.User;
+import org.sudocode.api.user.UserView;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -36,7 +40,7 @@ public class UserRestController {
      *
      * @return Currently logged in user in DTO form.
      */
-    @GetMapping(value = "/me", produces = JSON)
+    @Get(path = "/me")
     public ResponseEntity<?> currentUser(Authentication auth) {
         if (auth == null) {
             return ResponseEntity.ok().build();
@@ -51,7 +55,7 @@ public class UserRestController {
      *
      * @see UserService#fetchProjectionById(Long)
      */
-    @GetMapping(value = "/{id:[\\d]+}", produces = JSON)
+    @Get(value = "/{id:[\\d]+}")
     public UserView fetchById(@PathVariable("id") Long id) throws UserNotFoundException {
         return userService.fetchProjectionById(id);
     }
@@ -65,7 +69,7 @@ public class UserRestController {
      * @param login login to search for.
      * @return User with the given login in DTO form.
      */
-    @GetMapping(value = "/{login:[A-Za-z]+}", produces = JSON)
+    @Get(path = "/{login:[A-Za-z]+}")
     public UserView fetchByLogin(@PathVariable String login) {
         return userService.fetchProjectionByLogin(login.toLowerCase());
     }
@@ -75,19 +79,19 @@ public class UserRestController {
      *
      * @see UserService#fetchAllProjections(Pageable)
      */
-    @GetMapping(produces = JSON)
+    @Get
     public Page<UserView> fetchAll(Pageable pageable) {
         return userService.fetchAllProjections(pageable);
     }
 
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @DeleteMapping(value = "/{id}", produces = JSON)
+    @Delete(value = "/{id}")
     public void deleteById(@PathVariable("id") Long id) {
         userService.deleteById(id);
     }
 
-    @PostMapping(value = "/logout")
+    @Post(path = "/logout")
     public void logout(HttpServletRequest request) {
         request.getSession(false).invalidate();
     }

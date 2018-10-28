@@ -1,4 +1,4 @@
-package org.sudocode.api.project.comment;
+package org.sudocode.api.post.comment;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
@@ -6,12 +6,11 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.data.annotation.CreatedBy;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
-import org.sudocode.api.core.AbstractAuditableEntity;
-import org.sudocode.api.project.Project;
+import org.sudocode.api.post.UserPost;
+import org.sudocode.api.post.project.Project;
 import org.sudocode.api.user.User;
 
 import javax.persistence.*;
@@ -24,12 +23,7 @@ import static java.time.LocalDateTime.now;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "comments")
-public class Comment extends AbstractAuditableEntity {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
-    @GenericGenerator(name = "native", strategy = "native")
-    private Long id;
+public class Comment extends UserPost {
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -46,7 +40,7 @@ public class Comment extends AbstractAuditableEntity {
     private Comment parent;
 
     private Comment(Builder builder) {
-        this.id = builder.id;
+        super.setId(builder.id);
         this.project = builder.project;
         this.body = builder.body;
         this.author = builder.author;
@@ -56,7 +50,7 @@ public class Comment extends AbstractAuditableEntity {
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                .append("id", id)
+                .append("id", super.getId())
                 .append("project", project)
                 .append("body", body)
                 .append("author", author)

@@ -1,0 +1,27 @@
+package org.sudocode.api.core.annotation;
+
+import org.springframework.core.annotation.AliasFor;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+
+import java.lang.annotation.*;
+
+@Target(ElementType.METHOD)
+@Retention(RetentionPolicy.RUNTIME)
+@RequestMapping(method = RequestMethod.POST)
+@Documented
+public @interface Post {
+
+    @AliasFor(annotation = RequestMapping.class)
+    String value() default "";
+
+    @AliasFor(annotation = RequestMapping.class)
+    String path() default "";
+
+    @AliasFor(annotation = RequestMapping.class)
+    String[] produces() default {MediaType.APPLICATION_JSON_VALUE};
+
+    @AliasFor(annotation = RequestMapping.class)
+    String[] consumes() default {MediaType.APPLICATION_JSON_VALUE};
+}

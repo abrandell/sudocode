@@ -11,10 +11,9 @@ import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.sudocode.api.core.exceptions.TooManyRequestException;
-import org.sudocode.api.project.Project;
-import org.sudocode.api.project.ProjectService;
-import org.sudocode.api.project.comment.Comment;
-import org.sudocode.api.user.User;
+import org.sudocode.api.post.project.Project;
+import org.sudocode.api.post.PostingService;
+import org.sudocode.api.post.comment.Comment;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -26,15 +25,14 @@ import static org.sudocode.api.core.util.Constants.DEFAULT_LOCAL_DATE_TIME;
  * Service for timing out users for spamming and/or posting too often.
  */
 @Service
-@Transactional(readOnly = true)
 class TimeOutService {
 
     private final Logger LOG = LoggerFactory.getLogger(TimeOutService.class);
-    private final ProjectService projectService;
+    private final PostingService postingService;
 
     @Autowired
-    public TimeOutService(ProjectService projectService) {
-        this.projectService = projectService;
+    public TimeOutService(PostingService postingService) {
+        this.postingService = postingService;
     }
 
     public void handleTimeOut(Long userId) {
@@ -77,7 +75,7 @@ class TimeOutService {
 
         // To not make more queries than needed.
         if (!isTimedOut(id)) {
-            return projectService.fetchLatestPostDateByAuthorId(id);
+            return postingService.fetchLatestPostDateByAuthorId(id);
         }
 
         return DEFAULT_LOCAL_DATE_TIME;
@@ -92,7 +90,7 @@ class TimeOutService {
      * @return LoadingCache that fetches both dates (if they exist) for the last {@link Project} and {@link Comment} posted.
      *         The load function returns the latest.
      * @see LoadingCache
-     * @see ProjectService#fetchLatestPostDateByAuthorId(Long)
+     * @see PostingService#fetchLatestPostDateByAuthorId(Long)
      */
     @Bean
     public LoadingCache<Long, LocalDateTime> loadingCache() {
@@ -102,7 +100,7 @@ class TimeOutService {
                            .build(new CacheLoader<>() {
                                @Override
                                public LocalDateTime load(@NonNull Long userId) {
-                                   return projectService.fetchLatestPostDateByAuthorId(userId);
+                                   return postingService.fetchLatestPostDateByAuthorId(userId);
                                }
                            });
 

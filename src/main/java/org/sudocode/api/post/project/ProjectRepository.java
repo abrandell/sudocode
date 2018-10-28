@@ -1,4 +1,4 @@
-package org.sudocode.api.project;
+package org.sudocode.api.post.project;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -8,7 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import org.sudocode.api.project.web.ProjectView;
+import org.sudocode.api.post.PostingService;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -16,11 +16,10 @@ import java.util.Optional;
 /**
  * Project repository.
  * <p>
- * Not to be accessed without an ongoing transaction (preferably from {@link org.sudocode.api.project.ProjectService}.
+ * Not to be accessed without an ongoing transaction (preferably from {@link PostingService}.
  */
 @Repository
 @Transactional(
-        readOnly = true,
         rollbackFor = Exception.class,
         propagation = Propagation.MANDATORY
 )

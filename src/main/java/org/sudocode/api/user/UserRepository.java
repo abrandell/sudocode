@@ -8,7 +8,6 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import org.sudocode.api.user.web.UserView;
 
 import java.util.Optional;
 
@@ -19,7 +18,6 @@ import java.util.Optional;
  */
 @Repository
 @Transactional(
-        readOnly = true,
         rollbackFor = Exception.class,
         propagation = Propagation.MANDATORY
 )

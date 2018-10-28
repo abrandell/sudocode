@@ -1,55 +1,57 @@
-package org.sudocode.api.project;
+package org.sudocode.api.post;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.lang.Nullable;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.sudocode.api.core.annotation.ModifyingTX;
 import org.sudocode.api.core.exceptions.InvalidDifficultyException;
 import org.sudocode.api.core.exceptions.NotPostAuthorException;
 import org.sudocode.api.core.exceptions.ProjectNotFoundException;
-import org.sudocode.api.project.comment.Comment;
-import org.sudocode.api.project.comment.CommentRepository;
-import org.sudocode.api.project.comment.CommentView;
-import org.sudocode.api.project.web.ProjectView;
+import org.sudocode.api.post.project.Difficulty;
+import org.sudocode.api.post.project.Project;
+import org.sudocode.api.post.project.ProjectRepository;
+import org.sudocode.api.post.comment.Comment;
+import org.sudocode.api.post.comment.CommentRepository;
+import org.sudocode.api.post.comment.CommentView;
+import org.sudocode.api.post.project.ProjectView;
 import org.sudocode.api.user.User;
 
 import java.time.LocalDateTime;
 
 import static java.time.LocalDateTime.now;
 import static org.sudocode.api.core.util.Constants.DEFAULT_LOCAL_DATE_TIME;
-import static org.sudocode.api.project.Difficulty.fromText;
+import static org.sudocode.api.post.project.Difficulty.fromText;
 
 /**
- * Service for projects (and comments) transactions. Transactions start here for all projects and comments.
+ * Service for projects and comments transactions. Transactions start here for all projects and comments.
  * By default it is set to read-only and rolls back for ANY exception.
  * <p>
- * Be sure to add the {@code @Transactional} annotation if starting a modifying transaction (i.e. create, delete, etc).
  */
 @Service
 @Transactional(
         readOnly = true,
-        rollbackFor = Exception.class
+        rollbackFor = Exception.class,
+        propagation = Propagation.REQUIRES_NEW
 )
-public class ProjectService {
+public class PostingService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ProjectService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PostingService.class);
     private final ProjectRepository projectRepo;
     private final CommentRepository commentRepo;
 
     @Autowired
-    public ProjectService(ProjectRepository projectRepo, CommentRepository commentRepo) {
+    public PostingService(ProjectRepository projectRepo, CommentRepository commentRepo) {
         this.projectRepo = projectRepo;
         this.commentRepo = commentRepo;
     }
 
-
-    @Transactional(rollbackFor = Exception.class)
+    @ModifyingTX
     public Project postProject(Project project) {
         return projectRepo.save(project);
     }
@@ -71,9 +73,9 @@ public class ProjectService {
      * @see ProjectView
      * @see Difficulty#fromText(String)
      */
-    public Page<ProjectView> fetchAll(@Nullable String title,
-                                      @Nullable String difficulty,
-                                      @Nullable String description, Pageable pageable) {
+    public Page<ProjectView> fetchAllProjectViews(@Nullable String title,
+                                                  @Nullable String difficulty,
+                                                  @Nullable String description, Pageable pageable) {
         Difficulty diffEnum = (difficulty != null && !difficulty.isEmpty()) ? fromText(difficulty) : null;
         return projectRepo.fetchAllProjections(title, diffEnum, description, pageable);
     }
@@ -84,7 +86,7 @@ public class ProjectService {
      * @param id builder the project to fetch.
      * @return the project if found.
      */
-    public ProjectView fetchById(Long id) {
+    public ProjectView fetchProjectViewById(Long id) {
         return projectRepo.findViewById(id).orElseThrow(() -> new ProjectNotFoundException(id));
     }
 
@@ -94,8 +96,7 @@ public class ProjectService {
      * @param id of the project to update..
      * @return The updated (or new) {@link Project}.
      */
-    @Modifying
-    @Transactional(rollbackFor = Exception.class)
+    @ModifyingTX
     public Project updateProject(Long id, Project newProject, User currentUser) {
         return projectRepo.fetchById(id)
                           .filter(project -> project.getAuthor().equals(currentUser))
@@ -118,8 +119,7 @@ public class ProjectService {
      * @param id builder the comment.
      * @throws NotPostAuthorException if the user making the request did not postProject the comment.
      */
-    @Modifying
-    @Transactional(rollbackFor = Exception.class)
+    @ModifyingTX
     public void deleteProjectById(Long id, User currentUser) {
         projectRepo.fetchById(id).ifPresent(project -> {
             if (!project.getAuthor().equals(currentUser)) {
@@ -143,7 +143,7 @@ public class ProjectService {
      * @return The newly created comment.
      * @throws ProjectNotFoundException if the {@literal projectId} does not match any project id in the DB.
      */
-    @Transactional(rollbackFor = Exception.class)
+    @ModifyingTX
     public Comment postComment(Comment comment, Long projectId, User user) {
         final Long commentId = comment.getId();
 
@@ -157,8 +157,7 @@ public class ProjectService {
         return commentRepo.save(comment);
     }
 
-    @Modifying
-    @Transactional(rollbackFor = Exception.class)
+    @ModifyingTX
     public Comment updateComment(Comment newComment, Long commentId, Long projectId, User currentUser) {
         return commentRepo.fetchById(commentId)
                           .filter(comment -> comment.getAuthor().equals(currentUser))
@@ -180,7 +179,7 @@ public class ProjectService {
      * @param id builder the comment to be deleted.
      * @throws NotPostAuthorException if the user making the request did not postProject the comment.
      */
-    @Transactional(rollbackFor = Exception.class)
+    @ModifyingTX
     public void deleteCommentById(Long id, User currentUser) {
         commentRepo.fetchById(id).ifPresent(comment -> {
             if (!comment.getAuthor().equals(currentUser)) {

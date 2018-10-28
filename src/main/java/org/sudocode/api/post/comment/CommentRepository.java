@@ -1,4 +1,4 @@
-package org.sudocode.api.project.comment;
+package org.sudocode.api.post.comment;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.sudocode.api.core.annotation.ModifyingTX;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -35,8 +36,7 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     @Query("SELECT c FROM Comment c JOIN c.author AS u WHERE c.project.id = :id")
     Page<Comment> fetchCommentsByProjectId(@Param("id") Long id, Pageable pageable);
 
-    @Modifying
-    @Transactional(propagation = Propagation.MANDATORY)
+    @ModifyingTX(propagation = Propagation.MANDATORY)
     @Query("DELETE FROM Comment c WHERE c.project.id = :id")
     void deleteCommentsByProjectId(@Param("id") Long id);
 

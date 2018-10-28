@@ -7,21 +7,17 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
-import org.sudocode.api.project.Difficulty;
-import org.sudocode.api.project.web.ProjectRestController;
+import org.sudocode.api.post.project.Difficulty;
+import org.sudocode.api.post.web.PostingRestController;
 import testingutils.ProjectPostForm;
 import testingutils.WithMockOAuth2User;
-
-import java.io.IOException;
 
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -45,7 +41,7 @@ class ServerApplicationTests {
     private ObjectMapper objectMapper;
 
     @Autowired
-    private ProjectRestController projectRestController;
+    private PostingRestController postingRestController;
 
     JacksonTester<ProjectPostForm> jsonProjectPost;
 

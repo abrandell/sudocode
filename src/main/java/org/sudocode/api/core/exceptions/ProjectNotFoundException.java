@@ -1,6 +1,6 @@
 package org.sudocode.api.core.exceptions;
 
-import org.sudocode.api.project.Project;
+import org.sudocode.api.post.project.Project;
 
 /**
  * Thrown when a {@link Project} couldn't be found in the DB.

@@ -1,4 +1,4 @@
-package org.sudocode.api.project;
+package org.sudocode.api.post.project;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
@@ -12,27 +12,17 @@ import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.domain.Persistable;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
-import org.sudocode.api.core.AbstractAuditableEntity;
-import org.sudocode.api.project.web.ProjectView;
+import org.sudocode.api.post.UserPost;
 import org.sudocode.api.user.User;
 
 import javax.persistence.*;
-
-import static javax.persistence.ParameterMode.*;
 
 @Entity
 @Table(name = "projects")
 @Getter
 @Setter
 @NoArgsConstructor
-public class Project extends AbstractAuditableEntity implements Persistable<Long> {
-
-    // So the generator picks IDENTITY instead of TABLE
-    // https://vladmihalcea.com/9-high-performance-tips-when-using-mysql-with-jpa-and-hibernate/#more-7915
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
-    @GenericGenerator(name = "native", strategy = "native")
-    private Long id;
+public class Project extends UserPost {
 
     @Length(min = 5, max = 100)
     private String title;
@@ -49,7 +39,7 @@ public class Project extends AbstractAuditableEntity implements Persistable<Long
     private User author;
 
     private Project(Builder builder) {
-        this.id = builder.id;
+        super.setId(builder.id);
         this.title = builder.title;
         this.difficulty = builder.difficulty;
         this.description = builder.description;
@@ -60,21 +50,10 @@ public class Project extends AbstractAuditableEntity implements Persistable<Long
         return new Builder(author);
     }
 
-    /**
-     * If the id is null, it hasn't been persisted to the DB yet.
-     *
-     * @return false if ID is null, true otherwise.
-     */
-    @JsonIgnore
-    @Override
-    public boolean isNew() {
-        return id == null;
-    }
-
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
-                .append("id", id)
+                .append("id", super.getId())
                 .append("title", title)
                 .append("difficulty", difficulty)
                 .append("description", description)

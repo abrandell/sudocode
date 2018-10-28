@@ -1,7 +1,7 @@
-package org.sudocode.api.project.comment;
+package org.sudocode.api.post.comment;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import org.sudocode.api.user.web.UserView;
+import org.sudocode.api.user.UserView;
 
 import java.time.LocalDateTime;
 

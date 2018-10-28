@@ -1,14 +1,12 @@
-package org.sudocode.api.project.web;
+package org.sudocode.api.post.project;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import org.hibernate.criterion.Projection;
-import org.sudocode.api.project.Difficulty;
-import org.sudocode.api.user.web.UserView;
+import org.sudocode.api.user.UserView;
 
 import java.time.LocalDateTime;
 
 /**
- * Projection for {@link org.sudocode.api.project.Project} entities.
+ * Projection for {@link org.sudocode.api.post.project.Project} entities.
  */
 @SuppressWarnings({"unused"})
 @JsonPropertyOrder({
