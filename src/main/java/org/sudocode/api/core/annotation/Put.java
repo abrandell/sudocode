@@ -3,6 +3,7 @@ package org.sudocode.api.core.annotation;
 import org.springframework.core.annotation.AliasFor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -10,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.lang.annotation.*;
 
 /**
- * Meta annotation for {@link org.springframework.web.bind.annotation.PutMapping} that produces {@code MediaType.APPLICATION_JSON_VALUE}
+ * Meta annotation for {@link PutMapping} that produces & consumes {@code MediaType.APPLICATION_JSON_VALUE}
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
@@ -28,5 +29,5 @@ public @interface Put {
     String[] produces() default {MediaType.APPLICATION_JSON_VALUE};
 
     @AliasFor(annotation = RequestMapping.class)
-    String[] consumes() default { MediaType.APPLICATION_JSON_VALUE };
+    String[] consumes() default {MediaType.APPLICATION_JSON_VALUE};
 }

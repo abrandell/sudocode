@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import org.springframework.web.client.RestTemplate;
+import org.sudocode.api.core.annotation.ModifyingTX;
 import org.sudocode.api.core.exceptions.UserNotFoundException;
 
 /**
@@ -40,7 +41,7 @@ public class UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2U
     private final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     @Autowired
-    UserService(UserRepository userRepo) {
+    public UserService(UserRepository userRepo) {
         this.userRepo = userRepo;
     }
 
@@ -48,7 +49,7 @@ public class UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2U
      * Save a {@link User}
      * @return The newly persisted {@link User}
      */
-    @Transactional(rollbackFor = Exception.class)
+    @ModifyingTX
     public User saveUser(@NonNull User user) {
         logger.info("Saving user to database {}", user);
         return userRepo.save(user);
@@ -93,8 +94,7 @@ public class UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2U
      *
      * @param id builder the user to delete.
      */
-    @Modifying
-    @Transactional(rollbackFor = Exception.class)
+    @ModifyingTX
     public void deleteById(Long id) {
         userRepo.deleteById(id);
     }
@@ -113,8 +113,7 @@ public class UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2U
      * @see OAuth2UserService
      * @see OAuth2UserRequest
      */
-    @Override
-    @Transactional(rollbackFor = Exception.class)
+    @ModifyingTX
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         if (userRequest.getAccessToken() == null) {
             throw new OAuth2AuthenticationException(
