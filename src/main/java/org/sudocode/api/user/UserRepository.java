@@ -62,6 +62,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
             "FROM User u WHERE u.login = :login")
     Optional<UserView> fetchUserViewByLogin(@Param("login") String login);
 
-    Optional<UserView> fetchById(@Param("id") Long id);
+    Optional<UserView> findViewById(@Param("id") Long id);
 
 }

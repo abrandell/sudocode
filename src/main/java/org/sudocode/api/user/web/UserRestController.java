@@ -49,11 +49,11 @@ public class UserRestController {
      *
      * Returns the user with the given ID in DTO form.
      *
-     * @see UserService#fetchById(Long)
+     * @see UserService#fetchProjectionById(Long)
      */
     @GetMapping(value = "/{id:[\\d]+}", produces = JSON)
     public UserView fetchById(@PathVariable("id") Long id) throws UserNotFoundException {
-        return userService.fetchById(id);
+        return userService.fetchProjectionById(id);
     }
 
     /**
@@ -67,20 +67,21 @@ public class UserRestController {
      */
     @GetMapping(value = "/{login:[A-Za-z]+}", produces = JSON)
     public UserView fetchByLogin(@PathVariable String login) {
-        return userService.fetchByLogin(login.toLowerCase());
+        return userService.fetchProjectionByLogin(login.toLowerCase());
     }
 
     /**
      * GET /api/users?{page, sort}
      *
-     * @see UserService#fetchAll(Pageable)
+     * @see UserService#fetchAllProjections(Pageable)
      */
     @GetMapping(produces = JSON)
     public Page<UserView> fetchAll(Pageable pageable) {
-        return userService.fetchAll(pageable);
+        return userService.fetchAllProjections(pageable);
     }
 
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping(value = "/{id}", produces = JSON)
     public void deleteById(@PathVariable("id") Long id) {
         userService.deleteById(id);

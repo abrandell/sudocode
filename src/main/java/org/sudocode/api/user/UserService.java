@@ -6,9 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.lang.NonNull;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.oauth2.core.OAuth2AccessToken;
@@ -62,7 +64,7 @@ public class UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2U
      * @see Pageable
      * @see UserView
      */
-    public Page<UserView> fetchAll(Pageable pageable) {
+    public Page<UserView> fetchAllProjections(Pageable pageable) {
         return userRepo.fetchAllUserViews(pageable);
     }
 
@@ -73,8 +75,8 @@ public class UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2U
      * @return {@link UserView} projection of the {@link User} with the given ID as their PK.
      * @throws UserNotFoundException if the id does not match any persisted user.
      */
-    public UserView fetchById(Long id) {
-        return userRepo.fetchById(id).orElseThrow(() -> new UserNotFoundException(id));
+    public UserView fetchProjectionById(Long id) {
+        return userRepo.findViewById(id).orElseThrow(() -> new UserNotFoundException(id));
     }
 
     /**
@@ -84,7 +86,7 @@ public class UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2U
      * @return {@link UserView} projection of the User with the given login.
      * @throws UserNotFoundException if the login does not match any persisted user.
      */
-    public UserView fetchByLogin(String login) {
+    public UserView fetchProjectionByLogin(String login) {
         return userRepo.fetchUserViewByLogin(login).orElseThrow(() -> new UserNotFoundException(login));
     }
 
@@ -93,6 +95,7 @@ public class UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2U
      *
      * @param id builder the user to delete.
      */
+    @Modifying
     @Transactional(rollbackFor = Exception.class)
     public void deleteById(Long id) {
         userRepo.deleteById(id);

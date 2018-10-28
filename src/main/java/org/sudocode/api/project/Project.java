@@ -13,15 +13,18 @@ import org.springframework.data.domain.Persistable;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.sudocode.api.core.AbstractAuditableEntity;
+import org.sudocode.api.project.web.ProjectView;
 import org.sudocode.api.user.User;
 
 import javax.persistence.*;
 
+import static javax.persistence.ParameterMode.*;
+
 @Entity
+@Table(name = "projects")
 @Getter
 @Setter
 @NoArgsConstructor
-@Table(name = "projects")
 public class Project extends AbstractAuditableEntity implements Persistable<Long> {
 
     // So the generator picks IDENTITY instead of TABLE

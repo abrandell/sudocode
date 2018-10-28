@@ -6,11 +6,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.platform.commons.logging.Logger;
 import org.junit.platform.commons.logging.LoggerFactory;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.sudocode.api.core.exceptions.UserNotFoundException;
@@ -22,8 +19,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 @ExtendWith(SpringExtension.class)
 @ActiveProfiles("test")
@@ -57,7 +52,7 @@ class UserServiceTest {
     void fetchAll() {
         given(userRepoMock.findAll(any(Pageable.class))).willReturn(new PageImpl<>(List.of(userMock)));
 
-//        Page<User> actual = userService.fetchAll(PageRequest.of(1, 1));
+//        Page<User> actual = userService.fetchAllProjections(PageRequest.of(1, 1));
 //
 //        assertAll("FetchAll",
 //                () -> assertEquals(actual.getContent().get(0).getId(), userMock.getId()));
@@ -65,13 +60,13 @@ class UserServiceTest {
 
     @Test
     void fetchById() {
-        assertThrows(UserNotFoundException.class, () -> userService.fetchById(-1L));
+        assertThrows(UserNotFoundException.class, () -> userService.fetchProjectionById(-1L));
     }
 
     @Test
     void fetchByLogin() {
         given(userRepoMock.findByLogin("mock-username")).willReturn(Optional.of(userMock));
-        assertEquals(userMock, userService.fetchByLogin("mock-username"));
+        assertEquals(userMock, userService.fetchProjectionByLogin("mock-username"));
     }
 
 }

@@ -99,7 +99,7 @@ class ProjectServiceTest {
 
     @Test
     void fetchById() {
-        given(projectRepo.fetchById(project1.getId())).willReturn(Optional.of(project1));
+//        given(projectRepo.fetchProjectionById(project1.getId())).willReturn(Optional.of(project1));
         assertEquals(project1, service.fetchById(project1.getId()));
     }
 
@@ -109,7 +109,7 @@ class ProjectServiceTest {
         Long projectId = project1.getId();
         project2.setAuthor(null);
 
-        given(projectRepo.fetchById(projectId)).willReturn(Optional.of(project1));
+//        given(projectRepo.fetchProjectionById(projectId)).willReturn(Optional.of(project1));
         given(projectRepo.existsById(projectId)).willReturn(true);
         given(projectRepo.save(project2)).willReturn(project2);
 
@@ -137,7 +137,7 @@ class ProjectServiceTest {
                                                .difficulty(project1.getDifficulty())
                                                .title(project1.getTitle()).build();
 
-        given(projectRepo.fetchById(originalId)).willReturn(Optional.of(this.project1));
+//        given(projectRepo.fetchProjectionById(originalId)).willReturn(Optional.of(this.project1));
 
         final Project result = service.updateProject(
                 originalId,
@@ -167,7 +167,7 @@ class ProjectServiceTest {
     @SuppressWarnings("ConstantConditions")
     @Test
     void deleteProjectById_sameAuthor_thenNoException() {
-        given(projectRepo.fetchById(project2.getId())).willReturn(Optional.of(project2));
+//        given(projectRepo.fetchProjectionById(project2.getId())).willReturn(Optional.of(project2));
 
         assertAll("Delete project by id, same author",
                 // Check that no exception thrown
@@ -183,7 +183,7 @@ class ProjectServiceTest {
     @SuppressWarnings("ConstantConditions")
     @Test
     void deleteProjectById_notSameAuthor_thenException() {
-        given(projectRepo.fetchById(project1.getId())).willReturn(Optional.of(project1));
+//        given(projectRepo.fetchProjectionById(project1.getId())).willReturn(Optional.of(project1));
 
         assertAll("Delete comment by - not same author",
                 () -> assertThrows(NotPostAuthorException.class,

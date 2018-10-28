@@ -24,16 +24,6 @@ import static org.sudocode.api.core.util.Constants.*;
 @Entity
 @Table(name = "users")
 @AccessType(Type.FIELD)
-@NamedQuery(
-        name = "User.fetchById",
-        query = "SELECT " +
-                "u.id as id, " +
-                "u.login AS login, " +
-                "u.avatarUrl AS avatarUrl, " +
-                "u.hireable AS hireable " +
-                "FROM User u " +
-                "WHERE u.id = :id"
-)
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User implements OAuth2User {

@@ -58,7 +58,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 //        commentPage = new PageImpl<>(List.of(comment), PageRequest.of(0, 20), 1);
 //        commentDTOPage = commentPage.map(CommentDTO::new);
 //
-////        given(projectService.fetchById(project.getId())).willReturn(project);
+////        given(projectService.fetchProjectionById(project.getId())).willReturn(project);
 //        given(projectMapper.toDTO(project)).willReturn(projectDTO);
 //        given(commentMapper.toDTO(comment)).willReturn(commentDTO);
 //
@@ -71,7 +71,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 //
 //    @Test
 //    void response_FetchAll() throws Exception {
-////        given(projectService.fetchAll(any(), any(), any(), any())).willReturn(projectSummaryDTOPage);
+////        given(projectService.fetchAllProjections(any(), any(), any(), any())).willReturn(projectSummaryDTOPage);
 //
 //        mockMvc.perform(get("/api/projects"))
 //               .andExpect(status().isOk())
