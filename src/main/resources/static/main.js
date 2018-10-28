@@ -175,7 +175,7 @@ var AppRoutingModule = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div id=\"webpage\">\n<app-navbar></app-navbar>\n\n  <div id=\"content\">\n    <div id=\"sub-content\" class=\"max-width-wrapper container align-self-auto\">\n    <router-outlet></router-outlet>\n  </div>\n  </div>\n  <app-footer></app-footer>\n</div>\n"
+module.exports = "  <div id=\"content\">\n  <app-navbar></app-navbar>\n\n    <div id=\"sub-content\" class=\"max-width-wrapper container align-self-auto\">\n      <router-outlet></router-outlet>\n    </div>\n    <app-footer></app-footer>\n  </div>\n"
 
 /***/ }),
 
@@ -354,7 +354,8 @@ var AppModule = /** @class */ (function () {
             ],
             providers: [
                 _shared_project_service__WEBPACK_IMPORTED_MODULE_13__["ProjectService"], { provide: _angular_common_http__WEBPACK_IMPORTED_MODULE_5__["HTTP_INTERCEPTORS"], useClass: XhrInterceptor, multi: true },
-                _shared_user_service__WEBPACK_IMPORTED_MODULE_21__["UserService"], { provide: _angular_common_http__WEBPACK_IMPORTED_MODULE_5__["HTTP_INTERCEPTORS"], useClass: XhrInterceptor, multi: true }
+                _shared_user_service__WEBPACK_IMPORTED_MODULE_21__["UserService"], { provide: _angular_common_http__WEBPACK_IMPORTED_MODULE_5__["HTTP_INTERCEPTORS"], useClass: XhrInterceptor, multi: true },
+                _project_project_list_project_list_component__WEBPACK_IMPORTED_MODULE_6__["ProjectListComponent"]
             ],
             bootstrap: [_app_component__WEBPACK_IMPORTED_MODULE_3__["AppComponent"]]
         })
@@ -373,7 +374,7 @@ var AppModule = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"comment-card container-fluid\" style=\"margin-bottom: 1.2rem\">\n  <div *ngIf=\"auth.currentUser?.id == comment?.author?.id\"\n       class=\"author-buttons btn-group-sm\">\n    <button id=\"edit\" class=\"btn btn-sm btn-outline-secondary\">\n      <i class=\"fa fa-pencil\"></i> Edit\n    </button>\n    <button id=\"delete\" class=\"btn btn-sm btn-danger\" data-toggle=\"modal\" data-target=\"#confirm-delete\">\n      <i class=\"fa fa-trash-o\"></i> Delete\n    </button>\n\n    <div class=\"modal fade\" id=\"confirm-delete\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"exampleModalCenterTitle\" aria-hidden=\"true\">\n        <div class=\"modal-dialog modal-dialog-centered\" role=\"document\">\n          <div class=\"modal-content\">\n            <div class=\"modal-header\">\n              <h5 class=\"modal-title\" id=\"exampleModalLongTitle\">Are you sure?</h5>\n              <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\">\n                <span aria-hidden=\"true\">&times;</span>\n              </button>\n            </div>\n            <div class=\"modal-body\">\n              This cannot be undone.\n            </div>\n            <div class=\"modal-footer\">\n                <button type=\"button\" class=\"btn btn-danger\" (click)=\"deleteComment()\" data-dismiss=\"modal\">Delete Comment</button>\n              <button type=\"button\" class=\"btn btn-primary\" data-dismiss=\"modal\">Close</button>\n            </div>\n          </div>\n        </div>\n      </div>\n\n\n  </div>\n  <div class=\"header\">\n    <img class=\"avatar\" src=\"{{comment?.author?.avatar_url}}\">\n    <div class=\"metadata\">\n      <a class=\"clickable login\" href=\"https://github.com/{{comment?.author?.login}}\">\n        <h6>{{comment?.author?.login}}</h6>\n      </a>\n      <div class=\"date\">{{comment?.date_posted | date: 'MMM. d, y'}}</div>\n    </div>\n  </div>\n  <p class=\"comment-body\">{{comment?.body}}</p>\n</div>\n<hr class=\"my-2\">\n"
+module.exports = "<div class=\"comment-card container-fluid\" style=\"margin-bottom: 1.2rem\">\n  <div *ngIf=\"comment != null\">\n  <div *ngIf=\"auth.currentUser?.id == comment?.author?.id\"\n       class=\"author-buttons btn-group-sm\">\n    <button id=\"edit\" class=\"btn btn-sm btn-outline-secondary\">\n      <i class=\"fa fa-pencil\"></i> Edit\n    </button>\n    <button id=\"delete\" class=\"btn btn-sm btn-danger\" data-toggle=\"modal\" data-target=\"#confirm-delete\">\n      <i class=\"fa fa-trash-o\"></i> Delete\n    </button>\n\n    <div class=\"modal fade\" id=\"confirm-delete\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"exampleModalCenterTitle\" aria-hidden=\"true\">\n        <div class=\"modal-dialog modal-dialog-centered\" role=\"document\">\n          <div class=\"modal-content\">\n            <div class=\"modal-header\">\n              <h5 class=\"modal-title\" id=\"exampleModalLongTitle\">Are you sure?</h5>\n              <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\">\n                <span aria-hidden=\"true\">&times;</span>\n              </button>\n            </div>\n            <div class=\"modal-body\">\n              This cannot be undone.\n            </div>\n            <div class=\"modal-footer\">\n                <button type=\"button\" class=\"btn btn-danger\" (click)=\"deleteComment()\" data-dismiss=\"modal\">Delete Comment</button>\n              <button type=\"button\" class=\"btn btn-primary\" data-dismiss=\"modal\">Close</button>\n            </div>\n          </div>\n        </div>\n      </div>\n\n\n  </div>\n  <div class=\"header\">\n    <img class=\"avatar\" src=\"{{comment?.author?.avatar_url}}\">\n    <div class=\"metadata\">\n      <a class=\"clickable login\" href=\"https://github.com/{{comment?.author?.login}}\">\n        <h6>{{comment?.author?.login}}</h6>\n      </a>\n      <div class=\"date\">{{comment?.date_posted | date: 'MMM. d, y'}}</div>\n    </div>\n  </div>\n  <p class=\"comment-body\">{{comment?.body}}</p>\n    <hr class=\"my-2\">\n  </div>\n</div>\n"
 
 /***/ }),
 
@@ -402,6 +403,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _shared_auth_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../shared/auth.service */ "./src/app/shared/auth.service.ts");
 /* harmony import */ var _shared_project_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../shared/project.service */ "./src/app/shared/project.service.ts");
 /* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/router */ "./node_modules/@angular/router/fesm5/router.js");
+/* harmony import */ var _project_project_detail_project_detail_component__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../project/project-detail/project-detail.component */ "./src/app/project/project-detail/project-detail.component.ts");
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -415,19 +417,22 @@ var __metadata = (undefined && undefined.__metadata) || function (k, v) {
 
 
 
+
 var CommentCardComponent = /** @class */ (function () {
-    function CommentCardComponent(auth, projectService, route) {
+    function CommentCardComponent(auth, projectService, route, projectPage) {
         var _this = this;
         this.auth = auth;
         this.projectService = projectService;
         this.route = route;
+        this.projectPage = projectPage;
         this.route.params.subscribe(function (params) { return _this.projectId = params.id; }, function (err) { return console.log(err); });
     }
     CommentCardComponent.prototype.ngOnInit = function () {
     };
     CommentCardComponent.prototype.deleteComment = function () {
+        var _this = this;
         this.projectService.deleteComment(this.projectId, this.comment.id)
-            .subscribe(function () { }, function (err) { return console.log(err); });
+            .subscribe(function () { }, function (err) { return console.log(err); }, function () { return _this.projectPage.refreshCommentList(); });
     };
     __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"])(),
@@ -441,7 +446,8 @@ var CommentCardComponent = /** @class */ (function () {
         }),
         __metadata("design:paramtypes", [_shared_auth_service__WEBPACK_IMPORTED_MODULE_1__["AuthService"],
             _shared_project_service__WEBPACK_IMPORTED_MODULE_2__["ProjectService"],
-            _angular_router__WEBPACK_IMPORTED_MODULE_3__["ActivatedRoute"]])
+            _angular_router__WEBPACK_IMPORTED_MODULE_3__["ActivatedRoute"],
+            _project_project_detail_project_detail_component__WEBPACK_IMPORTED_MODULE_4__["ProjectDetailComponent"]])
     ], CommentCardComponent);
     return CommentCardComponent;
 }());
@@ -508,6 +514,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _shared_auth_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../shared/auth.service */ "./src/app/shared/auth.service.ts");
 /* harmony import */ var _shared_project_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../shared/project.service */ "./src/app/shared/project.service.ts");
 /* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/router */ "./node_modules/@angular/router/fesm5/router.js");
+/* harmony import */ var _project_project_detail_project_detail_component__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../project/project-detail/project-detail.component */ "./src/app/project/project-detail/project-detail.component.ts");
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -522,12 +529,14 @@ var __metadata = (undefined && undefined.__metadata) || function (k, v) {
 
 
 
+
 var CommentPostComponent = /** @class */ (function () {
-    function CommentPostComponent(auth, projectService, route, router) {
+    function CommentPostComponent(auth, projectService, route, router, projectDetail) {
         this.auth = auth;
         this.projectService = projectService;
         this.route = route;
         this.router = router;
+        this.projectDetail = projectDetail;
         this.submitted = false;
         this.comment = new _comment_creation__WEBPACK_IMPORTED_MODULE_1__["CommentCreation"]('');
     }
@@ -536,14 +545,10 @@ var CommentPostComponent = /** @class */ (function () {
         this.route.params.subscribe(function (params) { return _this.projectId = params.id; }, function (err) { return console.log(err); });
     };
     CommentPostComponent.prototype.submit = function () {
+        var _this = this;
         var submittedComment;
         this.projectService.postComment(this.projectId, this.comment)
-            .subscribe(function (data) { return submittedComment = data; }, function (err) { return console.log(err); });
-        this.router.navigate(['projects', this.projectId]).then(function () { });
-        if (submittedComment) {
-            this.submitted = true;
-            return submittedComment;
-        }
+            .subscribe(function (data) { return submittedComment = data; }, function (err) { return console.log(err); }, function () { return _this.projectDetail.refreshCommentList(); });
     };
     Object.defineProperty(CommentPostComponent.prototype, "diagnostic", {
         get: function () {
@@ -561,7 +566,8 @@ var CommentPostComponent = /** @class */ (function () {
         __metadata("design:paramtypes", [_shared_auth_service__WEBPACK_IMPORTED_MODULE_2__["AuthService"],
             _shared_project_service__WEBPACK_IMPORTED_MODULE_3__["ProjectService"],
             _angular_router__WEBPACK_IMPORTED_MODULE_4__["ActivatedRoute"],
-            _angular_router__WEBPACK_IMPORTED_MODULE_4__["Router"]])
+            _angular_router__WEBPACK_IMPORTED_MODULE_4__["Router"],
+            _project_project_detail_project_detail_component__WEBPACK_IMPORTED_MODULE_5__["ProjectDetailComponent"]])
     ], CommentPostComponent);
     return CommentPostComponent;
 }());
@@ -577,7 +583,7 @@ var CommentPostComponent = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<footer>\n  <div class=\"max-width-wrapper container\">\n    <div id=\"footer-content\" class=\"container\" style=\"min-height: 5rem\">\n      This site was created using Spring Boot & Angular 6\n    </div>\n  </div>\n</footer>\n"
+module.exports = "<footer>\n  <div class=\"max-width-wrapper container\">\n    <div id=\"footer-content\" class=\"container\" style=\"min-height: 5rem\">\n      <div id=\"footer-links\">\n        <p>Created with <i class=\"fa fa-heart\"></i> using </p>\n        <div class=\"logos\">\n        <img id=\"spring-logo\" src=\"/src/assets/spring-logo.png\">\n        <i class=\"fa fa-plus\"></i>\n        <img id=\"angular-logo\" src=\"/src/assets/angular-logo.png\">\n        </div>\n      </div>\n    </div>\n  </div>\n</footer>\n\n"
 
 /***/ }),
 
@@ -588,7 +594,7 @@ module.exports = "<footer>\n  <div class=\"max-width-wrapper container\">\n    <
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "footer {\n  background-color: #1c2331;\n  position: static;\n  bottom: 0;\n  width: 100%;\n  height: 200px; }\n  footer .max-width-wrapper {\n    color: #fffbfe; }\n  footer .max-width-wrapper #footer-content {\n      padding-top: 1rem;\n      font-family: \"Valera Round\", sans-serif;\n      font-size: 1rem; }\n"
+module.exports = "footer {\n  background-color: #1c2331;\n  position: static;\n  width: 100%;\n  height: 10vh !important; }\n  footer .max-width-wrapper {\n    color: #fffbfe; }\n  footer .max-width-wrapper #footer-content {\n      display: -ms-grid;\n      display: grid;\n      -ms-grid-rows: (10px)[2];\n          grid-template-rows: repeat(2, 10px);\n      -ms-grid-columns: (auto)[2];\n          grid-template-columns: repeat(2, auto);\n      font-size: 1rem;\n      text-align: center;\n      padding-top: 1rem;\n      font-family: \"Valera Round\", sans-serif; }\n  footer .max-width-wrapper .logos {\n      padding-top: 0;\n      margin-top: 0; }\n  footer .max-width-wrapper .logos #spring-logo {\n        max-height: 20px;\n        padding-right: 10px; }\n  footer .max-width-wrapper .logos #angular-logo {\n        padding-left: 10px;\n        border-radius: 50px;\n        max-height: 30px; }\n"
 
 /***/ }),
 
@@ -707,7 +713,7 @@ var HeaderComponent = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<nav class=\"navbar navbar-expand-sm navbar-dark\">\n  <div id=\"inner-nav\" class=\"container max-width-wrapper\">\n    <a class=\"navbar-brand\" routerLink=\"/\">(sudoCode);</a>\n    <button class=\"navbar-toggler\" data-toggle=\"collapse\" data-target=\"#mainNav\">\n      <span class=\"navbar-toggler-icon\"></span>\n    </button>\n    <div class=\"collapse navbar-collapse\" id=\"mainNav\">\n      <div class=\"navbar-expand\">\n        <div class=\"navbar-nav\">\n          <a class=\"nav-item nav-link\" routerLinkActive=\"active\"\n             [routerLinkActiveOptions]=\"{exact: true}\" routerLink=\"/\">Home</a>\n          <a class=\"nav-item nav-link\" routerLinkActive=\"active\"\n             routerLink=\"projects\">Projects</a>\n          <a class=\"nav-item nav-link\" routerLinkActive=\"active\"\n             routerLink=\"users\">Users</a>\n          <a class=\"nav-item nav-link\" routerLinkActive=\"active\"\n             routerLink=\"about\">About</a>\n        </div>\n      </div>\n    </div>\n    <div class=\"mavbar-expand ml-auto\">\n      <div class=\"navbar-nav\" *ngIf=\"!auth.authenticated\">\n        <a class=\"nav-item nav-link\" href=\"http://localhost:8080/oauth2/authorization/github\">\n          <i class=\"fa fa-github fa-lg\"></i> <span> Login</span>\n        </a>\n      </div>\n      <li class=\"nav-item dropdown\" *ngIf=\"auth.authenticated\">\n        <a class=\"nav-link dropdown-toggle\" id=\"navbarDropdown\" role=\"button\" data-toggle=\"dropdown\"\n           aria-haspopup=\"true\" aria-expanded=\"false\">\n          <span class=\"login\">{{auth.currentUser?.login}} </span>\n          <img src=\"{{auth.currentUser?.avatar_url}}\" style=\"max-width: 40px; border-radius: 50px; padding: 0; margin: 0\">\n        </a>\n        <div class=\"dropdown-menu\" aria-labelledby=\"navbarDropdown\">\n          <a class=\"dropdown-item\" (click)=\"auth.logout()\" style=\"cursor: pointer\">Logout</a>\n        </div>\n      </li>\n    </div>\n  </div>\n</nav>\n"
+module.exports = "<nav class=\"navbar navbar-expand-sm navbar-dark\">\n  <div id=\"inner-nav\" class=\"container max-width-wrapper\">\n    <a class=\"navbar-brand\" routerLink=\"/\">(sudoCode);</a>\n    <button class=\"navbar-toggler\" data-toggle=\"collapse\" data-target=\"#mainNav\">\n      <span class=\"navbar-toggler-icon\"></span>\n    </button>\n    <div class=\"collapse navbar-collapse\" id=\"mainNav\">\n      <div class=\"navbar-expand\">\n        <div class=\"navbar-nav\">\n          <a class=\"nav-item nav-link\" routerLinkActive=\"active\"\n             [routerLinkActiveOptions]=\"{exact: true}\" routerLink=\"/\">Home</a>\n          <a class=\"nav-item nav-link\" routerLinkActive=\"active\"\n             routerLink=\"projects\">Projects</a>\n          <a class=\"nav-item nav-link\" routerLinkActive=\"active\"\n             routerLink=\"users\">Users</a>\n          <a class=\"nav-item nav-link\" routerLinkActive=\"active\"\n             routerLink=\"about\">About</a>\n        </div>\n      </div>\n    </div>\n    <div class=\"mavbar-expand ml-auto\">\n      <div class=\"navbar-nav\" *ngIf=\"!auth.authenticated\">\n        <a class=\"nav-item nav-link\" href=\"http://localhost:8080/oauth2/authorization/github\">\n          <i class=\"fa fa-github fa-lg\"></i> <span> Login</span>\n        </a>\n      </div>\n      <li class=\"nav-item dropdown\" *ngIf=\"auth.authenticated\">\n        <a class=\"nav-link dropdown-toggle\" id=\"navbarDropdown\" role=\"button\" data-toggle=\"dropdown\"\n           aria-haspopup=\"true\" aria-expanded=\"false\">\n          <span class=\"login\">{{auth.currentUser?.login}} </span>\n          <img src=\"{{auth.currentUser?.avatar_url}}\" style=\"max-width: 40px; border-radius: 50px; padding: 0; margin: 0\">\n        </a>\n        <div class=\"dropdown-menu\" aria-labelledby=\"navbarDropdown\">\n          <a class=\"dropdown-item\" (click)=\"logout()\" style=\"cursor: pointer\">Logout</a>\n        </div>\n      </li>\n    </div>\n  </div>\n</nav>\n"
 
 /***/ }),
 
@@ -756,8 +762,12 @@ var NavbarComponent = /** @class */ (function () {
         var _this = this;
         this.activatedRoute.params.subscribe(function (params) {
             console.log(params);
-            _this.auth.authenticate(undefined);
+            _this.auth.authenticate();
         });
+    };
+    NavbarComponent.prototype.logout = function () {
+        this.auth.logout()
+            .subscribe(function (status) { return console.log(status); }, function (err) { return console.log(err); });
     };
     NavbarComponent = __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Component"])({
@@ -888,6 +898,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _angular_animations__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/animations */ "./node_modules/@angular/animations/fesm5/animations.js");
 /* harmony import */ var _shared_sort_order__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../shared/sort-order */ "./src/app/shared/sort-order.ts");
 /* harmony import */ var _shared_auth_service__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../shared/auth.service */ "./src/app/shared/auth.service.ts");
+/* harmony import */ var _project_list_project_list_component__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../project-list/project-list.component */ "./src/app/project/project-list/project-list.component.ts");
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -903,29 +914,29 @@ var __metadata = (undefined && undefined.__metadata) || function (k, v) {
 
 
 
+
 var ProjectDetailComponent = /** @class */ (function () {
-    function ProjectDetailComponent(projectService, route, auth, router) {
+    function ProjectDetailComponent(projectService, route, auth, router, projectList) {
         var _this = this;
         this.projectService = projectService;
         this.route = route;
         this.auth = auth;
         this.router = router;
+        this.projectList = projectList;
         this.route.params.subscribe(function (params) { return _this.projectId = params.id; }, function (err) { return console.log(err); });
     }
     ProjectDetailComponent.prototype.isAuthor = function () {
-        if (this.auth.currentUser == null) {
-            return false;
-        }
-        if (this.project == null) {
+        if (this.auth.currentUser == null || this.project == null) {
             return false;
         }
         return this.auth.currentUser.id === this.project.author.id;
     };
     ProjectDetailComponent.prototype.deleteProject = function () {
+        var _this = this;
         if (this.isAuthor()) {
             this.projectService.deleteProject(this.projectId)
-                .subscribe(function (status) { return console.log(status); }, function (err) { return console.log(err); });
-            this.router.navigate(['projects']).then(function () { });
+                .subscribe(function (status) { return console.log(status); }, function (err) { return console.log(err); }, function () { return _this.projectList.ngOnInit(); })
+                .add(function () { return _this.router.navigate(['projects']); });
         }
     };
     ProjectDetailComponent.prototype.ngOnInit = function () {
@@ -963,6 +974,9 @@ var ProjectDetailComponent = /** @class */ (function () {
         this.projectService.fetchProjectComments(this.projectId, this.order, this.pageNum)
             .subscribe(function (data) { return _this.comments = data; }, function (err) { return console.log(err); });
     };
+    ProjectDetailComponent.prototype.refreshCommentList = function () {
+        this.sortByNewest();
+    };
     ProjectDetailComponent = __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Component"])({
             selector: 'app-project-detail',
@@ -982,7 +996,7 @@ var ProjectDetailComponent = /** @class */ (function () {
         __metadata("design:paramtypes", [_shared_project_service__WEBPACK_IMPORTED_MODULE_1__["ProjectService"],
             _angular_router__WEBPACK_IMPORTED_MODULE_2__["ActivatedRoute"],
             _shared_auth_service__WEBPACK_IMPORTED_MODULE_5__["AuthService"],
-            _angular_router__WEBPACK_IMPORTED_MODULE_2__["Router"]])
+            _angular_router__WEBPACK_IMPORTED_MODULE_2__["Router"], _project_list_project_list_component__WEBPACK_IMPORTED_MODULE_6__["ProjectListComponent"]])
     ], ProjectDetailComponent);
     return ProjectDetailComponent;
 }());
@@ -1158,6 +1172,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _project_search_project_creation__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../project-search/project-creation */ "./src/app/project/project-search/project-creation.ts");
 /* harmony import */ var _shared_project_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../shared/project.service */ "./src/app/shared/project.service.ts");
 /* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/router */ "./node_modules/@angular/router/fesm5/router.js");
+/* harmony import */ var _project_list_project_list_component__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../project-list/project-list.component */ "./src/app/project/project-list/project-list.component.ts");
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -1171,10 +1186,12 @@ var __metadata = (undefined && undefined.__metadata) || function (k, v) {
 
 
 
+
 var ProjectPostComponent = /** @class */ (function () {
-    function ProjectPostComponent(projectService, router) {
+    function ProjectPostComponent(projectService, router, projectList) {
         this.projectService = projectService;
         this.router = router;
+        this.projectList = projectList;
         this.difficulty = [
             'basic',
             'beginner',
@@ -1183,13 +1200,12 @@ var ProjectPostComponent = /** @class */ (function () {
             'expert'
         ];
         this.model = new _project_search_project_creation__WEBPACK_IMPORTED_MODULE_1__["ProjectCreation"]('', '', '');
-        this.submitted = false;
     }
     ProjectPostComponent.prototype.submit = function () {
-        this.submitted = true;
+        var _this = this;
         this.projectService.post(this.model)
-            .subscribe(function (status) { return console.log(status); }, function (err) { return console.log(err); });
-        this.router.navigateByUrl('/projects').then(function () { });
+            .subscribe(function (status) { return console.log(status); }, function (err) { return console.log(err); }, function () { return _this.projectList.ngOnInit(); })
+            .add(function () { return _this.router.navigate(['projects']); });
     };
     Object.defineProperty(ProjectPostComponent.prototype, "diagnostic", {
         get: function () {
@@ -1204,7 +1220,9 @@ var ProjectPostComponent = /** @class */ (function () {
             template: __webpack_require__(/*! ./project-post.component.html */ "./src/app/project/project-post/project-post.component.html"),
             styles: [__webpack_require__(/*! ./project-post.component.scss */ "./src/app/project/project-post/project-post.component.scss")]
         }),
-        __metadata("design:paramtypes", [_shared_project_service__WEBPACK_IMPORTED_MODULE_2__["ProjectService"], _angular_router__WEBPACK_IMPORTED_MODULE_3__["Router"]])
+        __metadata("design:paramtypes", [_shared_project_service__WEBPACK_IMPORTED_MODULE_2__["ProjectService"],
+            _angular_router__WEBPACK_IMPORTED_MODULE_3__["Router"],
+            _project_list_project_list_component__WEBPACK_IMPORTED_MODULE_4__["ProjectListComponent"]])
     ], ProjectPostComponent);
     return ProjectPostComponent;
 }());
@@ -1353,20 +1371,22 @@ var AuthService = /** @class */ (function () {
         this.http = http;
         this.authenticated = false;
     }
-    AuthService.prototype.authenticate = function (callback) {
+    AuthService.prototype.authenticate = function () {
         var _this = this;
-        this.http.get('/api/users/me')
-            .subscribe(function (data) {
-            _this.authenticated = JSON.stringify(data).includes('login');
-            if (_this.authenticated) {
-                _this.currentUser = data;
-            }
-            return callback && callback();
-        });
+        if (!this.authenticated) {
+            this.http.get('/api/users/me')
+                .subscribe(function (data) {
+                _this.authenticated = JSON.stringify(data).includes('login');
+                if (_this.authenticated) {
+                    _this.currentUser = data;
+                }
+            });
+        }
     };
     AuthService.prototype.logout = function () {
         this.currentUser = null;
         this.authenticated = false;
+        return this.http.post('/api/users/logout', {});
     };
     AuthService = __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Injectable"])({
