@@ -8,7 +8,6 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import org.sudocode.api.user.web.UserDTO;
 import org.sudocode.api.user.web.UserView;
 
 import java.util.Optional;
@@ -62,5 +61,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
             "u.hireable AS hireable " +
             "FROM User u WHERE u.login = :login")
     Optional<UserView> fetchUserViewByLogin(@Param("login") String login);
+
+    Optional<UserView> fetchById(@Param("id") Long id);
 
 }

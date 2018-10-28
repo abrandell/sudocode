@@ -20,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import org.springframework.web.client.RestTemplate;
 import org.sudocode.api.core.exceptions.UserNotFoundException;
-import org.sudocode.api.user.web.UserDTO;
 import org.sudocode.api.user.web.UserView;
 
 /**
@@ -45,6 +44,10 @@ public class UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2U
         this.userRepo = userRepo;
     }
 
+    /**
+     * Save a {@link User}
+     * @return The newly persisted {@link User}
+     */
     @Transactional(rollbackFor = Exception.class)
     public User saveUser(@NonNull User user) {
         logger.info("Saving user to database {}", user);
@@ -52,12 +55,12 @@ public class UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2U
     }
 
     /**
-     * Fetch a pageable builder all users in DTO form.
+     * Fetch all users as {@link UserView} projections in a page.
      *
      * @param pageable {@link Pageable}
-     * @return Page builder all UserDTOs.
+     * @return Page of all Users in {@link UserView} projections.
      * @see Pageable
-     * @see UserDTO
+     * @see UserView
      */
     public Page<UserView> fetchAll(Pageable pageable) {
         return userRepo.fetchAllUserViews(pageable);
@@ -66,19 +69,19 @@ public class UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2U
     /**
      * Fetch user by id.
      *
-     * @param id builder the user to fetch.
-     * @return User with the given ID as their PK.
+     * @param id of the user to fetch.
+     * @return {@link UserView} projection of the {@link User} with the given ID as their PK.
      * @throws UserNotFoundException if the id does not match any persisted user.
      */
     public UserView fetchById(Long id) {
-        return userRepo.fetchUserViewById(id).orElseThrow(() -> new UserNotFoundException(id));
+        return userRepo.fetchById(id).orElseThrow(() -> new UserNotFoundException(id));
     }
 
     /**
      * Fetch user by login.
      *
-     * @param login builder the user to fetch.
-     * @return User with the given login.
+     * @param login of the user to fetch.
+     * @return {@link UserView} projection of the User with the given login.
      * @throws UserNotFoundException if the login does not match any persisted user.
      */
     public UserView fetchByLogin(String login) {
@@ -101,7 +104,7 @@ public class UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2U
      *
      * <pre>
      * Adds the header {@literal "Bearer: Authorization: <access-token>"} to the http GET request.
-     * Searches for the ueser in the database by id and no record exists, returns the newly persisted {@link User}
+     * Searches for the {@link User} in the database by id and no record exists, returns the newly persisted {@link User}
      * </pre>
      *
      * @return The newly logged in user.

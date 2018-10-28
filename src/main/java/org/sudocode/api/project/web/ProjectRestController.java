@@ -13,8 +13,6 @@ import org.sudocode.api.core.security.CurrentUser;
 import org.sudocode.api.project.Project;
 import org.sudocode.api.project.ProjectService;
 import org.sudocode.api.project.comment.Comment;
-import org.sudocode.api.project.comment.CommentDTO;
-import org.sudocode.api.project.comment.CommentMapper;
 import org.sudocode.api.project.comment.CommentView;
 import org.sudocode.api.user.User;
 
@@ -31,16 +29,11 @@ import static org.sudocode.api.core.util.Constants.JSON;
 public final class ProjectRestController {
 
     private final ProjectService projectService;
-    private final ProjectMapper projectMapper;
-    private final CommentMapper commentMapper;
     private final Logger logger = LoggerFactory.getLogger(ProjectRestController.class);
 
     @Autowired
-    public ProjectRestController(ProjectService projectService,
-                                 ProjectMapper projectMapper, CommentMapper commentMapper) {
+    public ProjectRestController(ProjectService projectService) {
         this.projectService = projectService;
-        this.projectMapper = projectMapper;
-        this.commentMapper = commentMapper;
     }
 
     /**
@@ -93,8 +86,9 @@ public final class ProjectRestController {
      * @see ProjectService#postComment(Comment, Long, User)
      */
     @PostMapping(value = "/{id}/comments", consumes = JSON, produces = JSON)
-    public Comment postComment(@PathVariable("id") Long projectId, @RequestBody Comment comment,
-                                  @CurrentUser User user) {
+    public Comment postComment(@PathVariable("id") Long projectId,
+                               @RequestBody Comment comment,
+                               @CurrentUser User user) {
         comment.setId(null);
         return projectService.postComment(comment, projectId, user);
     }
@@ -103,7 +97,7 @@ public final class ProjectRestController {
     public Comment updateComment(@PathVariable("projectId") Long projectId,
                                     @PathVariable("commentId") Long commentId,
                                     @RequestBody Comment comment,
-                                    @CurrentUser User user) throws ExecutionException {
+                                    @CurrentUser User user) {
 
         return projectService.updateComment(comment, commentId, projectId, user);
     }
@@ -127,10 +121,9 @@ public final class ProjectRestController {
      * @see ProjectService#updateProject(Long, Project, User)
      */
     @PutMapping(value = "/{id}", consumes = JSON, produces = JSON)
-    public ProjectDTO updateProject(@PathVariable("id") Long id,
-                                    @RequestBody Project project,
-                                    @CurrentUser User user) {
-        return projectMapper.toDTO(projectService.updateProject(id, project, user));
+    public Project updateProject(@PathVariable("id") Long id,
+                                 @RequestBody Project project, @CurrentUser User user) {
+        return projectService.updateProject(id, project, user);
     }
 
     /**

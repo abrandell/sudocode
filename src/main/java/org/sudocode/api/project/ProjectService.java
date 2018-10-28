@@ -16,7 +16,6 @@ import org.sudocode.api.core.exceptions.ProjectNotFoundException;
 import org.sudocode.api.project.comment.Comment;
 import org.sudocode.api.project.comment.CommentRepository;
 import org.sudocode.api.project.comment.CommentView;
-import org.sudocode.api.project.web.ProjectSummaryDTO;
 import org.sudocode.api.project.web.ProjectView;
 import org.sudocode.api.user.User;
 
@@ -57,7 +56,7 @@ public class ProjectService {
 
 
     /**
-     * Returns a page of {@link ProjectSummaryDTO} based on the given criteria.
+     * Returns a page of {@link ProjectView} projections based on the given criteria.
      * Converts the difficulty string (if not null or empty) to the {@link Difficulty} enum.
      * <br>
      * Casing does not matter.
@@ -66,10 +65,10 @@ public class ProjectService {
      * @param difficulty  String value of the difficulty to search for.
      * @param description Description to search for.
      * @param pageable    Pageable params.
-     * @return Page of {@link ProjectSummaryDTO}s.
+     * @return Page of {@link ProjectView}s.
      * @throws InvalidDifficultyException if the difficulty param string isn't a a {@link Difficulty} enum value.
      * @see Pageable
-     * @see ProjectSummaryDTO
+     * @see ProjectView
      * @see Difficulty#fromText(String)
      */
     public Page<ProjectView> fetchAll(@Nullable String title,
@@ -86,7 +85,7 @@ public class ProjectService {
      * @return the project if found.
      */
     public ProjectView fetchById(Long id) {
-        return projectRepo.fetchViewById(id).orElseThrow(() -> new ProjectNotFoundException(id));
+        return projectRepo.findViewById(id).orElseThrow(() -> new ProjectNotFoundException(id));
     }
 
     /**

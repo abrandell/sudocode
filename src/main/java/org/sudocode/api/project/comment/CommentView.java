@@ -5,6 +5,10 @@ import org.sudocode.api.user.web.UserView;
 
 import java.time.LocalDateTime;
 
+/**
+ * Projection for {@link Comment} entities.
+ */
+@SuppressWarnings({"unused"})
 @JsonPropertyOrder({
         "id",
         "body",
@@ -15,9 +19,13 @@ import java.time.LocalDateTime;
 public interface CommentView {
 
     Long getId();
+
     String getBody();
+
     UserView getAuthor();
+
     LocalDateTime getDatePosted();
+
     LocalDateTime getLastModifiedDate();
 }
 
