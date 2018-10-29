@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.domain.Persistable;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.sudocode.api.core.AbstractEntity;
@@ -35,12 +36,8 @@ public abstract class UserPost extends AbstractEntity implements Persistable<Lon
     @CreatedDate
     private LocalDateTime datePosted;
 
+    @LastModifiedDate
     @Column(name = "last_modified")
     private LocalDateTime lastModifiedDate;
 
-    @PreUpdate
-    protected void createLastModifiedDate() {
-        LocalDateTime currentTime = now();
-        this.lastModifiedDate = (this.datePosted != currentTime) ? currentTime : null;
-    }
 }
