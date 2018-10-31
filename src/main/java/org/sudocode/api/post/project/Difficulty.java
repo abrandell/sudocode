@@ -24,6 +24,13 @@ public enum Difficulty {
         this.difficulty = difficulty;
     }
 
+    /**
+     * Returns the Enum from the text value param.
+     *
+     * @param text - the value (string) of the enum constant to get. Ignores casing.
+     * @return the Enum constant if the text matches any.
+     * @throws InvalidDifficultyException if no enum has the value of the string param.
+     */
     public static Difficulty fromText(String text) {
         return Arrays.stream(values())
                      .filter(diff -> diff.difficulty.equalsIgnoreCase(text))

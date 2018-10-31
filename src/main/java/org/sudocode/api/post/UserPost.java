@@ -12,8 +12,11 @@ import org.sudocode.api.core.AbstractEntity;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-import static java.time.LocalDateTime.now;
-
+/**
+ * Abstract class for all entities which can be posted by a user.
+ *
+ * @see AbstractEntity
+ */
 @MappedSuperclass
 @Getter
 @Setter

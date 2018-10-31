@@ -13,6 +13,11 @@ import java.util.Optional;
 @EnableJpaAuditing
 public class JpaConfig {
 
+    /**
+     * AuditorAware bean that returns the current user.
+     * @return Optional of the current user.
+     * @see SecurityUtils#getCurrentUser()
+     */
     @Bean
     public AuditorAware<User> auditorAware() {
         return () -> Optional.of(SecurityUtils.getCurrentUser());

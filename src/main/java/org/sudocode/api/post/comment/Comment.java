@@ -3,6 +3,7 @@ package org.sudocode.api.post.comment;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.data.annotation.CreatedBy;
@@ -47,17 +48,7 @@ public class Comment extends UserPost {
         this.parent = builder.parent;
     }
 
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-                .append("id", super.getId())
-                .append("project", project)
-                .append("body", body)
-                .append("author", author)
-                .append("datePosted", super.getDatePosted())
-                .append("lastModifiedDate", super.getLastModifiedDate())
-                .toString();
-    }
+
 
     // --- BUILDER --- //
 
@@ -101,5 +92,16 @@ public class Comment extends UserPost {
         public Comment build() {
             return new Comment(this);
         }
+    }
+
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
+                .append("project", project)
+                .append("body", body)
+                .append("author", author)
+                .append("parent", parent)
+                .toString();
     }
 }

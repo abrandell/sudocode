@@ -52,7 +52,7 @@ public class Project extends UserPost {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
                 .append("id", super.getId())
                 .append("title", title)
                 .append("difficulty", difficulty)

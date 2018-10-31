@@ -1,8 +1,10 @@
 package org.sudocode.api.core;
 
 import org.springframework.hateoas.VndErrors;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import org.sudocode.api.core.exceptions.*;
 import org.sudocode.api.core.exceptions.UserNotFoundException;
 import org.sudocode.api.core.exceptions.UserNotLoggedInException;
@@ -11,8 +13,8 @@ import static org.springframework.hateoas.MediaTypes.*;
 import static org.springframework.http.HttpStatus.*;
 
 @RestControllerAdvice(annotations = RestController.class)
-@RequestMapping(produces = HAL_JSON_VALUE)
-public class RestExceptionHandler {
+@RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(ProjectNotFoundException.class)
     @ResponseStatus(NOT_FOUND)

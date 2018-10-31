@@ -227,9 +227,9 @@ class PostingServiceTest {
         Comment result = postingService.postComment(comment1, project1.getId(), user1);
 
         assertAll("Posting comment with project ID found",
-                () -> assertNotNull(result),
-                () -> assertEquals(comment1, result,
-                        "Comment and result should equal"),
+                () -> assertNotNull(result, "Result should not be null"),
+                () -> assertEquals(comment1, result, "Comment and result should equal"),
+
                 () -> verify(commentRepo, times(1)).existsById(comment1.getId()),
                 () -> verify(projectRepo, times(1)).findById(project1.getId()),
                 () -> verify(commentRepo, times(1)).save(comment1),

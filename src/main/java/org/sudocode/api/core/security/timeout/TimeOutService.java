@@ -81,7 +81,7 @@ class TimeOutService {
     }
 
     /**
-     * LoadingCache that fetches the last {@link LocalDateTime} builder the most recent postProject a user made by their ID.<br>
+     * LoadingCache that fetches the last {@link LocalDateTime} of the most recent post a user made with given ID.<br>
      * Returns the most recent date between both the latest {@link Project} and {@link Comment} made.<br>
      * <p>
      * This is mainly to check if a user is spamming/posting too often.

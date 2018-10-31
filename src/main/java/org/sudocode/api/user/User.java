@@ -8,6 +8,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.springframework.data.annotation.AccessType;
+import org.springframework.lang.Nullable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -108,6 +109,7 @@ public class User implements OAuth2User {
      */
     @Deprecated
     @Override
+    @Nullable
     public Map<String, Object> getAttributes() {
         return null;
     }

@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.Nullable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -36,12 +37,12 @@ public class UserRestController {
     /**
      * GET /api/users/me
      * Used for the client to check if a user is logged in.
-     * Returns an empty body if not authenticated so no exception gets thrown
+     * Returns an empty body if not authenticated and no exception gets thrown.
      *
-     * @return Currently logged in user in DTO form.
+     * @return Currently logged in user.
      */
     @Get(path = "/me")
-    public ResponseEntity<?> currentUser(Authentication auth) {
+    public ResponseEntity<?> currentUser(@Nullable Authentication auth) {
         if (auth == null) {
             return ResponseEntity.ok().build();
         }

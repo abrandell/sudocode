@@ -1,27 +1,18 @@
 package org.sudocode.api.user;
 
-import com.google.common.base.Preconditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.util.Optionals;
 import org.springframework.lang.NonNull;
-import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.sudocode.api.core.annotation.ModifyingTX;
 import org.sudocode.api.core.exceptions.UserNotFoundException;
 
-import static com.google.common.base.Preconditions.*;
-
 /**
- * Service for user transactions and logging in via OAuth2. Read only by default & rolls back for any exception.
- * <p>
- * Be sure to include another transactional annotation with the required params for any modifying transaction.
- *
- * @see OAuth2UserService
+ * Service for user transactions. Read only by default & rolls back for any exception.
  */
 @Service
 @Transactional(
@@ -49,10 +40,9 @@ public class UserService {
         return userRepo.save(user);
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     @ModifyingTX
     public User updateUser(User user) {
-        checkNotNull(user);
-
         return userRepo.findById(user.getId())
                        .map(updated -> {
                            updated.setLogin(user.getLogin());
@@ -100,7 +90,7 @@ public class UserService {
     /**
      * Delete a user by id.
      *
-     * @param id builder the user to delete.
+     * @param id of the user to delete.
      */
     @ModifyingTX
     public void deleteById(Long id) {

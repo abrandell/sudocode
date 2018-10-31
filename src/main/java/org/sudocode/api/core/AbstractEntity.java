@@ -15,7 +15,7 @@ import static org.springframework.data.annotation.AccessType.Type;
  * This class exists in the case you need to compare <b>detached or un-managed entities</b>.
  * <p>It generates the AbstractEntity, equals, and hashcode for all entities that extend it.
  *
- * <p>The hashcode is always unique, even for non-managed entities since they are created at object instantiation.
+ * <p>The hashcode is always unique, even for non-managed entities since the UUID is created at object instantiation.
  */
 @MappedSuperclass
 @AccessType(Type.FIELD)

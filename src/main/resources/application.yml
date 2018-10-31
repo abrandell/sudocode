@@ -27,9 +27,9 @@ spring:
 spring:
   profiles: dev
   datasource:
-    url: jdbc:mysql://localhost:3308/sudodev?useSSL=false
-    username: developer
-    password: password
+    url: ${SPRING_DB_URL} #jdbc:mysql://localhost:3308/sudodev?useSSL=false
+    username: ${SPRING_DB_USER} #developer
+    password: ${SPRING_DB_PASS} #password
   jpa:
     hibernate:
       ddl-auto: update
