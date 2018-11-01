@@ -38,7 +38,7 @@ import static org.sudocode.api.post.project.Difficulty.*;
 @Transactional(
         readOnly = true,
         rollbackFor = Exception.class,
-        propagation = Propagation.REQUIRES_NEW
+        propagation = Propagation.REQUIRED
 )
 public class PostingService {
 
@@ -60,6 +60,7 @@ public class PostingService {
 
     /**
      * Returns a page of {@link ProjectView} projections based on the given criteria.
+     * <br>
      * Converts the difficulty string (if not null or empty) to the {@link Difficulty} enum.
      * <br>
      * Casing does not matter.
@@ -112,7 +113,7 @@ public class PostingService {
                           .orElseGet(() -> {
                               // Make sure not to replace an already existing project
                               newProject.setId(projectRepo.existsById(id) ? null : id);
-                              return projectRepo.save(newProject);
+                              return postProject(newProject);
                           });
     }
 

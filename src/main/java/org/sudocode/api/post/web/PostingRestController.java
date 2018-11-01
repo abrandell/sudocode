@@ -48,11 +48,12 @@ public final class PostingRestController {
     /**
      * GET /api/projects{?page=}&{title=}&{difficulty=}&{description=}&{sort=}
      *
-     * @see PostingService#fetchAllProjectViews(String, String, String, Pageable) (String, String, String, Pageable)
+     * @see PostingService#fetchAllProjectViews(String, String, String, Pageable)
      */
     @Get
     public Page<ProjectView> fetchProjects(@RequestParam Map<String, String> params,
                                            Pageable pageable) throws InvalidDifficultyException {
+
         return postingService.fetchAllProjectViews(
                 params.get("title"),
                 params.get("difficulty"),

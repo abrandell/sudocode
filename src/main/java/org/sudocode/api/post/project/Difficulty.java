@@ -28,12 +28,12 @@ public enum Difficulty {
     /**
      * Returns the Enum from the text value param.
      *
-     * @param text - the value (string) of the enum constant to get. Ignores casing.
+     * @param value - the value (string) of the enum constant to get. Ignores casing.
      * @return the Enum constant if the text matches any.
      * @throws InvalidDifficultyException if no enum has the value of the string param.
      */
-    public static Difficulty difficultyEnumFromValue(@NonNull String text) {
-        String paramValue = text.trim();
+    public static Difficulty difficultyEnumFromValue(@NonNull String value) {
+        String paramValue = value.trim();
 
         return Arrays.stream(values())
                      .filter(difficulty -> difficulty.stringValue.equalsIgnoreCase(paramValue))

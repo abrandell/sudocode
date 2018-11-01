@@ -382,6 +382,6 @@ class PostingServiceTest {
 
     @Test
     void fetchAll_validDifficulty_noException() {
-        postingService.fetchAllProjectViews(null, "bAsIc", null, null);
+        postingService.fetchAllProjectViews(null, "   bAsIc", null, null);
     }
 }

@@ -15,7 +15,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.sudocode.api.user.User;
 import testingutils.ProjectViewMock;
 import testingutils.UserViewMock;
-import testingutils.WithMockOAuth2User;
 
 import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
 import static org.junit.jupiter.api.Assertions.*;
@@ -42,13 +41,12 @@ class ProjectRepositoryTest {
     @BeforeEach
     void setUp() {
         this.user1 = tem.persistAndFlush(User.builder().id(1L).login("user-1").build());
-        this.project1 = tem.persistAndFlush(
-                Project.builder(user1)
-                       .description("Spring Security 5")
-                       .difficulty(BASIC)
-                       .title("Spring Security 5")
-                       .build()
-        );
+
+        this.project1 = tem.persistAndFlush(Project.builder(user1)
+                                                   .description("Spring Security 5")
+                                                   .difficulty(BASIC)
+                                                   .title("Spring Security 5")
+                                                   .build());
 
         this.userView1 = UserViewMock.builder().id(user1.getId())
                                      .login(user1.getLogin())
@@ -98,7 +96,7 @@ class ProjectRepositoryTest {
 
         tem.persistAndFlush(
                 Project.builder(user2).title("Effective Java").difficulty(INTERMEDIATE)
-                                   .description("Pretty good book if I do say so myself").build()
+                       .description("Pretty good book if I do say so myself").build()
         );
 
         var query1 = repo.filterAll("g", BASIC, "", unpaged()).getContent();
@@ -120,8 +118,10 @@ class ProjectRepositoryTest {
 
 
         assertAll("Fetch by id",
-                () -> assertTrue(repo.fetchById(projectMock.getId()).isPresent(), "Should be present"),
-                () -> assertFalse(projectMock.isNew(), "Shouldn't be new"),
+                () -> assertTrue(repo.fetchById(projectMock.getId()).isPresent(),
+                        "Should be present"),
+                () -> assertFalse(projectMock.isNew(),
+                        "Shouldn't be new"),
                 () -> assertNotNull(projectMock.getDatePosted(),
                         "Date posted should not be null. Make sure JPA auditing is enabled on test"));
     }
@@ -132,7 +132,8 @@ class ProjectRepositoryTest {
                 () -> assertTrue(repo.findViewById(project1.getId()).isPresent(),
                         "Should be present"),
                 () -> assertTrue(repo.findViewById(project1.getId())
-                                     .filter(p -> p.getTitle().equals(project1.getTitle())).isPresent(), "Title's should match.")
+                                     .filter(p -> p.getTitle().equals(project1.getTitle())).isPresent(),
+                        "Title's should match.")
         );
     }
 }
