@@ -17,6 +17,7 @@ import org.springframework.util.Assert;
 import javax.persistence.*;
 import javax.validation.constraints.Pattern;
 
+import java.io.Serializable;
 import java.util.*;
 
 import static org.springframework.data.annotation.AccessType.*;
@@ -28,7 +29,11 @@ import static org.sudocode.api.core.util.Constants.*;
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class User implements OAuth2User {
+public class User implements OAuth2User, Serializable {
+
+    @JsonIgnore
+    @Transient
+    private static long serialVersionUID = 1L;
 
     /**
      * Not generated.
