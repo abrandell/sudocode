@@ -19,6 +19,7 @@ public class ProjectViewMock implements ProjectView {
     Difficulty difficulty;
     String description;
     LocalDateTime datePosted;
+    LocalDateTime lastModifiedDate;
     UserView author;
 
 }

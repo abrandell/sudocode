@@ -29,5 +29,7 @@ public interface ProjectView {
 
     LocalDateTime getDatePosted();
 
+    LocalDateTime getLastModifiedDate();
+
     UserView getAuthor();
 }

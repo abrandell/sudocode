@@ -55,7 +55,7 @@ class ProjectRepositoryTest {
                                      .build();
 
         this.projectView1 = new ProjectViewMock(project1.getId(), project1.getTitle(), project1.getDifficulty(),
-                project1.getDescription(), project1.getDatePosted(), userView1);
+                project1.getDescription(), project1.getDatePosted(), project1.getLastModifiedDate(), userView1);
 
     }
 

@@ -31,6 +31,7 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
             "p.difficulty AS difficulty, " +
             "p.description AS description, " +
             "p.datePosted AS datePosted, " +
+            "p.lastModifiedDate AS lastModifiedDate, " +
             "p.author AS author " +
             "FROM Project p " +
             "WHERE (:title is null or lower(p.title) LIKE concat('%', lower(:title), '%')) " +
