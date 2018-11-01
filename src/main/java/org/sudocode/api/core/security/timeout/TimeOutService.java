@@ -44,7 +44,7 @@ class TimeOutService {
         long secPassed = Duration.between(lastDatePosted, LocalDateTime.now()).toSeconds();
         LOG.info(String.format("User: %d waited %d seconds before attempting to post again.", userId, secPassed));
 
-        if (secPassed < 10) {
+        if (secPassed < 555) {
             timeOutUser(userId);
             throw new TooManyRequestException();
         }

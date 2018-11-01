@@ -16,6 +16,7 @@ import org.sudocode.api.post.UserPost;
 import org.sudocode.api.user.User;
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
 
 @Entity
 @Table(name = "projects")
@@ -24,14 +25,14 @@ import javax.persistence.*;
 @NoArgsConstructor
 public class Project extends UserPost {
 
-    @Length(min = 5, max = 100)
+    @Length(min = 5, max = 300)
     private String title;
 
     @Enumerated(EnumType.STRING)
     private Difficulty difficulty;
 
-    @Lob
-    @Length(min = 8, max = 800)
+    @Size(min = 8, max = 10000)
+    @Basic(fetch = FetchType.LAZY)
     private String description;
 
     @CreatedBy

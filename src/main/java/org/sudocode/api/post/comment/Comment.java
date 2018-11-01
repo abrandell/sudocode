@@ -30,7 +30,7 @@ public class Comment extends UserPost {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     private Project project;
 
-    @Length(min = 3, max = 255)
+    @Length(min = 3, max = 500)
     private String body;
 
     @CreatedBy
