@@ -149,10 +149,7 @@ public class PostingService {
      */
     @ModifyingTX
     public Comment postComment(Comment comment, Long projectId, User user) {
-        comment.setProject(
-                projectRepo.findById(projectId).orElseThrow(() -> new ProjectNotFoundException(projectId))
-        );
-
+        comment.setProject(projectRepo.findById(projectId).orElseThrow(() -> new ProjectNotFoundException(projectId)));
         LOGGER.info("Posting comment by user ID: {} at {}", user.getId(), now());
         return commentRepo.save(comment);
     }
@@ -219,6 +216,5 @@ public class PostingService {
 
         return lastCommentDate.compareTo(lastPostDate) > 0 ? lastCommentDate : lastPostDate;
     }
-
 
 }

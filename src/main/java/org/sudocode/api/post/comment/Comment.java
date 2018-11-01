@@ -2,6 +2,7 @@ package org.sudocode.api.post.comment;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
+import lombok.experimental.Accessors;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.hibernate.annotations.GenericGenerator;
@@ -24,6 +25,7 @@ import static java.time.LocalDateTime.now;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "comments")
+@Accessors(chain = true)
 public class Comment extends UserPost {
 
     @JsonIgnore
