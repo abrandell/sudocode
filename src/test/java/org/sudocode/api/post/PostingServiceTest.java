@@ -202,7 +202,6 @@ class PostingServiceTest {
 
     @Test
     void postComment_givenUnknownProjectId_ThenException() {
-        given(commentRepo.existsById(any())).willReturn(false);
 
         assertAll("Posting comment with project ID not found",
                 () -> assertThrows(ProjectNotFoundException.class,
@@ -210,7 +209,6 @@ class PostingServiceTest {
                         "Exception should be thrown due to no project found from the given id"),
 
                 () -> verify(commentRepo, never()).save(any()),
-                () -> verify(commentRepo, times(1)).existsById(any()),
                 () -> verify(projectRepo, times(1)).findById(any()),
                 () -> verifyNoMoreInteractions(projectRepo, commentRepo)
         );
@@ -219,7 +217,6 @@ class PostingServiceTest {
     @SuppressWarnings("ConstantConditions")
     @Test
     void postComment_giveKnownProjectId_thenSaveComment() {
-        given(commentRepo.existsById(any())).willReturn(false);
         given(projectRepo.findById(project1.getId())).willReturn(Optional.of(project1));
         given(commentRepo.save(comment1)).willReturn(comment1);
 
@@ -230,8 +227,6 @@ class PostingServiceTest {
                 () -> assertNotNull(result, "Result should not be null"),
                 () -> assertEquals(comment1, result, "Comment and result should equal"),
 
-                () -> verify(commentRepo, times(1)).existsById(comment1.getId()),
-                () -> verify(projectRepo, times(1)).findById(project1.getId()),
                 () -> verify(commentRepo, times(1)).save(comment1),
                 () -> verifyNoMoreInteractions(commentRepo, projectRepo)
         );
@@ -383,12 +378,6 @@ class PostingServiceTest {
                         null, "invalid-diff", null, null
                 )
         );
-    }
-
-    @Test
-    void postProject_setsIdNull() {
-        given(projectRepo.save(any(Project.class))).willReturn(project1);
-        assertNull(postingService.postProject(project1).getId(), "Should set ID to null");
     }
 
     @Test

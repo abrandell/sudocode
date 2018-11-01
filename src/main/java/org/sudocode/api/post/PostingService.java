@@ -25,8 +25,9 @@ import org.sudocode.api.user.User;
 import java.time.LocalDateTime;
 
 import static java.time.LocalDateTime.now;
+import static org.apache.commons.lang3.StringUtils.*;
 import static org.sudocode.api.core.util.Constants.DEFAULT_LOCAL_DATE_TIME;
-import static org.sudocode.api.post.project.Difficulty.fromText;
+import static org.sudocode.api.post.project.Difficulty.*;
 
 /**
  * Service for projects and comments transactions. Transactions start here for all projects and comments.
@@ -53,7 +54,6 @@ public class PostingService {
 
     @ModifyingTX
     public Project postProject(Project project) {
-        project.setId(null);
         return projectRepo.save(project);
     }
 
@@ -65,27 +65,29 @@ public class PostingService {
      * Casing does not matter.
      *
      * @param title       Title to search for.
-     * @param difficulty  String value of the difficulty to search for.
+     * @param difficultyStr  String value of the difficulty to search for.
      * @param description Description to search for.
      * @param pageable    Pageable params.
      * @return Page of {@link ProjectView}s.
-     * @throws InvalidDifficultyException if the difficulty param string isn't a a {@link Difficulty} enum value.
+     * @throws InvalidDifficultyException if the difficulty param string isn't a {@link Difficulty} enum value.
      * @see Pageable
      * @see ProjectView
-     * @see Difficulty#fromText(String)
+     * @see Difficulty#difficultyEnumFromValue(String)
      */
     public Page<ProjectView> fetchAllProjectViews(@Nullable String title,
-                                                  @Nullable String difficulty,
+                                                  @Nullable String difficultyStr,
                                                   @Nullable String description, Pageable pageable) {
-        Difficulty diffEnum = (difficulty != null && !difficulty.isEmpty()) ? fromText(difficulty) : null;
-        return projectRepo.filterAll(title, diffEnum, description, pageable);
+
+        var difficultyEnum = isNotBlank(difficultyStr) ? difficultyEnumFromValue(difficultyStr) : null;
+
+        return projectRepo.filterAll(title, difficultyEnum, description, pageable);
     }
 
     /**
-     * Searches for and returns a project based on id.
+     * Searches for and returns a {@link ProjectView} projection of the project with the given id.
      *
-     * @param id builder the project to fetch.
-     * @return the project if found.
+     * @param id of the project to fetch.
+     * @return The {@link ProjectView} projection of the {@link Project} if found.
      */
     public ProjectView fetchProjectViewById(Long id) {
         return projectRepo.findViewById(id).orElseThrow(() -> new ProjectNotFoundException(id));
@@ -139,21 +141,17 @@ public class PostingService {
     /**
      * Post a comment.
      *
-     * @param comment   to post.
+     * @param comment   Comment to post..
      * @param projectId id of the project to comment on.
      * @return The newly created comment.
-     * @throws ProjectNotFoundException if the {@literal projectId} does not match any project id in the DB.
+     * @throws ProjectNotFoundException if the projectId does not match any project id in the DB.
      */
     @ModifyingTX
     public Comment postComment(Comment comment, Long projectId, User user) {
-        final Long commentId = comment.getId();
+        comment.setProject(
+                projectRepo.findById(projectId).orElseThrow(() -> new ProjectNotFoundException(projectId))
+        );
 
-        if (commentId != null) {
-            comment.setId(commentRepo.existsById(commentId) ? null : commentId);
-        }
-
-        comment.setProject(projectRepo.findById(projectId)
-                                      .orElseThrow(() -> new ProjectNotFoundException(projectId)));
         LOGGER.info("Posting comment by user ID: {} at {}", user.getId(), now());
         return commentRepo.save(comment);
     }
@@ -202,6 +200,18 @@ public class PostingService {
         return commentRepo.fetchCommentViewsByProjectId(id, pageable);
     }
 
+    /**
+     * Returns the latest {@link LocalDateTime} of a post made by a {@link User} with the given id.
+     * <br>
+     *
+     * This method exists for {@link org.sudocode.api.core.security.timeout.TimeOutService}.
+     * <br>
+     *
+     * If no results are found, it returns {@link LocalDateTime#MIN}
+     *
+     * @param id The ID of the User.
+     * @return The {@link LocalDateTime} of the latest post made from the {@link User} if exists, else {@link LocalDateTime#MIN}.
+     */
     public LocalDateTime fetchLatestPostDateByAuthorId(Long id) {
         var lastCommentDate = commentRepo.fetchLatestPostDateByAuthorId(id).orElse(DEFAULT_LOCAL_DATE_TIME);
         var lastPostDate = projectRepo.fetchLatestPostDateByAuthorId(id).orElse(DEFAULT_LOCAL_DATE_TIME);

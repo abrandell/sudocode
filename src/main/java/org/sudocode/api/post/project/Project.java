@@ -30,7 +30,8 @@ public class Project extends UserPost {
     @Enumerated(EnumType.STRING)
     private Difficulty difficulty;
 
-    @Length(min = 8, max = 255)
+    @Lob
+    @Length(min = 8, max = 800)
     private String description;
 
     @CreatedBy

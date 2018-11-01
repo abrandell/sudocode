@@ -1,6 +1,7 @@
 package org.sudocode.api.post.project;
 
 import com.fasterxml.jackson.annotation.JsonValue;
+import org.springframework.lang.NonNull;
 import org.sudocode.api.core.exceptions.InvalidDifficultyException;
 
 import java.util.Arrays;
@@ -18,10 +19,10 @@ public enum Difficulty {
     ADVANCED("advanced"),
     EXPERT("expert");
 
-    private final String difficulty;
+    private final String stringValue;
 
     Difficulty(String difficulty) {
-        this.difficulty = difficulty;
+        this.stringValue = difficulty;
     }
 
     /**
@@ -31,16 +32,18 @@ public enum Difficulty {
      * @return the Enum constant if the text matches any.
      * @throws InvalidDifficultyException if no enum has the value of the string param.
      */
-    public static Difficulty fromText(String text) {
+    public static Difficulty difficultyEnumFromValue(@NonNull String text) {
+        String paramValue = text.trim();
+
         return Arrays.stream(values())
-                     .filter(diff -> diff.difficulty.equalsIgnoreCase(text))
+                     .filter(difficulty -> difficulty.stringValue.equalsIgnoreCase(paramValue))
                      .findFirst()
-                     .orElseThrow(() -> new InvalidDifficultyException(text));
+                     .orElseThrow(() -> new InvalidDifficultyException(paramValue));
     }
 
     @JsonValue
     @Override
     public String toString() {
-        return difficulty;
+        return stringValue;
     }
 }
