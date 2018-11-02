@@ -35,6 +35,12 @@ public class Project extends UserPost {
     @Basic(fetch = FetchType.LAZY)
     private String description;
 
+    private int rating;
+
+    public void vote(int vote) {
+        this.rating += vote;
+    }
+
     @CreatedBy
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_fk")

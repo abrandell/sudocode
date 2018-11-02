@@ -10,6 +10,7 @@ import org.sudocode.api.core.annotation.*;
 import org.sudocode.api.core.exceptions.InvalidDifficultyException;
 import org.sudocode.api.core.exceptions.ProjectNotFoundException;
 import org.sudocode.api.post.PostingService;
+import org.sudocode.api.post.Vote;
 import org.sudocode.api.post.comment.Comment;
 import org.sudocode.api.post.comment.CommentView;
 import org.sudocode.api.post.project.Project;
@@ -60,6 +61,11 @@ public final class PostingRestController {
                 params.get("description"),
                 pageable
         );
+    }
+
+    @Post(path = "/{id}/vote")
+    public void voteOnProject(@PathVariable("id") Long id, @RequestParam("dir") Vote vote) {
+        postingService.voteOnProject(vote.primitiveValue(), id);
     }
 
     /**

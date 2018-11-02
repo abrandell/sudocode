@@ -9,7 +9,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 import org.sudocode.api.core.exceptions.InvalidDifficultyException;
 import org.sudocode.api.core.exceptions.NotPostAuthorException;
 import org.sudocode.api.core.exceptions.ProjectNotFoundException;
@@ -30,10 +29,7 @@ import java.util.Optional;
 import static java.time.LocalDateTime.MIN;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
-import static org.springframework.data.domain.Pageable.*;
-import static org.sudocode.api.post.project.Difficulty.BASIC;
-import static org.sudocode.api.post.project.Difficulty.EXPERT;
-import static org.sudocode.api.post.project.Difficulty.INTERMEDIATE;
+import static org.sudocode.api.post.project.Difficulty.*;
 
 @ExtendWith(MockitoExtension.class)
 class PostingServiceTest {
@@ -63,11 +59,14 @@ class PostingServiceTest {
     @BeforeEach
     void setUp() {
         user1 = User.builder().id(1L).login("user-name-1").build();
+
         userViewMock1 = UserViewMock.builder().id(1L).login(user1.getLogin()).build();
+
         user2 = User.builder().id(2L).login("user-name-2").build();
 
         project1 = Project.builder(user1).id(1L).description("project-1 desc")
                           .difficulty(BASIC).title("project1-title").build();
+
         projectViewMock1 = ProjectViewMock.builder().author(userViewMock1).id(1L)
                                           .description(project1.getDescription())
                                           .difficulty(project1.getDifficulty()).build();
@@ -76,7 +75,9 @@ class PostingServiceTest {
                           .difficulty(INTERMEDIATE).title("project2-title").build();
 
         comment1 = Comment.builder().id(1L).author(user1).body("comment-1 desc").project(project1).build();
+
         commentViewMock1 = CommentViewMock.builder().id(1L).author(userViewMock1).body(comment1.getBody()).build();
+
         comment2 = Comment.builder().id(2L).author(user2).body("comment-2 desc").project(project1).build();
     }
 
@@ -349,7 +350,6 @@ class PostingServiceTest {
                 () -> verifyNoMoreInteractions(commentRepo, projectRepo)
         );
     }
-
 
 
     @Test

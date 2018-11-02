@@ -25,9 +25,9 @@ import org.sudocode.api.user.User;
 import java.time.LocalDateTime;
 
 import static java.time.LocalDateTime.now;
-import static org.apache.commons.lang3.StringUtils.*;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.sudocode.api.core.util.Constants.DEFAULT_LOCAL_DATE_TIME;
-import static org.sudocode.api.post.project.Difficulty.*;
+import static org.sudocode.api.post.project.Difficulty.difficultyEnumFromValue;
 
 /**
  * Service for projects and comments transactions. Transactions start here for all projects and comments.
@@ -65,10 +65,10 @@ public class PostingService {
      * <br>
      * Casing does not matter.
      *
-     * @param title       Title to search for.
-     * @param difficultyStr  String value of the difficulty to search for.
-     * @param description Description to search for.
-     * @param pageable    Pageable params.
+     * @param title         Title to search for.
+     * @param difficultyStr String value of the difficulty to search for.
+     * @param description   Description to search for.
+     * @param pageable      Pageable params.
      * @return Page of {@link ProjectView}s.
      * @throws InvalidDifficultyException if the difficulty param string isn't a {@link Difficulty} enum value.
      * @see Pageable
@@ -138,6 +138,10 @@ public class PostingService {
 
     }
 
+    @ModifyingTX
+    public void voteOnProject(int value, Long projectId) {
+        projectRepo.findById(projectId).ifPresent(project -> project.vote(value));
+    }
 
     /**
      * Post a comment.
@@ -173,8 +177,8 @@ public class PostingService {
     /**
      * Delete a comment.
      *
-     * @param id builder the comment to be deleted.
-     * @throws NotPostAuthorException if the user making the request did not postProject the comment.
+     * @param id of the comment to be deleted.
+     * @throws NotPostAuthorException if the user making the request did not post the comment.
      */
     @ModifyingTX
     public void deleteCommentById(Long id, User currentUser) {
@@ -187,12 +191,13 @@ public class PostingService {
     }
 
     /**
-     * Fetches a page with all comments for the given project.
+     * Fetches a page with all comments projections for the given project.
      *
      * @param id       id of the project to fetch comments for.
      * @param pageable the Page request.
      * @return Page of all comments for the given project.
      * @see Pageable
+     * @see CommentView
      */
     public Page<CommentView> fetchCommentViewsByProjectId(Long id, Pageable pageable) {
         return commentRepo.fetchCommentViewsByProjectId(id, pageable);
@@ -201,10 +206,10 @@ public class PostingService {
     /**
      * Returns the latest {@link LocalDateTime} of a post made by a {@link User} with the given id.
      * <br>
-     *
+     * <p>
      * This method exists for {@link org.sudocode.api.core.security.timeout.TimeOutService}.
      * <br>
-     *
+     * <p>
      * If no results are found, it returns {@link LocalDateTime#MIN}
      *
      * @param id The ID of the User.

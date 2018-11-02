@@ -5,11 +5,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.lang.NonNull;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.sudocode.api.core.annotation.ModifyingTX;
 import org.sudocode.api.core.exceptions.UserNotFoundException;
+
 
 /**
  * Service for user transactions. Read only by default & rolls back for any exception.
@@ -35,8 +36,8 @@ public class UserService {
      * @return The newly persisted {@link User}
      */
     @ModifyingTX
-    public User saveUser(@NonNull User user) {
-        logger.info("Saving user to database {}", user);
+    public User saveUser(User user) {
+        logger.debug("Saving user to database {}", user);
         return userRepo.save(user);
     }
 
@@ -93,9 +94,9 @@ public class UserService {
      * @param id of the user to delete.
      */
     @ModifyingTX
+    @PreAuthorize("#principal.id.equals(id) || hasRole('ROLE_ADMIN')")
     public void deleteById(Long id) {
+        logger.debug("Deleting user with id: {}", id);
         userRepo.deleteById(id);
     }
-
-
 }

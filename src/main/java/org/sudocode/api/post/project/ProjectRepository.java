@@ -52,7 +52,6 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
             "WHERE p.id = :id")
     Optional<Project> fetchById(@Param("id") Long id);
 
-
     Optional<ProjectView> findViewById(@Param("id") Long id);
 
 }
