@@ -23,6 +23,8 @@ public interface ProjectView {
 
     String getTitle();
 
+    int getRating();
+
     Difficulty getDifficulty();
 
     String getDescription();

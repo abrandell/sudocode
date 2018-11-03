@@ -35,6 +35,7 @@ public class Project extends UserPost {
     @Basic(fetch = FetchType.LAZY)
     private String description;
 
+    @Basic
     private int rating;
 
     public void vote(int vote) {

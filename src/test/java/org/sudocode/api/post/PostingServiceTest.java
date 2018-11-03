@@ -384,4 +384,26 @@ class PostingServiceTest {
     void fetchAll_validDifficulty_noException() {
         postingService.fetchAllProjectViews(null, "   bAsIc", null, null);
     }
+
+    @Test
+    void voteOnProject_thenRating_changes() {
+        assert project1.getId() != null;
+        given(projectRepo.findById(project1.getId())).willReturn(Optional.of(project1));
+        project1.setRating(0);
+
+        postingService.voteOnProject(Vote.UPVOTE, project1.getId());
+
+
+        assertAll("Upvote on project post",
+                () -> assertEquals(1, project1.getRating(), "Rating should increase by one with a single upvote."),
+
+                () -> assertTrue(() -> {
+                    postingService.voteOnProject(Vote.DOWNVOTE, project1.getId());
+
+                    return project1.getRating() == 0;
+                }, "Unvoting should remove the previous vote")
+        );
+
+
+    }
 }

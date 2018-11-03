@@ -22,4 +22,9 @@ public class ProjectViewMock implements ProjectView {
     LocalDateTime lastModifiedDate;
     UserView author;
 
+    // TODO, fix me.
+    @Override
+    public int getRating() {
+        return 0;
+    }
 }

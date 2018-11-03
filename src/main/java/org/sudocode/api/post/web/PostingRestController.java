@@ -65,7 +65,7 @@ public final class PostingRestController {
 
     @Post(path = "/{id}/vote")
     public void voteOnProject(@PathVariable("id") Long id, @RequestParam("dir") Vote vote) {
-        postingService.voteOnProject(vote.primitiveValue(), id);
+        postingService.voteOnProject(vote, id);
     }
 
     /**

@@ -30,6 +30,7 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
             "p.title AS title, " +
             "p.difficulty AS difficulty, " +
             "p.description AS description, " +
+            "p.rating AS rating, " +
             "p.datePosted AS datePosted, " +
             "p.lastModifiedDate AS lastModifiedDate, " +
             "p.author AS author " +
