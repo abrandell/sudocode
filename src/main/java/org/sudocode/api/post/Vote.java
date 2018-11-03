@@ -1,9 +1,8 @@
 package org.sudocode.api.post;
 
 import com.fasterxml.jackson.annotation.JsonValue;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 
-public enum Vote {
+public enum VoteEnum {
 
     UPVOTE(1),
     UNVOTE(0),
@@ -11,7 +10,7 @@ public enum Vote {
 
     int value;
 
-    Vote(int value) {
+    VoteEnum(int value) {
         this.value = value;
     }
 
