@@ -139,8 +139,8 @@ public class PostingService {
     }
 
     @ModifyingTX
-    public void voteOnProject(Vote vote, Long projectId) {
-        projectRepo.findById(projectId).ifPresent(project -> project.vote(vote.value));
+    public void voteOnProject(Long projectId, Vote vote) {
+        projectRepo.vote(projectId, vote.value);
     }
 
     /**

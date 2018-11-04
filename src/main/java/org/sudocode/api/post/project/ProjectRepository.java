@@ -3,6 +3,7 @@ package org.sudocode.api.post.project;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -54,5 +55,11 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
     Optional<Project> fetchById(@Param("id") Long id);
 
     Optional<ProjectView> findViewById(@Param("id") Long id);
+
+    @Modifying
+    @Query("UPDATE Project p " +
+            "SET p.rating = p.rating + (:vote) " +
+            "WHERE p.id = :id")
+    void vote(@Param("id") Long projectId, @Param("vote") int vote);
 
 }

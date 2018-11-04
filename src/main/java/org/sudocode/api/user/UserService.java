@@ -49,6 +49,7 @@ public class UserService {
                            updated.setLogin(user.getLogin());
                            updated.setAvatarUrl(user.getAvatarUrl());
                            updated.setHireable(user.isHireable());
+                           logger.info("Updated user with ID: {}", updated.getId());
                            return updated;
                        })
                        .orElseGet(() -> saveUser(user));

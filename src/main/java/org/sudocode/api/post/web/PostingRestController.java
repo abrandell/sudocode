@@ -63,15 +63,21 @@ public final class PostingRestController {
         );
     }
 
+    /**
+     * POST /api/:id/vote?dir={UPVOTE, DOWNVOTE}
+     *
+     * Upvote or downvote a project idea.
+     */
+    @SuppressWarnings("SpellCheckingInspection")
     @Post(path = "/{id}/vote")
     public void voteOnProject(@PathVariable("id") Long id, @RequestParam("dir") Vote vote) {
-        postingService.voteOnProject(vote, id);
+        postingService.voteOnProject(id, vote);
     }
 
     /**
      * GET /api/projects/:id
      *
-     * @see PostingService#fetchProjectViewById(Long) (Long)
+     * @see PostingService#fetchProjectViewById(Long)
      */
     @Get(path = "/{id}")
     public ProjectView fetchProjectById(@PathVariable("id") Long id) throws ProjectNotFoundException {
