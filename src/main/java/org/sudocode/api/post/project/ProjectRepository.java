@@ -56,7 +56,7 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
 
     Optional<ProjectView> findViewById(@Param("id") Long id);
 
-    @Modifying
+    @Modifying()
     @Query("UPDATE Project p " +
             "SET p.rating = p.rating + (:vote) " +
             "WHERE p.id = :id")

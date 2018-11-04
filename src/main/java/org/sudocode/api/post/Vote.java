@@ -13,6 +13,11 @@ public enum Vote {
         this.value = value;
     }
 
+    /**
+     * The primitive int value of the Vote enum.
+     *
+     * @return the primitive value.
+     */
     @JsonValue
     public int primitiveValue() {
         return value;

@@ -13,6 +13,7 @@ import org.springframework.data.domain.Persistable;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.sudocode.api.post.UserPost;
+import org.sudocode.api.post.Vote;
 import org.sudocode.api.user.User;
 
 import javax.persistence.*;
@@ -38,8 +39,8 @@ public class Project extends UserPost {
     @Basic
     private int rating;
 
-    public void vote(int vote) {
-        this.rating += vote;
+    public void vote(Vote vote) {
+        this.rating += vote.primitiveValue();
     }
 
     @CreatedBy
