@@ -13,9 +13,9 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
  */
 public class UserNotLoggedInException extends AuthenticationException {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    public UserNotLoggedInException() {
-        super("User is not currently logged in");
-    }
+	public UserNotLoggedInException() {
+		super("User is not currently logged in");
+	}
 }

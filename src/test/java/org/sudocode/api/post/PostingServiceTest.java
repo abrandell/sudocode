@@ -385,25 +385,4 @@ class PostingServiceTest {
         postingService.fetchAllProjectViews(null, "   bAsIc", null, null);
     }
 
-    @Test
-    void voteOnProject_thenRating_changes() {
-        assert project1.getId() != null;
-        given(projectRepo.findById(project1.getId())).willReturn(Optional.of(project1));
-        project1.setRating(0);
-
-        postingService.voteOnProject(project1.getId(), Vote.UPVOTE);
-
-
-        assertAll("Upvote on project post",
-                () -> assertEquals(1, project1.getRating(), "Rating should increase by one with a single upvote."),
-
-                () -> assertTrue(() -> {
-                    postingService.voteOnProject(project1.getId(), Vote.DOWNVOTE);
-
-                    return project1.getRating() == 0;
-                }, "Unvoting should remove the previous vote")
-        );
-
-
-    }
 }

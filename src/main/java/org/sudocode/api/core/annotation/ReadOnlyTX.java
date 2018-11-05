@@ -6,20 +6,21 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import org.springframework.core.annotation.AliasFor;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * Meta-annotation for {@link Modifying} and {@link Transactional} that rolls back for any exception.
+ * Meta-annotation for {@link Transactional} with {@code readOnly = true} and rolls back for
+ * any exception by default.
  */
-@Deprecated
 @Target({ ElementType.METHOD, ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
-@Modifying
-@Transactional(readOnly = false, rollbackFor = Exception.class)
-public @interface ModifyingTX {
+@Transactional(rollbackFor = Exception.class)
+public @interface ReadOnlyTX {
 
 	@AliasFor(annotation = Transactional.class)
 	Propagation propagation() default Propagation.REQUIRED;
+
+	@AliasFor(annotation = Transactional.class)
+	boolean readOnly() default true;
 }

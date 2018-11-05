@@ -5,9 +5,9 @@ package org.sudocode.api.core.exceptions;
  */
 public class CommentNotFoundException extends RuntimeException {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    public CommentNotFoundException(Long id) {
-        super("Comment with id: " + id + " not found");
-    }
+	public CommentNotFoundException(Long id) {
+		super("Comment with id: " + id + " not found");
+	}
 }

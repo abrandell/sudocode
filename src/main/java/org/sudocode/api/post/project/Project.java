@@ -1,23 +1,29 @@
 package org.sudocode.api.post.project;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import javax.persistence.Basic;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.validation.constraints.Size;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.validator.constraints.Length;
+
 import org.springframework.data.annotation.CreatedBy;
-import org.springframework.data.domain.Persistable;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
+
 import org.sudocode.api.post.UserPost;
 import org.sudocode.api.post.Vote;
 import org.sudocode.api.user.User;
-
-import javax.persistence.*;
-import javax.validation.constraints.Size;
 
 @Entity
 @Table(name = "projects")
@@ -26,92 +32,96 @@ import javax.validation.constraints.Size;
 @NoArgsConstructor
 public class Project extends UserPost {
 
-    @Length(min = 5, max = 300)
-    private String title;
+	@Length(min = 5, max = 300)
+	private String title;
 
-    @Enumerated(EnumType.STRING)
-    private Difficulty difficulty;
+	@Enumerated(EnumType.STRING)
+	private Difficulty difficulty;
 
-    @Size(min = 8, max = 10000)
-    @Basic(fetch = FetchType.LAZY)
-    private String description;
+	@Size(min = 8, max = 10000)
+	@Basic(fetch = FetchType.LAZY)
+	private String description;
 
-    @Basic
-    private int rating;
+	@Basic
+	private int rating;
 
-    public void vote(Vote vote) {
-        this.rating += vote.primitiveValue();
-    }
+	@CreatedBy
+	@ManyToOne(fetch = FetchType.LAZY, optional = false)
+	@JoinColumn(name = "user_fk")
+	private User author;
 
-    @CreatedBy
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "user_fk")
-    private User author;
+	private Project(Builder builder) {
+		super.setId(builder.id);
+		this.title = builder.title;
+		this.difficulty = builder.difficulty;
+		this.description = builder.description;
+		this.author = builder.author;
+	}
 
-    private Project(Builder builder) {
-        super.setId(builder.id);
-        this.title = builder.title;
-        this.difficulty = builder.difficulty;
-        this.description = builder.description;
-        this.author = builder.author;
-    }
+	public static Builder builder(@NonNull User author) {
+		return new Builder(author);
+	}
 
-    public static Builder builder(@NonNull User author) {
-        return new Builder(author);
-    }
+	public void vote(Vote vote) {
+		this.rating += vote.primitiveValue();
+	}
 
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
-                .append("id", super.getId())
-                .append("title", title)
-                .append("difficulty", difficulty)
-                .append("description", description)
-                .append("author", author)
-                .append("datePosted", super.getDatePosted())
-                .append("lastModifiedDate", super.getLastModifiedDate())
-                .toString();
-    }
+	public boolean isAuthor(User user) {
+		return this.author == user;
+	}
 
-    /**
-     * Builder for a more fluid api.
-     */
-    public static class Builder {
-        private final User author;
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
+				.append("id", super.getId())
+				.append("title", title)
+				.append("difficulty", difficulty)
+				.append("description", description)
+				.append("author", author)
+				.append("datePosted", super.getDatePosted())
+				.append("lastModifiedDate", super.getLastModifiedDate())
+				.toString();
+	}
 
-        private Long id;
-        private String title = "Title-Placeholder";
-        private Difficulty difficulty = Difficulty.BASIC;
-        private String description = "Description-Placeholder";
+	/**
+	 * Builder for a more fluid api.
+	 */
+	public static class Builder {
+		private final User author;
 
-        public Builder(@NonNull User author) {
-            this.author = author;
-        }
+		private Long id;
+		private String title = "Title-Placeholder";
+		private Difficulty difficulty = Difficulty.BASIC;
+		private String description = "Description-Placeholder";
 
-        public Builder id(@Nullable Long id) {
-            this.id = id;
-            return this;
-        }
+		public Builder(@NonNull User author) {
+			this.author = author;
+		}
 
-        public Builder title(String title) {
-            this.title = title;
-            return this;
-        }
+		public Builder id(@Nullable Long id) {
+			this.id = id;
+			return this;
+		}
 
-        public Builder difficulty(Difficulty difficulty) {
-            this.difficulty = difficulty;
-            return this;
-        }
+		public Builder title(String title) {
+			this.title = title;
+			return this;
+		}
 
-        public Builder description(String description) {
-            this.description = description;
-            return this;
-        }
+		public Builder difficulty(Difficulty difficulty) {
+			this.difficulty = difficulty;
+			return this;
+		}
 
-        public Project build() {
-            return new Project(this);
-        }
+		public Builder description(String description) {
+			this.description = description;
+			return this;
+		}
 
-    }
+		public Project build() {
+			return new Project(this);
+		}
+
+	}
 
 }

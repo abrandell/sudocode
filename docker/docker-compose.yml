@@ -5,7 +5,6 @@ services:
   mysql-dev:
     image: mysql:5.7
 #    volumes:
-#      - "./my.conf:/etc/mysql/conf.d/config-file.cnf"
 #      - "./data:/var/lib/mysql:rw"
     ports:
       - 3308:3306

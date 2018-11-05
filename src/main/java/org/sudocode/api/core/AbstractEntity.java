@@ -1,15 +1,16 @@
 package org.sudocode.api.core;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.springframework.data.annotation.AccessType;
-
-import javax.persistence.MappedSuperclass;
-import javax.persistence.Transient;
 import java.io.Serializable;
 import java.util.Objects;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.Transient;
 
-import static org.springframework.data.annotation.AccessType.Type;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+
+import org.springframework.data.annotation.AccessType;
+
+import static org.springframework.data.annotation.AccessType.*;
 
 /**
  * This class exists in the case you need to compare <b>detached or un-managed entities</b>.
@@ -21,36 +22,37 @@ import static org.springframework.data.annotation.AccessType.Type;
 @AccessType(Type.FIELD)
 public abstract class AbstractEntity implements Serializable {
 
-    @JsonIgnore
-    @Transient
-    private static final long serialVersionUID = 33L;
+	@JsonIgnore
+	@Transient
+	private static final long serialVersionUID = 33L;
 
-    @JsonIgnore
-    private final String UUID = java.util.UUID.randomUUID().toString();
+	@JsonIgnore
+	private final String UUID = java.util.UUID.randomUUID().toString();
 
-    /**
-     * @return The UUID in the form of a {@literal String}.
-     * @serialData
-     */
-    protected String getUUID() {
-        return this.UUID;
-    }
+	/**
+	 * @return The UUID in the form of a {@literal String}.
+	 *
+	 * @serialData
+	 */
+	protected String getUUID() {
+		return this.UUID;
+	}
 
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(UUID);
-    }
+	@Override
+	public int hashCode() {
+		return Objects.hashCode(UUID);
+	}
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) { return true; }
 
-        if (o == null || getClass() != o.getClass()) return false;
+		if (o == null || getClass() != o.getClass()) { return false; }
 
-        AbstractEntity that = (AbstractEntity) o;
+		AbstractEntity that = (AbstractEntity) o;
 
-        return new EqualsBuilder()
-                .append(UUID, that.UUID)
-                .isEquals();
-    }
+		return new EqualsBuilder()
+				.append(UUID, that.UUID)
+				.isEquals();
+	}
 }

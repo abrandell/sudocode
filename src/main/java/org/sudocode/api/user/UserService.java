@@ -2,102 +2,101 @@ package org.sudocode.api.user;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.sudocode.api.core.annotation.ModifyingTX;
+
+import org.sudocode.api.core.annotation.ReadOnlyTX;
+import org.sudocode.api.core.annotation.TransactionalService;
 import org.sudocode.api.core.exceptions.UserNotFoundException;
 
 
 /**
  * Service for user transactions. Read only by default & rolls back for any exception.
  */
-@Service
-@Transactional(
-        readOnly = true,
-        rollbackFor = Exception.class
-)
+@TransactionalService
 public class UserService {
 
-    private final UserRepository userRepo;
-    private final Logger logger = LoggerFactory.getLogger(UserService.class);
+	private final UserRepository userRepo;
+	private final Logger logger = LoggerFactory.getLogger(UserService.class);
 
-    @Autowired
-    public UserService(UserRepository userRepo) {
-        this.userRepo = userRepo;
-    }
+	@Autowired
+	public UserService(UserRepository userRepo) {
+		this.userRepo = userRepo;
+	}
 
-    /**
-     * Save a {@link User}
-     *
-     * @return The newly persisted {@link User}
-     */
-    @ModifyingTX
-    public User saveUser(User user) {
-        logger.debug("Saving user to database {}", user);
-        return userRepo.save(user);
-    }
+	/**
+	 * Save a {@link User}
+	 *
+	 * @return The newly persisted {@link User}
+	 */
+	public User saveUser(User user) {
+		logger.debug("Saving user to database {}", user);
+		return userRepo.save(user);
+	}
 
-    @SuppressWarnings("UnusedReturnValue")
-    @ModifyingTX
-    public User updateUser(User user) {
-        return userRepo.findById(user.getId())
-                       .map(updated -> {
-                           updated.setLogin(user.getLogin());
-                           updated.setAvatarUrl(user.getAvatarUrl());
-                           updated.setHireable(user.isHireable());
-                           logger.info("Updated user with ID: {}", updated.getId());
-                           return updated;
-                       })
-                       .orElseGet(() -> saveUser(user));
-    }
+	@SuppressWarnings("UnusedReturnValue")
+	public User updateUser(User user) {
+		return userRepo.findById(user.getId())
+		               .map(updated -> {
+			               updated.setLogin(user.getLogin());
+			               updated.setAvatarUrl(user.getAvatarUrl());
+			               updated.setHireable(user.isHireable());
+			               logger.info("Updated user with ID: {}", updated.getId());
+			               return updated;
+		               })
+		               .orElseGet(() -> saveUser(user));
+	}
 
-    /**
-     * Fetch all users as {@link UserView} projections in a page.
-     *
-     * @param pageable {@link Pageable}
-     * @return Page of all Users in {@link UserView} projections.
-     * @see Pageable
-     * @see UserView
-     */
-    public Page<UserView> fetchAllProjections(Pageable pageable) {
-        return userRepo.fetchAllUserViews(pageable);
-    }
+	/**
+	 * Fetch all users as {@link UserView} projections in a page.
+	 *
+	 * @param pageable {@link Pageable}
+	 * @return Page of all Users in {@link UserView} projections.
+	 * @see Pageable
+	 * @see UserView
+	 */
+	@ReadOnlyTX
+	public Page<UserView> fetchAllProjections(Pageable pageable) {
+		return userRepo.fetchAllUserViews(pageable);
+	}
 
-    /**
-     * Fetch user by id.
-     *
-     * @param id of the user to fetch.
-     * @return {@link UserView} projection of the {@link User} with the given ID as their PK.
-     * @throws UserNotFoundException if the id does not match any persisted user.
-     */
-    public UserView fetchProjectionById(Long id) {
-        return userRepo.findViewById(id).orElseThrow(() -> new UserNotFoundException(id));
-    }
+	/**
+	 * Fetch user by id.
+	 *
+	 * @param id of the user to fetch.
+	 * @return {@link UserView} projection of the {@link User} with the given ID as their PK.
+	 * @throws UserNotFoundException if the id does not match any persisted user.
+	 */
+	@ReadOnlyTX
+	public UserView fetchProjectionById(Long id) {
+		return userRepo.findViewById(id).orElseThrow(() -> new UserNotFoundException(id));
+	}
 
-    /**
-     * Fetch user by login.
-     *
-     * @param login of the user to fetch.
-     * @return {@link UserView} projection of the User with the given login.
-     * @throws UserNotFoundException if the login does not match any persisted user.
-     */
-    public UserView fetchProjectionByLogin(String login) {
-        return userRepo.fetchUserViewByLogin(login).orElseThrow(() -> new UserNotFoundException(login));
-    }
+	/**
+	 * Fetch user by login.
+	 *
+	 * @param login of the user to fetch.
+	 * @return {@link UserView} projection of the User with the given login.
+	 * @throws UserNotFoundException if the login does not match any persisted user.
+	 */
+	@ReadOnlyTX
+	public UserView fetchProjectionByLogin(String login) {
+		return userRepo.fetchUserViewByLogin(login).orElseThrow(() -> new UserNotFoundException(login));
+	}
 
-    /**
-     * Delete a user by id.
-     *
-     * @param id of the user to delete.
-     */
-    @ModifyingTX
-    @PreAuthorize("#principal.id.equals(id) || hasRole('ROLE_ADMIN')")
-    public void deleteById(Long id) {
-        logger.debug("Deleting user with id: {}", id);
-        userRepo.deleteById(id);
-    }
+	/**
+	 * Delete a user by id.
+	 *
+	 * @param id of the user to delete.
+	 */
+	@PreAuthorize("#principal.id.equals(id) || hasRole('ROLE_ADMIN')")
+	public void deleteById(Long id) {
+		logger.debug("Deleting user with id: {}", id);
+		userRepo.deleteById(id);
+	}
 }

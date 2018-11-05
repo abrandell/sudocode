@@ -1,31 +1,32 @@
 package org.sudocode.api.post.comment;
 
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import org.sudocode.api.user.UserView;
-
 import java.time.LocalDateTime;
+
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+
+import org.sudocode.api.user.UserView;
 
 /**
  * Projection for {@link Comment} entities.
  */
-@SuppressWarnings({"unused"})
+@SuppressWarnings({ "unused" })
 @JsonPropertyOrder({
-        "id",
-        "body",
-        "author",
-        "last_modified_date",
-        "date_posted"
+		"id",
+		"body",
+		"author",
+		"last_modified_date",
+		"date_posted"
 })
 public interface CommentView {
 
-    Long getId();
+	Long getId();
 
-    String getBody();
+	String getBody();
 
-    UserView getAuthor();
+	UserView getAuthor();
 
-    LocalDateTime getDatePosted();
+	LocalDateTime getDatePosted();
 
-    LocalDateTime getLastModifiedDate();
+	LocalDateTime getLastModifiedDate();
 }
 
