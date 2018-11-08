@@ -1,8 +1,5 @@
 package org.sudocode.api.post.comment;
 
-import java.time.LocalDateTime;
-import java.util.Optional;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -13,16 +10,15 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.util.Optional;
+
 @Repository
-@Transactional(
-    propagation = Propagation.MANDATORY,
-    rollbackFor = Exception.class
-)
+@Transactional(propagation = Propagation.MANDATORY, rollbackFor = Exception.class)
 public interface CommentRepository extends JpaRepository<Comment, Long> {
 
     @Deprecated
-    @Query(value = "SELECT c FROM Comment c JOIN FETCH c.project JOIN FETCH c.author WHERE c.project.id = :id",
-        countQuery = "SELECT count(c) FROM Comment c WHERE c.project.id = :id")
+    @Query(value = "SELECT c FROM Comment c JOIN FETCH c.project JOIN FETCH c.author WHERE c.project.id = :id", countQuery = "SELECT count(c) FROM Comment c WHERE c.project.id = :id")
     Page<Comment> fetchAllByProjectId(@Param("id") Long id, Pageable pageable);
 
     @Query("SELECT c FROM Comment c JOIN FETCH c.author WHERE c.id = :id")
@@ -39,15 +35,10 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     @Query("DELETE FROM Comment c WHERE c.project.id = :id")
     void deleteCommentsByProjectId(@Param("id") Long id);
 
-
-    @Query("SELECT "
-        + "c.id AS id, "
-        + "c.body AS body, "
-        + "c.author AS author, "
-        + "c.datePosted AS datePosted, "
-        + "c.lastModifiedDate AS lastModifiedDate "
-        + "FROM Comment c "
-        + "WHERE c.project.id = :id")
-    Page<CommentView> fetchCommentViewsByProjectId(@Param("id") Long id, Pageable pageable);
+    @Query("SELECT " + "c.id AS id, " + "c.body AS body, " + "c.author AS author, "
+            + "c.datePosted AS datePosted, " + "c.lastModifiedDate AS lastModifiedDate "
+            + "FROM Comment c " + "WHERE c.project.id = :id")
+    Page<CommentView> fetchCommentViewsByProjectId(@Param("id") Long id,
+                                                   Pageable pageable);
 
 }

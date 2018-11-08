@@ -2,16 +2,13 @@ package org.sudocode.api.user;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.util.Assert;
-
 import org.sudocode.api.core.annotation.ReadOnlyTX;
 import org.sudocode.api.core.annotation.TransactionalService;
 import org.sudocode.api.core.exception.UserNotFoundException;
-
 
 /**
  * Service for user transactions. Read only by default & rolls back for any exception.
@@ -20,6 +17,7 @@ import org.sudocode.api.core.exception.UserNotFoundException;
 public class UserService {
 
     private final UserRepository userRepo;
+
     private final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     @Autowired
@@ -38,7 +36,7 @@ public class UserService {
     }
 
     /**
-     *  Update a user.
+     * Update a user.
      */
     @SuppressWarnings("UnusedReturnValue")
     public User updateUser(User user) {
@@ -51,8 +49,7 @@ public class UserService {
                            updated.setHireable(user.isHireable());
                            logger.info("Updated user with ID: {}", updated.getId());
                            return updated;
-                       })
-                       .orElseGet(() -> saveUser(user));
+                       }).orElseGet(() -> saveUser(user));
     }
 
     /**
@@ -60,7 +57,6 @@ public class UserService {
      *
      * @param pageable {@link Pageable}
      * @return Page of all Users in {@link UserView} projections.
-     *
      * @see Pageable
      * @see UserView
      */
@@ -73,8 +69,8 @@ public class UserService {
      * Fetch user by id.
      *
      * @param id of the user to fetch.
-     * @return {@link UserView} projection of the {@link User} with the given ID as their PK.
-     *
+     * @return {@link UserView} projection of the {@link User} with the given ID as their
+     * PK.
      * @throws UserNotFoundException if the id does not match any persisted user.
      */
     @ReadOnlyTX
@@ -87,12 +83,12 @@ public class UserService {
      *
      * @param login of the user to fetch.
      * @return {@link UserView} projection of the User with the given login.
-     *
      * @throws UserNotFoundException if the login does not match any persisted user.
      */
     @ReadOnlyTX
     public UserView fetchProjectionByLogin(String login) {
-        return userRepo.fetchUserViewByLogin(login).orElseThrow(() -> new UserNotFoundException(login));
+        return userRepo.fetchUserViewByLogin(login)
+                       .orElseThrow(() -> new UserNotFoundException(login));
     }
 
     /**
@@ -104,4 +100,5 @@ public class UserService {
         logger.debug("Deleting user with id: {}", id);
         userRepo.deleteById(id);
     }
+
 }

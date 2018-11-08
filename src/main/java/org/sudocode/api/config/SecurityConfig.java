@@ -1,7 +1,5 @@
 package org.sudocode.api.config;
 
-import java.util.Map;
-
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -12,9 +10,10 @@ import org.springframework.security.oauth2.client.userinfo.CustomUserTypesOAuth2
 import org.springframework.security.web.DefaultRedirectStrategy;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
-
 import org.sudocode.api.user.User;
 import org.sudocode.api.user.UserService;
+
+import java.util.Map;
 
 import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpMethod.OPTIONS;
@@ -39,7 +38,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        // @formatter:off
+        //@formatter:off
         http
             .csrf()
                 .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
@@ -59,7 +58,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .userService(customOAuth2UserService())
             .and()
                 .successHandler(successHandler());
-        // @formatter:on
+        //@formatter:on
     }
 
     private CustomUserTypesOAuth2UserService customOAuth2UserService() {
@@ -67,9 +66,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     /**
-     * Saves or updates the user that successfully logged in.
-     * Redirects back to the origin of the where the user logged in.
-     * Redirect is useful for developing the front end on a different port.
+     * Saves or updates the user that successfully logged in. Redirects back to the origin
+     * of the where the user logged in. Redirect is useful for developing the front end on
+     * a different port.
      */
     public AuthenticationSuccessHandler successHandler() {
         return (request, response, authentication) -> {
@@ -80,7 +79,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             String origin = request.getHeader("Referer");
 
             // Temp fix.
-            // 'Referer' is null if logging into app while already authenticated with github.
+            // 'Referer' is null if logging into app while already authenticated with
+            // github.
             if (origin == null || origin.isEmpty()) {
                 origin = "http://localhost:4200";
             }

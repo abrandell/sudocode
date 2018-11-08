@@ -17,4 +17,5 @@ public class ProjectNotFoundException extends RuntimeException {
     public ProjectNotFoundException(Long id) {
         super("No project with the id " + id + " exists.");
     }
+
 }

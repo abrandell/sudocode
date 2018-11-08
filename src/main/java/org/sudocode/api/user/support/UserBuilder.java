@@ -1,7 +1,6 @@
 package org.sudocode.api.user.support;
 
 import org.springframework.util.Assert;
-
 import org.sudocode.api.user.User;
 
 import static org.sudocode.api.core.util.Constants.URL_REGEX_PATTERN;
@@ -12,6 +11,7 @@ import static org.sudocode.api.core.util.Constants.URL_REGEX_PATTERN;
 public final class UserBuilder {
 
     public static class Builder {
+
         private Long id;
         private String login = "placeholder-name";
         private String avatarUrl = "https://dummyimage.com/200x200/000/fff";
@@ -53,5 +53,7 @@ public final class UserBuilder {
             user.setAvatarUrl(this.avatarUrl);
             return user;
         }
+
     }
+
 }

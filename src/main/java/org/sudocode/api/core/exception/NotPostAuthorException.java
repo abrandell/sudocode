@@ -7,4 +7,5 @@ public class NotPostAuthorException extends RuntimeException {
     public NotPostAuthorException(String msg) {
         super(msg);
     }
+
 }

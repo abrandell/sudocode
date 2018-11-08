@@ -1,7 +1,8 @@
 package org.sudocode.api.core.exception;
 
 /**
- * Exception for when a {@link org.sudocode.api.post.comment.Comment} could not be found in the DB.
+ * Exception for when a {@link org.sudocode.api.post.comment.Comment} could not be found
+ * in the DB.
  */
 public class CommentNotFoundException extends RuntimeException {
 
@@ -10,4 +11,5 @@ public class CommentNotFoundException extends RuntimeException {
     public CommentNotFoundException(Long id) {
         super("Comment with id: " + id + " not found");
     }
+
 }

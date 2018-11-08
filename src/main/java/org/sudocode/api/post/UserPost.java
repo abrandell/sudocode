@@ -1,34 +1,22 @@
 package org.sudocode.api.post;
 
-import java.time.LocalDateTime;
-import java.util.Optional;
-import java.util.function.Predicate;
-import javax.persistence.Column;
-import javax.persistence.EntityListeners;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.MappedSuperclass;
-
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.hibernate.annotations.GenericGenerator;
-
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.domain.Persistable;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
 import org.sudocode.api.core.AbstractEntity;
-import org.sudocode.api.core.security.SecurityUtils;
 import org.sudocode.api.user.User;
 
+import javax.persistence.*;
+import java.time.LocalDateTime;
+
 /**
- * Abstract class for all entities which can be posted by a user.
+ * Base class for all entities which can be posted by a user.
  *
  * @see AbstractEntity
  */
@@ -65,6 +53,13 @@ public abstract class UserPost extends AbstractEntity implements Persistable<Lon
 
     public boolean isPostedBy(User other) {
         return this.author.equals(other);
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).append("id", id).append("datePosted", datePosted)
+                                        .append("author", author).append("lastModifiedDate", lastModifiedDate)
+                                        .toString();
     }
 
 }

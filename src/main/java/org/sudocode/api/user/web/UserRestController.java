@@ -1,7 +1,5 @@
 package org.sudocode.api.user.web;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,7 +10,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import org.sudocode.api.core.annotation.Delete;
 import org.sudocode.api.core.annotation.Get;
 import org.sudocode.api.core.annotation.Post;
@@ -20,6 +17,8 @@ import org.sudocode.api.core.exception.UserNotFoundException;
 import org.sudocode.api.user.User;
 import org.sudocode.api.user.UserService;
 import org.sudocode.api.user.UserView;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * Rest controller for {@link User}.
@@ -37,8 +36,9 @@ public class UserRestController {
 
     /**
      * GET /api/users/me
-     * Used for the client to check if a user is logged in.
-     * Returns an empty body if not authenticated and no exception gets thrown.
+     *
+     * <p>Used for the client to check if a user is logged in. Returns an
+     * empty body if not authenticated and no exception gets thrown.
      *
      * @return Currently logged in user.
      */
@@ -52,7 +52,7 @@ public class UserRestController {
 
     /**
      * GET /api/users/:id
-     *
+     * <p>
      * Returns the user with the given ID in DTO form.
      *
      * @see UserService#fetchProjectionById(Long)
@@ -64,7 +64,7 @@ public class UserRestController {
 
     /**
      * GET /api/users/:login
-     *
+     * <p>
      * Fetch a {@link UserView} projection by their login.
      *
      * @param login login to search for.
@@ -84,7 +84,6 @@ public class UserRestController {
     public Page<UserView> fetchAll(Pageable pageable) {
         return userService.fetchAllProjections(pageable);
     }
-
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Delete(value = "/{id}")

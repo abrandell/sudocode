@@ -27,4 +27,5 @@ public enum Vote {
     public String toString() {
         return String.valueOf(value);
     }
+
 }

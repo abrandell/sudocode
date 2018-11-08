@@ -23,30 +23,37 @@ public class OAuth2ServiceUtils {
     }
 
     private OAuth2AuthorizedClient getAuthorizedClient(OAuth2AuthenticationToken token) {
-        return clientService.loadAuthorizedClient(token.getAuthorizedClientRegistrationId(), token.getName());
+        return clientService.loadAuthorizedClient(
+            token.getAuthorizedClientRegistrationId(), token.getName()
+        );
     }
 
     /**
-     * RestTemplate with the added header "Authorization: Bearer {@literal <access-token>}" if the current auth is OAuth2.
+     * RestTemplate with the added header "Authorization: Bearer
+     * {@literal <access-token>}" if the current auth is OAuth2.
      *
      * @return RestTemplate with the added header.
      */
     @Bean
     public RestTemplate restTemplate() {
-        return new RestTemplateBuilder().interceptors((ClientHttpRequestInterceptor) (request, body, execution) -> {
+        return new RestTemplateBuilder()
+            .interceptors((ClientHttpRequestInterceptor) (request, body, execution) -> {
 
-            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+                Authentication auth = SecurityContextHolder.getContext()
+                                                           .getAuthentication();
 
-            if (auth instanceof OAuth2AuthenticationToken) {
-                var token = (OAuth2AuthenticationToken) auth;
-                OAuth2AuthorizedClient client = getAuthorizedClient(token);
+                if (auth instanceof OAuth2AuthenticationToken) {
+                    var token = (OAuth2AuthenticationToken) auth;
+                    OAuth2AuthorizedClient client = getAuthorizedClient(token);
 
-                final String accessToken = client.getAccessToken().getTokenValue();
+                    final String accessToken = client.getAccessToken()
+                                                     .getTokenValue();
 
-                request.getHeaders().add(AUTHORIZATION, "Bearer " + accessToken);
-            }
+                    request.getHeaders().add(AUTHORIZATION, "Bearer " + accessToken);
+                }
 
-            return execution.execute(request, body);
-        }).build();
+                return execution.execute(request, body);
+            }).build();
     }
+
 }

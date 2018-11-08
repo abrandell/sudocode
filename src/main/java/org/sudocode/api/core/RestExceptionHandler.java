@@ -2,20 +2,9 @@ package org.sudocode.api.core;
 
 import org.springframework.hateoas.VndErrors;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
-
-import org.sudocode.api.core.exception.CommentNotFoundException;
-import org.sudocode.api.core.exception.InvalidDifficultyException;
-import org.sudocode.api.core.exception.NotPostAuthorException;
-import org.sudocode.api.core.exception.ProjectNotFoundException;
-import org.sudocode.api.core.exception.TooManyRequestException;
-import org.sudocode.api.core.exception.UserNotFoundException;
-import org.sudocode.api.core.exception.UserNotLoggedInException;
+import org.sudocode.api.core.exception.*;
 
 import static org.springframework.http.HttpStatus.*;
 
@@ -64,4 +53,5 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     public VndErrors userNotFound(UserNotFoundException ex) {
         return new VndErrors(NOT_FOUND.toString(), ex.getMessage());
     }
+
 }

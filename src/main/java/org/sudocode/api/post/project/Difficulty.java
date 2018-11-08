@@ -1,12 +1,10 @@
 package org.sudocode.api.post.project;
 
-import java.util.Arrays;
-
 import com.fasterxml.jackson.annotation.JsonValue;
-
 import org.springframework.lang.NonNull;
-
 import org.sudocode.api.core.exception.InvalidDifficultyException;
+
+import java.util.Arrays;
 
 /**
  * Difficulty for the {@link Project} idea.
@@ -32,7 +30,6 @@ public enum Difficulty {
      *
      * @param value - the value (string) of the enum constant to get. Ignores casing.
      * @return the Enum constant if the text matches any.
-     *
      * @throws InvalidDifficultyException if no enum has the value of the string param.
      */
     public static Difficulty difficultyEnumFromValue(@NonNull String value) {

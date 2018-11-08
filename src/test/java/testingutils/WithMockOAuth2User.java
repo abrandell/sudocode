@@ -15,11 +15,12 @@ import java.util.List;
 @WithSecurityContext(factory = MockOAuth2SecurityContextFactory.class)
 public @interface WithMockOAuth2User {
 
-    String name() default "oauthUser";
+	String name() default "oauthUser";
 
-    long id() default 1L;
+	long id() default 1L;
 
-    boolean hireable() default false;
+	boolean hireable() default false;
 
-    String[] authorities() default "ROLE_USER";
+	String[] authorities() default "ROLE_USER";
+
 }

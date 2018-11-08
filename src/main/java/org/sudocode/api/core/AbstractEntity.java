@@ -1,22 +1,25 @@
 package org.sudocode.api.core;
 
-import java.io.Serializable;
-import java.util.Objects;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.Transient;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.lang3.builder.EqualsBuilder;
-
 import org.springframework.data.annotation.AccessType;
+
+import javax.persistence.MappedSuperclass;
+import javax.persistence.Transient;
+import java.io.Serializable;
+import java.util.Objects;
 
 import static org.springframework.data.annotation.AccessType.Type;
 
 /**
- * This class exists in the case you need to compare <b>detached or un-managed entities</b>.
- * <p>It generates the AbstractEntity, equals, and hashcode for all entities that extend it.
+ * This class exists in the case you need to compare <b>detached or un-managed
+ * entities</b>.
+ * <p>
+ * It generates the AbstractEntity, equals, and hashcode for all entities that extend it.
  *
- * <p>The hashcode is always unique, even for non-managed entities since the UUID is created at object instantiation.
+ * <p>
+ * The hashcode is always unique, even for non-managed entities since the UUID is created
+ * at object instantiation.
  */
 @MappedSuperclass
 @AccessType(Type.FIELD)
@@ -31,7 +34,6 @@ public abstract class AbstractEntity implements Serializable {
 
     /**
      * @return The UUID in the form of a {@literal String}.
-     *
      * @serialData
      */
     protected String getUUID() {
@@ -45,14 +47,17 @@ public abstract class AbstractEntity implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) { return true; }
+        if (this == o) {
+            return true;
+        }
 
-        if (o == null || getClass() != o.getClass()) { return false; }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         AbstractEntity that = (AbstractEntity) o;
 
-        return new EqualsBuilder()
-            .append(UUID, that.UUID)
-            .isEquals();
+        return new EqualsBuilder().append(UUID, that.UUID).isEquals();
     }
+
 }

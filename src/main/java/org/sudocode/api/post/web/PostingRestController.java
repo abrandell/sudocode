@@ -1,24 +1,12 @@
 package org.sudocode.api.post.web;
 
-import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import org.sudocode.api.core.annotation.CurrentUser;
-import org.sudocode.api.core.annotation.Delete;
-import org.sudocode.api.core.annotation.Get;
-import org.sudocode.api.core.annotation.Post;
-import org.sudocode.api.core.annotation.Put;
+import org.springframework.web.bind.annotation.*;
+import org.sudocode.api.core.annotation.*;
 import org.sudocode.api.core.exception.InvalidDifficultyException;
 import org.sudocode.api.core.exception.ProjectNotFoundException;
 import org.sudocode.api.post.PostingService;
@@ -29,6 +17,7 @@ import org.sudocode.api.post.project.Project;
 import org.sudocode.api.post.project.ProjectView;
 import org.sudocode.api.user.User;
 
+import java.util.Map;
 
 /**
  * {@link RestController} for {@link Project} and {@link Comment} posts.
@@ -38,6 +27,7 @@ import org.sudocode.api.user.User;
 public final class PostingRestController {
 
     private final PostingService postingService;
+
     private final Logger logger = LoggerFactory.getLogger(PostingRestController.class);
 
     @Autowired
@@ -63,7 +53,7 @@ public final class PostingRestController {
      */
     @Get
     public Page<ProjectView> fetchProjects(@RequestParam Map<String, String> params,
-                                           Pageable pageable) throws InvalidDifficultyException {
+                                           Pageable pageable) {
 
         return postingService.fetchAllProjectViews(
             params.get("title"),
@@ -75,11 +65,12 @@ public final class PostingRestController {
 
     /**
      * POST /api/:id/vote?dir={UPVOTE, DOWNVOTE}
-     *
+     * <p>
      * Upvote or downvote a project idea.
      */
     @Post(path = "/{id}/vote")
-    public void voteOnProject(@PathVariable("id") Long id, @RequestParam("dir") Vote vote) {
+    public void voteOnProject(@PathVariable("id") Long id,
+                              @RequestParam("dir") Vote vote) {
         postingService.voteOnProject(vote, id);
     }
 
@@ -89,7 +80,8 @@ public final class PostingRestController {
      * @see PostingService#fetchProjectViewById(Long) (Long)
      */
     @Get(path = "/{id}")
-    public ProjectView fetchProjectById(@PathVariable("id") Long id) throws ProjectNotFoundException {
+    public ProjectView fetchProjectById(@PathVariable("id") Long id)
+        throws ProjectNotFoundException {
         return postingService.fetchProjectViewById(id);
     }
 
@@ -97,7 +89,8 @@ public final class PostingRestController {
      * GET /api/projects/:id/comments{?page=}&{sort=}
      */
     @Get(path = "/{id}/comments")
-    public Page<CommentView> fetchComments(@PathVariable("id") Long id, Pageable pageable) {
+    public Page<CommentView> fetchComments(@PathVariable("id") Long id,
+                                           Pageable pageable) {
         return postingService.fetchCommentViewsByProjectId(id, pageable);
     }
 
@@ -108,15 +101,15 @@ public final class PostingRestController {
      */
     @Post(path = "/{id}/comments")
     public Comment postComment(@PathVariable("id") Long projectId,
-                               @RequestBody Comment comment,
-                               @CurrentUser User user) {
+                               @RequestBody Comment comment, @CurrentUser User user) {
         comment.setId(null);
         return postingService.postComment(comment, projectId, user);
     }
 
     @Put(path = "/{projectId}/comments/{commentId}")
-    public Comment updateComment(@PathVariable("projectId") Long projectId, @PathVariable("commentId") Long commentId,
-                                 @RequestBody Comment comment, @CurrentUser User user) {
+    public Comment updateComment(@PathVariable("projectId") Long projectId,
+                                 @PathVariable("commentId") Long commentId, @RequestBody Comment comment,
+                                 @CurrentUser User user) {
 
         return postingService.updateComment(comment, commentId, projectId, user);
     }
@@ -126,10 +119,8 @@ public final class PostingRestController {
      *
      * @see PostingService#deleteCommentById(Long, User)
      */
-    @Delete(path = "/{projectId}/comments/{commentId}")
-    public void deleteCommentById(@PathVariable("projectId") Long projectId,
-                                  @PathVariable("commentId") Long commentId,
-                                  @CurrentUser User currentUser) {
+    @Delete(path = "/**/comments/{commentId}")
+    public void deleteCommentById(@PathVariable("commentId") Long commentId, @CurrentUser User currentUser) {
 
         this.postingService.deleteCommentById(commentId, currentUser);
     }
@@ -154,4 +145,5 @@ public final class PostingRestController {
     public void deleteProject(@PathVariable("id") Long id, @CurrentUser User user) {
         postingService.deleteProjectById(id, user);
     }
+
 }

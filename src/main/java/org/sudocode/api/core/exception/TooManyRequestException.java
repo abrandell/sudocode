@@ -1,6 +1,5 @@
 package org.sudocode.api.core.exception;
 
-
 /**
  * Exception thrown if a user makes too many requests in too short of a time.
  *
@@ -12,5 +11,7 @@ public class TooManyRequestException extends RuntimeException {
 
     public TooManyRequestException() {
         super("Too many requests made.");
+        super.getLocalizedMessage();
     }
+
 }

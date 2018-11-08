@@ -1,22 +1,16 @@
 package org.sudocode.api.post.project;
 
-import java.time.LocalDateTime;
-
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-
 import org.sudocode.api.user.UserView;
+
+import java.time.LocalDateTime;
 
 /**
  * Projection for {@link org.sudocode.api.post.project.Project} entities.
  */
-@SuppressWarnings({ "unused" })
+@SuppressWarnings({"unused"})
 @JsonPropertyOrder({
-    "id",
-    "title",
-    "difficulty",
-    "description",
-    "date_posted",
-    "author"
+    "id", "title", "difficulty", "description", "date_posted", "author"
 })
 public interface ProjectView {
 
@@ -35,4 +29,5 @@ public interface ProjectView {
     LocalDateTime getLastModifiedDate();
 
     UserView getAuthor();
+
 }
