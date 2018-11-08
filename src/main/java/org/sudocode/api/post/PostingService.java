@@ -1,8 +1,8 @@
 package org.sudocode.api.post;
 
 import java.time.LocalDateTime;
+import java.util.function.Predicate;
 
-import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -103,7 +103,7 @@ public class PostingService {
      */
     public Project updateProject(Long id, Project newProject, User currentUser) {
         return projectRepo.fetchById(id)
-                          .filter(project -> project.isAuthor(currentUser))
+                          .filter(p -> p.isPostedBy(currentUser))
                           .map(project -> {
                               project.setTitle(newProject.getTitle());
                               project.setDescription(newProject.getDescription());
@@ -158,7 +158,7 @@ public class PostingService {
 
     public Comment updateComment(Comment newComment, Long commentId, Long projectId, User currentUser) {
         return commentRepo.fetchById(commentId)
-                          .filter(comment -> comment.getAuthor().equals(currentUser))
+                          .filter(c -> c.isPostedBy(currentUser))
                           .map(comment -> {
                               comment.setBody(newComment.getBody());
                               return comment;

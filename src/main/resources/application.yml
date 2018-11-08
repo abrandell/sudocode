@@ -41,7 +41,7 @@ spring:
     password: ${SPRING_DB_PASS} #password
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: create-drop
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL5Dialect

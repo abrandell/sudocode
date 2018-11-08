@@ -18,6 +18,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import org.hibernate.validator.constraints.Length;
 
 import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.PersistenceConstructor;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 

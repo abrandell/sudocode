@@ -28,6 +28,8 @@ import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.util.Assert;
 
+import org.sudocode.api.user.support.UserBuilder;
+
 import static org.springframework.data.annotation.AccessType.Type;
 import static org.sudocode.api.core.util.Constants.URL_REGEX;
 import static org.sudocode.api.core.util.Constants.URL_REGEX_PATTERN;
@@ -37,7 +39,7 @@ import static org.sudocode.api.core.util.Constants.URL_REGEX_PATTERN;
 @AccessType(Type.FIELD)
 @Getter
 @Setter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 public class User implements OAuth2User, Serializable {
 
     @JsonIgnore
@@ -63,15 +65,13 @@ public class User implements OAuth2User, Serializable {
     @Column(nullable = false)
     private boolean hireable;
 
-    private User(Builder builder) {
-        this.id = builder.id;
-        this.login = builder.login;
-        this.hireable = builder.hireable;
-        this.avatarUrl = builder.avatarUrl;
-    }
-
-    public static Builder builder() {
-        return new Builder();
+    /**
+     *
+     * @return Fluent builder for creating a {@link User} POJO.
+     * @see UserBuilder
+     */
+    public static UserBuilder.Builder builder() {
+        return new UserBuilder.Builder();
     }
 
     /**
@@ -93,11 +93,8 @@ public class User implements OAuth2User, Serializable {
     @Override
     public boolean equals(Object o) {
         if (this == o) { return true; }
-
         if (o == null || getClass() != o.getClass()) { return false; }
-
         User user = (User) o;
-
         return new EqualsBuilder()
             .append(id, user.id)
             .isEquals();
@@ -110,16 +107,6 @@ public class User implements OAuth2User, Serializable {
             .toHashCode();
     }
 
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this, ToStringStyle.SIMPLE_STYLE)
-            .append("id", id)
-            .append("login", login)
-            .append("avatarUrl", avatarUrl)
-            .append("hireable", hireable)
-            .toString();
-    }
-
     @JsonIgnore
     @Override
     public Collection<GrantedAuthority> getAuthorities() {
@@ -127,10 +114,8 @@ public class User implements OAuth2User, Serializable {
     }
 
     /**
-     * Required to implement {@link OAuth2User}. Do not use.
-     *
+     * Required to implement {@link OAuth2User}.
      * All needed info is provided via standard getters.
-     *
      * @return null
      */
     @Deprecated
@@ -140,44 +125,13 @@ public class User implements OAuth2User, Serializable {
         return null;
     }
 
-    public static class Builder {
-        private Long id;
-        private String login = "placeholder-name";
-        private String avatarUrl = "https://dummyimage.com/200x200/000/fff";
-        private boolean hireable;
-
-        public Builder id(Long id) {
-            this.id = id;
-            return this;
-        }
-
-        public Builder login(String login) {
-            Assert.hasText(login, "Login cannot be blank.");
-            this.login = login;
-            return this;
-        }
-
-
-        /**
-         * Optional. Defaults to a placeholder image.
-         *
-         * @return Builder
-         */
-        public Builder avatarUrl(String avatarUrl) {
-            if (URL_REGEX_PATTERN.matcher(avatarUrl).matches()) {
-                this.avatarUrl = avatarUrl;
-            }
-
-            return this;
-        }
-
-        public Builder hireable(boolean hireable) {
-            this.hireable = hireable;
-            return this;
-        }
-
-        public User build() {
-            return new User(this);
-        }
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this, ToStringStyle.SIMPLE_STYLE)
+            .append("id", id)
+            .append("login", login)
+            .append("avatarUrl", avatarUrl)
+            .append("hireable", hireable)
+            .toString();
     }
 }

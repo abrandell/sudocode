@@ -1,6 +1,8 @@
 package org.sudocode.api.post;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
+import java.util.function.Predicate;
 import javax.persistence.Column;
 import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
@@ -22,6 +24,7 @@ import org.springframework.data.domain.Persistable;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import org.sudocode.api.core.AbstractEntity;
+import org.sudocode.api.core.security.SecurityUtils;
 import org.sudocode.api.user.User;
 
 /**
@@ -60,8 +63,8 @@ public abstract class UserPost extends AbstractEntity implements Persistable<Lon
         return this.id == null;
     }
 
-    public boolean isAuthor(User user) {
-        return this.author == user;
+    public boolean isPostedBy(User other) {
+        return this.author.equals(other);
     }
 
 }
