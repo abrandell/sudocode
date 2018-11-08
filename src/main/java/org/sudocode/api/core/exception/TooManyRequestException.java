@@ -1,4 +1,4 @@
-package org.sudocode.api.core.exceptions;
+package org.sudocode.api.core.exception;
 
 
 /**
@@ -8,9 +8,9 @@ package org.sudocode.api.core.exceptions;
  */
 public class TooManyRequestException extends RuntimeException {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public TooManyRequestException() {
-		super("Too many requests made.");
-	}
+    public TooManyRequestException() {
+        super("Too many requests made.");
+    }
 }

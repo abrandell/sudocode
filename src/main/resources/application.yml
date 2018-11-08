@@ -23,6 +23,14 @@ spring:
       fail-on-empty-beans: false
   profiles:
     active: ${ACTIVE_PROFILE}
+management:
+  endpoint:
+    beans:
+      enabled: true
+    threaddump:
+      enabled: true
+    health:
+      enabled: true
 ---
 
 spring:
@@ -33,14 +41,17 @@ spring:
     password: ${SPRING_DB_PASS} #password
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL5Dialect
-#logging:
-#  level:
-#    org.springframework.web.mvc: debug
-#    com.fasterxml.jackson.databind: info
+logging:
+  level:
+    org.sudocode.api: debug
+    org.springframework.web.mvc: info
+    com.fasterxml.jackson.databind: info
+    org.springframework.transaction.interceptor: info
+    org.springframework.web.filter: trace
 
 ---
 

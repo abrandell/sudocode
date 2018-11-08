@@ -23,9 +23,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(rollbackFor = Exception.class)
 public @interface TransactionalService {
 
-	@AliasFor(annotation = Transactional.class)
-	boolean readOnly() default false;
+    @AliasFor(annotation = Transactional.class)
+    boolean readOnly() default false;
 
-	@AliasFor(annotation = Transactional.class)
-	Propagation propagation() default Propagation.REQUIRED;
+    @AliasFor(annotation = Transactional.class)
+    Propagation propagation() default Propagation.REQUIRED;
 }

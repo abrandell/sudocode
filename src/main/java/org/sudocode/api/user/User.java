@@ -28,8 +28,9 @@ import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.util.Assert;
 
-import static org.springframework.data.annotation.AccessType.*;
-import static org.sudocode.api.core.util.Constants.*;
+import static org.springframework.data.annotation.AccessType.Type;
+import static org.sudocode.api.core.util.Constants.URL_REGEX;
+import static org.sudocode.api.core.util.Constants.URL_REGEX_PATTERN;
 
 @Entity
 @Table(name = "users")
@@ -39,144 +40,144 @@ import static org.sudocode.api.core.util.Constants.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User implements OAuth2User, Serializable {
 
-	@JsonIgnore
-	@Transient
-	private static long serialVersionUID = 1L;
+    @JsonIgnore
+    @Transient
+    private static long serialVersionUID = 1L;
 
-	/**
-	 * Not generated.
-	 *
-	 * Uses the same ID as the github API.
-	 */
-	@Id
-	@Column(nullable = false)
-	private Long id;
+    /**
+     * Not generated.
+     *
+     * Uses the same ID as the github API.
+     */
+    @Id
+    @Column(nullable = false)
+    private Long id;
 
-	@Column(length = 50, nullable = false)
-	private String login;
+    @Column(length = 50, nullable = false)
+    private String login;
 
-	@Column(nullable = false)
-	@Pattern(regexp = URL_REGEX)
-	private String avatarUrl;
+    @Column(nullable = false)
+    @Pattern(regexp = URL_REGEX)
+    private String avatarUrl;
 
-	@Column(nullable = false)
-	private boolean hireable;
+    @Column(nullable = false)
+    private boolean hireable;
 
-	/**
-	 * Required for principal. Returns ID since that never changes (unless Github decides to change it).
-	 */
-	@JsonIgnore
-	public String getName() {
-		return id.toString();
-	}
+    private User(Builder builder) {
+        this.id = builder.id;
+        this.login = builder.login;
+        this.hireable = builder.hireable;
+        this.avatarUrl = builder.avatarUrl;
+    }
 
-	@JsonProperty("avatar_url")
-	public String getAvatarUrl() {
-		return avatarUrl;
-	}
+    public static Builder builder() {
+        return new Builder();
+    }
 
-	/**
-	 * Only uses the ID since everything else can change.
-	 */
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) { return true; }
+    /**
+     * Required for principal. Returns ID since that never changes (unless Github decides to change it).
+     */
+    @JsonIgnore
+    public String getName() {
+        return id.toString();
+    }
 
-		if (o == null || getClass() != o.getClass()) { return false; }
+    @JsonProperty("avatar_url")
+    public String getAvatarUrl() {
+        return avatarUrl;
+    }
 
-		User user = (User) o;
+    /**
+     * Only uses the ID since everything else can change.
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) { return true; }
 
-		return new EqualsBuilder()
-				.append(id, user.id)
-				.isEquals();
-	}
+        if (o == null || getClass() != o.getClass()) { return false; }
 
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder(17, 37)
-				.append(id)
-				.toHashCode();
-	}
+        User user = (User) o;
 
-	@Override
-	public String toString() {
-		return new ToStringBuilder(this, ToStringStyle.SIMPLE_STYLE)
-				.append("id", id)
-				.append("login", login)
-				.append("avatarUrl", avatarUrl)
-				.append("hireable", hireable)
-				.toString();
-	}
+        return new EqualsBuilder()
+            .append(id, user.id)
+            .isEquals();
+    }
 
-	@JsonIgnore
-	@Override
-	public Collection<GrantedAuthority> getAuthorities() {
-		return AuthorityUtils.createAuthorityList("ROLE_USER");
-	}
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37)
+            .append(id)
+            .toHashCode();
+    }
 
-	/**
-	 * Required to implement {@link OAuth2User}. Do not use.
-	 *
-	 * All needed info is provided via standard getters.
-	 * @return null
-	 */
-	@Deprecated
-	@Override
-	@Nullable
-	public Map<String, Object> getAttributes() {
-		return null;
-	}
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this, ToStringStyle.SIMPLE_STYLE)
+            .append("id", id)
+            .append("login", login)
+            .append("avatarUrl", avatarUrl)
+            .append("hireable", hireable)
+            .toString();
+    }
 
-	// --- BUILDER --- //
+    @JsonIgnore
+    @Override
+    public Collection<GrantedAuthority> getAuthorities() {
+        return AuthorityUtils.createAuthorityList("ROLE_USER");
+    }
 
-	public static Builder builder() {
-		return new Builder();
-	}
+    /**
+     * Required to implement {@link OAuth2User}. Do not use.
+     *
+     * All needed info is provided via standard getters.
+     *
+     * @return null
+     */
+    @Deprecated
+    @Override
+    @Nullable
+    public Map<String, Object> getAttributes() {
+        return null;
+    }
 
-	public static class Builder {
-		private Long id;
-		private String login = "placeholder-name";
-		private String avatarUrl = "https://dummyimage.com/200x200/000/fff";
-		private boolean hireable;
+    public static class Builder {
+        private Long id;
+        private String login = "placeholder-name";
+        private String avatarUrl = "https://dummyimage.com/200x200/000/fff";
+        private boolean hireable;
 
-		public Builder id(Long id) {
-			this.id = id;
-			return this;
-		}
+        public Builder id(Long id) {
+            this.id = id;
+            return this;
+        }
 
-		public Builder login(String login) {
-			Assert.hasText(login, "Login cannot be blank.");
-			this.login = login;
-			return this;
-		}
+        public Builder login(String login) {
+            Assert.hasText(login, "Login cannot be blank.");
+            this.login = login;
+            return this;
+        }
 
 
-		/**
-		 * Optional. Defaults to a placeholder image.
-		 * @return Builder
-		 */
-		public Builder avatarUrl(String avatarUrl) {
-			if (URL_REGEX_PATTERN.matcher(avatarUrl).matches()) {
-				this.avatarUrl = avatarUrl;
-			}
+        /**
+         * Optional. Defaults to a placeholder image.
+         *
+         * @return Builder
+         */
+        public Builder avatarUrl(String avatarUrl) {
+            if (URL_REGEX_PATTERN.matcher(avatarUrl).matches()) {
+                this.avatarUrl = avatarUrl;
+            }
 
-			return this;
-		}
+            return this;
+        }
 
-		public Builder hireable(boolean hireable) {
-			this.hireable = hireable;
-			return this;
-		}
+        public Builder hireable(boolean hireable) {
+            this.hireable = hireable;
+            return this;
+        }
 
-		public User build() {
-			return new User(this);
-		}
-	}
-
-	private User(Builder builder) {
-		this.id = builder.id;
-		this.login = builder.login;
-		this.hireable = builder.hireable;
-		this.avatarUrl = builder.avatarUrl;
-	}
+        public User build() {
+            return new User(this);
+        }
+    }
 }

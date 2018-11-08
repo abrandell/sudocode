@@ -1,3 +1,6 @@
+/**
+ * Package for the User domain.
+ */
 @NonNullApi
 package org.sudocode.api.user;
 

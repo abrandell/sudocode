@@ -21,12 +21,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @Documented
 public @interface Get {
 
-	@AliasFor(annotation = RequestMapping.class)
-	String value() default "";
+    @AliasFor(annotation = RequestMapping.class)
+    String value() default "";
 
-	@AliasFor(annotation = RequestMapping.class)
-	String path() default "";
+    @AliasFor(annotation = RequestMapping.class)
+    String path() default "";
 
-	@AliasFor(annotation = RequestMapping.class)
-	String[] produces() default { MediaType.APPLICATION_JSON_VALUE };
+    @AliasFor(annotation = RequestMapping.class)
+    String[] produces() default { MediaType.APPLICATION_JSON_VALUE };
 }

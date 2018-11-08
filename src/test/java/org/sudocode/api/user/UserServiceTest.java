@@ -10,14 +10,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
-import org.springframework.security.oauth2.core.OAuth2AccessToken;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.sudocode.api.core.exceptions.UserNotFoundException;
-import testingutils.ClientRegistrationMock;
+import org.sudocode.api.core.exception.UserNotFoundException;
+
 import testingutils.UserViewMock;
-import testingutils.WithMockOAuth2User;
 
 import java.util.List;
 import java.util.Optional;

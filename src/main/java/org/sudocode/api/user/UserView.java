@@ -10,12 +10,12 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @JsonPropertyOrder({ "id", "login", "avatar_url", "hireable" })
 public interface UserView {
 
-	Long getId();
+    Long getId();
 
-	String getLogin();
+    String getLogin();
 
-	String getAvatarUrl();
+    String getAvatarUrl();
 
-	boolean isHireable();
+    boolean isHireable();
 
 }

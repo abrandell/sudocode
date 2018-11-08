@@ -7,7 +7,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
@@ -27,11 +29,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(SpringExtension.class)
-@WebMvcTest
-@ActiveProfiles("dev")
-@WebAppConfiguration
-@AutoConfigureTestDatabase
-@ContextConfiguration
+@SpringBootTest
+@AutoConfigureMockMvc
 class ServerApplicationTests {
 
     @Autowired
@@ -57,13 +56,11 @@ class ServerApplicationTests {
     @Test
     @WithMockOAuth2User(name = "Patrick Ewing")
     void testFetchProjectById() throws Exception {
-
-        var response = mockMvc.perform(get("/api/users/me"))
+        mockMvc.perform(get("/api/users/me"))
                               .andExpect(jsonPath("$.login", is("Patrick Ewing")))
                               .andExpect(jsonPath("$.id", is(1)))
                               .andDo(print()).andReturn().getResponse();
 
-        Assertions.assertNotNull(response);
     }
 
 

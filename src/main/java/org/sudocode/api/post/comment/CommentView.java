@@ -11,22 +11,22 @@ import org.sudocode.api.user.UserView;
  */
 @SuppressWarnings({ "unused" })
 @JsonPropertyOrder({
-		"id",
-		"body",
-		"author",
-		"last_modified_date",
-		"date_posted"
+    "id",
+    "body",
+    "author",
+    "last_modified_date",
+    "date_posted"
 })
 public interface CommentView {
 
-	Long getId();
+    Long getId();
 
-	String getBody();
+    String getBody();
 
-	UserView getAuthor();
+    UserView getAuthor();
 
-	LocalDateTime getDatePosted();
+    LocalDateTime getDatePosted();
 
-	LocalDateTime getLastModifiedDate();
+    LocalDateTime getLastModifiedDate();
 }
 
