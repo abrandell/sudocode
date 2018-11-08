@@ -18,7 +18,8 @@ import java.util.Optional;
 public interface CommentRepository extends JpaRepository<Comment, Long> {
 
     @Deprecated
-    @Query(value = "SELECT c FROM Comment c JOIN FETCH c.project JOIN FETCH c.author WHERE c.project.id = :id", countQuery = "SELECT count(c) FROM Comment c WHERE c.project.id = :id")
+    @Query(value = "SELECT c FROM Comment c JOIN FETCH c.project JOIN FETCH c.author WHERE c.project.id = :id",
+        countQuery = "SELECT count(c) FROM Comment c WHERE c.project.id = :id")
     Page<Comment> fetchAllByProjectId(@Param("id") Long id, Pageable pageable);
 
     @Query("SELECT c FROM Comment c JOIN FETCH c.author WHERE c.id = :id")
@@ -35,9 +36,14 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     @Query("DELETE FROM Comment c WHERE c.project.id = :id")
     void deleteCommentsByProjectId(@Param("id") Long id);
 
-    @Query("SELECT " + "c.id AS id, " + "c.body AS body, " + "c.author AS author, "
-            + "c.datePosted AS datePosted, " + "c.lastModifiedDate AS lastModifiedDate "
-            + "FROM Comment c " + "WHERE c.project.id = :id")
+    @Query("SELECT"
+        + " c.id AS id,"
+        + " c.body AS body,"
+        + " c.author AS author,"
+        + " c.datePosted AS datePosted,"
+        + " c.lastModifiedDate AS lastModifiedDate "
+        + "FROM Comment c "
+        + "WHERE c.project.id = :id")
     Page<CommentView> fetchCommentViewsByProjectId(@Param("id") Long id,
                                                    Pageable pageable);
 

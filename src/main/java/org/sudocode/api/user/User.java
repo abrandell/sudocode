@@ -84,19 +84,16 @@ public class User implements OAuth2User, Serializable {
      */
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
+        if (this == o) { return true; }
+        if (o == null || getClass() != o.getClass()) { return false; }
         User user = (User) o;
         return new EqualsBuilder().append(id, user.id).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(17, 37).append(id).toHashCode();
+        return new HashCodeBuilder(17, 37)
+            .append(id).toHashCode();
     }
 
     @JsonIgnore

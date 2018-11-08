@@ -32,8 +32,8 @@ public class TimeOutFilter extends OncePerRequestFilter {
      */
     @Override
     protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response, FilterChain filterChain)
-            throws ServletException, IOException {
+                                    HttpServletResponse response,
+                                    FilterChain filterChain) throws ServletException, IOException {
 
         if (!request.getRequestURI().contains("vote")
                 && request.getRemoteUser() != null) {
