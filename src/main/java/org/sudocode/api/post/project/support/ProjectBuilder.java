@@ -6,6 +6,9 @@ import org.sudocode.api.post.project.Difficulty;
 import org.sudocode.api.post.project.Project;
 import org.sudocode.api.user.User;
 
+/**
+ * Builder class for {@link Project}'s for convenience.
+ */
 public class ProjectBuilder {
 
     public static class Builder {

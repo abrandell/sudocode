@@ -28,10 +28,6 @@ public class ProjectViewMock implements ProjectView {
 
     UserView author;
 
-    // TODO, fix me.
-    @Override
-    public int getRating() {
-        return 0;
-    }
+    int rating;
 
 }

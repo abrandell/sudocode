@@ -7,7 +7,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 import org.sudocode.api.core.annotation.*;
-import org.sudocode.api.core.exception.InvalidDifficultyException;
 import org.sudocode.api.core.exception.ProjectNotFoundException;
 import org.sudocode.api.post.PostingService;
 import org.sudocode.api.post.Vote;
@@ -40,7 +39,7 @@ public final class PostingRestController {
      *
      * @see PostingService#postProject(Project)
      */
-    @Post
+    @PostJSON
     public Project postProject(@RequestBody Project project) {
         project.setId(null);
         return postingService.postProject(project);
@@ -51,7 +50,7 @@ public final class PostingRestController {
      *
      * @see PostingService#fetchAllProjectViews(String, String, String, Pageable)
      */
-    @Get
+    @GetJSON
     public Page<ProjectView> fetchProjects(@RequestParam Map<String, String> params,
                                            Pageable pageable) {
 
@@ -68,7 +67,7 @@ public final class PostingRestController {
      * <p>
      * Upvote or downvote a project idea.
      */
-    @Post(path = "/{id}/vote")
+    @PostJSON(path = "/{id}/vote")
     public void voteOnProject(@PathVariable("id") Long id,
                               @RequestParam("dir") Vote vote) {
         postingService.voteOnProject(vote, id);
@@ -79,7 +78,7 @@ public final class PostingRestController {
      *
      * @see PostingService#fetchProjectViewById(Long) (Long)
      */
-    @Get(path = "/{id}")
+    @GetJSON(path = "/{id}")
     public ProjectView fetchProjectById(@PathVariable("id") Long id)
         throws ProjectNotFoundException {
         return postingService.fetchProjectViewById(id);
@@ -88,7 +87,7 @@ public final class PostingRestController {
     /**
      * GET /api/projects/:id/comments{?page=}&{sort=}
      */
-    @Get(path = "/{id}/comments")
+    @GetJSON(path = "/{id}/comments")
     public Page<CommentView> fetchComments(@PathVariable("id") Long id,
                                            Pageable pageable) {
         return postingService.fetchCommentViewsByProjectId(id, pageable);
@@ -99,14 +98,14 @@ public final class PostingRestController {
      *
      * @see PostingService#postComment(Comment, Long, User)
      */
-    @Post(path = "/{id}/comments")
+    @PostJSON(path = "/{id}/comments")
     public Comment postComment(@PathVariable("id") Long projectId,
                                @RequestBody Comment comment, @CurrentUser User user) {
         comment.setId(null);
         return postingService.postComment(comment, projectId, user);
     }
 
-    @Put(path = "/{projectId}/comments/{commentId}")
+    @PutJSON(path = "/{projectId}/comments/{commentId}")
     public Comment updateComment(@PathVariable("projectId") Long projectId,
                                  @PathVariable("commentId") Long commentId, @RequestBody Comment comment,
                                  @CurrentUser User user) {
@@ -119,8 +118,8 @@ public final class PostingRestController {
      *
      * @see PostingService#deleteCommentById(Long, User)
      */
-    @Delete(path = "/**/comments/{commentId}")
-    public void deleteCommentById(@PathVariable("commentId") Long commentId, @CurrentUser User currentUser) {
+    @Delete(path = "/**/comments/{id}")
+    public void deleteCommentById(@PathVariable("id") Long commentId, @CurrentUser User currentUser) {
 
         this.postingService.deleteCommentById(commentId, currentUser);
     }
@@ -130,7 +129,7 @@ public final class PostingRestController {
      *
      * @see PostingService#updateProject(Long, Project, User)
      */
-    @Put(path = "/{id}")
+    @PutJSON(path = "/{id}")
     public Project updateProject(@PathVariable("id") Long id,
                                  @RequestBody Project project, @CurrentUser User user) {
         return postingService.updateProject(id, project, user);

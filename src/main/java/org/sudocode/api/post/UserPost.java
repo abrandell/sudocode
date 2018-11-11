@@ -9,6 +9,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.domain.Persistable;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.sudocode.api.core.AbstractEntity;
 import org.sudocode.api.user.User;
 
@@ -57,9 +58,12 @@ public abstract class UserPost extends AbstractEntity implements Persistable<Lon
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("id", id).append("datePosted", datePosted)
-                                        .append("author", author).append("lastModifiedDate", lastModifiedDate)
-                                        .toString();
+        return new ToStringBuilder(this)
+            .append("id", id)
+            .append("datePosted", datePosted)
+            .append("author", author)
+            .append("lastModifiedDate", lastModifiedDate)
+            .toString();
     }
 
 }

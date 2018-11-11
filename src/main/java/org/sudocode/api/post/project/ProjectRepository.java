@@ -28,28 +28,28 @@ import java.util.Optional;
 public interface ProjectRepository extends JpaRepository<Project, Long> {
 
     @Query("SELECT "
-            + "p.id AS id, "
-            + "p.title AS title, "
-            + "p.difficulty AS difficulty, "
-            + "p.description AS description, "
-            + "p.rating AS rating, "
-            + "p.datePosted AS datePosted, "
-            + "p.lastModifiedDate AS lastModifiedDate, "
-            + "p.author AS author "
-            + "FROM Project p "
-            + "WHERE :title is null "
-            + " or lower(p.title) LIKE concat('%', lower(:title), '%') "
-            + "AND :difficulty is null "
-            + " or p.difficulty = :difficulty "
-            + "AND :description is null "
-            + " or lower(p.description) LIKE concat('%', lower(:description), '%')")
+           + "p.id AS id, "
+           + "p.title AS title, "
+           + "p.difficulty AS difficulty, "
+           + "p.description AS description, "
+           + "p.rating AS rating, "
+           + "p.datePosted AS datePosted, "
+           + "p.lastModifiedDate AS lastModifiedDate, "
+           + "p.author AS author "
+           + "FROM Project p "
+           + "WHERE :title is null "
+           + " or lower(p.title) LIKE concat('%', lower(:title), '%') "
+           + "AND :difficulty is null "
+           + " or p.difficulty = :difficulty "
+           + "AND :description is null "
+           + " or lower(p.description) LIKE concat('%', lower(:description), '%')")
     Page<ProjectView> filterAll(@Param("title") String title,
                                 @Param("difficulty") Difficulty difficulty,
                                 @Param("description") String description,
                                 Pageable pageable);
 
     @Query("SELECT max(p.datePosted) FROM Project p WHERE p.author.id = :id")
-    Optional<LocalDateTime> fetchLatestPostDateByAuthorId(@Param("id") Long id);
+    Optional<LocalDateTime> lastPostDateByUserId(@Param("id") Long id);
 
     @Query("SELECT p FROM Project p JOIN FETCH p.author WHERE p.id = :id")
     Optional<Project> fetchById(@Param("id") Long id);

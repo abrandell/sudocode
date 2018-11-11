@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class UserRepositoryIntTest {
 
     @Autowired
-    UserRepository userRepo;
+    private UserRepository userRepo;
 
     private User octocat;
     private User porzingis;

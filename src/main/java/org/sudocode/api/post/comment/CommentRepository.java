@@ -14,7 +14,10 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Repository
-@Transactional(propagation = Propagation.MANDATORY, rollbackFor = Exception.class)
+@Transactional(
+    propagation = Propagation.MANDATORY,
+    rollbackFor = Exception.class
+)
 public interface CommentRepository extends JpaRepository<Comment, Long> {
 
     @Deprecated
@@ -26,7 +29,7 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     Optional<Comment> fetchById(@Param("id") Long id);
 
     @Query("SELECT max(c.datePosted) FROM Comment c WHERE c.author.id = :id")
-    Optional<LocalDateTime> fetchLatestPostDateByAuthorId(@Param("id") Long id);
+    Optional<LocalDateTime> lastPostDateByUserId(@Param("id") Long id);
 
     @Deprecated
     @Query("SELECT c FROM Comment c JOIN c.author AS u WHERE c.project.id = :id")

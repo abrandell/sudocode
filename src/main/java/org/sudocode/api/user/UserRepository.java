@@ -24,12 +24,10 @@ import java.util.Optional;
 )
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    Optional<User> findByLogin(String login);
-
     /**
      * Query for fetching a {@link UserView} by id.
      *
-     * @param id THe ID of the user to retrieve.
+     * @param id of the user to retrieve.
      * @return {@link UserView} projection of the user found.
      */
     @Query("SELECT "
@@ -62,7 +60,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
             + " u.hireable AS hireable "
             + "FROM User u "
             + "WHERE u.login = :login")
-    Optional<UserView> fetchUserViewByLogin(@Param("login") String login);
+    Optional<UserView> fetchViewByLogin(@Param("login") String login);
 
     Optional<UserView> findViewById(@Param("id") Long id);
 

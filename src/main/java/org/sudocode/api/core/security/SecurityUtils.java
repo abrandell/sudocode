@@ -16,7 +16,7 @@ import java.security.Principal;
 public abstract class SecurityUtils {
 
     /**
-     * @return The {@link Principal} in the form builder a {@link User}
+     * @return The {@link Principal} in the form of a {@link User}
      * @see OAuth2User
      * @see Principal
      * @see User

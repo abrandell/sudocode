@@ -15,7 +15,7 @@ import static org.springframework.data.annotation.AccessType.Type;
  * This class exists in the case you need to compare <b>detached or un-managed
  * entities</b>.
  * <p>
- * It generates the AbstractEntity, equals, and hashcode for all entities that extend it.
+ * It generates the UUID, equals, and hashcode for all entities that extend it.
  *
  * <p>
  * The hashcode is always unique, even for non-managed entities since the UUID is created
@@ -50,11 +50,9 @@ public abstract class AbstractEntity implements Serializable {
         if (this == o) {
             return true;
         }
-
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-
         AbstractEntity that = (AbstractEntity) o;
 
         return new EqualsBuilder().append(UUID, that.UUID).isEquals();

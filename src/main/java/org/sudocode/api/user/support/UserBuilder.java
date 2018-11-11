@@ -3,7 +3,7 @@ package org.sudocode.api.user.support;
 import org.springframework.util.Assert;
 import org.sudocode.api.user.User;
 
-import static org.sudocode.api.core.util.Constants.URL_REGEX_PATTERN;
+import static org.sudocode.api.core.Constants.URL_REGEX_PATTERN;
 
 /**
  * Fluent builder for User POJO's.

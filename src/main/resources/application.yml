@@ -23,14 +23,7 @@ spring:
       fail-on-empty-beans: false
   profiles:
     active: ${ACTIVE_PROFILE}
-management:
-  endpoint:
-    beans:
-      enabled: true
-    threaddump:
-      enabled: true
-    health:
-      enabled: true
+
 ---
 
 spring:

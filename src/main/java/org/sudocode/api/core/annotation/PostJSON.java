@@ -16,7 +16,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @RequestMapping(method = RequestMethod.POST)
 @Documented
-public @interface Post {
+public @interface PostJSON {
 
     @AliasFor(annotation = RequestMapping.class)
     String value() default "";

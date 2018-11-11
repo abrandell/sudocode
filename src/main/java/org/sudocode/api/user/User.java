@@ -8,7 +8,6 @@ import lombok.Setter;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 import org.springframework.data.annotation.AccessType;
 import org.springframework.lang.Nullable;
 import org.springframework.security.core.GrantedAuthority;
@@ -24,7 +23,7 @@ import java.util.Map;
 
 import static org.apache.commons.lang3.builder.ToStringStyle.*;
 import static org.springframework.data.annotation.AccessType.Type;
-import static org.sudocode.api.core.util.Constants.URL_REGEX;
+import static org.sudocode.api.core.Constants.URL_REGEX;
 
 @Entity
 @Table(name = "users")

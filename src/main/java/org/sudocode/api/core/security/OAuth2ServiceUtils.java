@@ -3,7 +3,6 @@ package org.sudocode.api.core.security;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
@@ -36,22 +35,18 @@ public class OAuth2ServiceUtils {
      */
     @Bean
     public RestTemplate restTemplate() {
-        return new RestTemplateBuilder()
-            .interceptors((ClientHttpRequestInterceptor) (request, body, execution) -> {
-
-                Authentication auth = SecurityContextHolder.getContext()
-                                                           .getAuthentication();
+        return new RestTemplateBuilder().interceptors(
+            (ClientHttpRequestInterceptor) (request, body, execution) -> {
+                var auth = SecurityContextHolder.getContext().getAuthentication();
 
                 if (auth instanceof OAuth2AuthenticationToken) {
                     var token = (OAuth2AuthenticationToken) auth;
-                    OAuth2AuthorizedClient client = getAuthorizedClient(token);
 
-                    final String accessToken = client.getAccessToken()
-                                                     .getTokenValue();
+                    final String accessToken = this.getAuthorizedClient(token)
+                                                   .getAccessToken().getTokenValue();
 
                     request.getHeaders().add(AUTHORIZATION, "Bearer " + accessToken);
                 }
-
                 return execution.execute(request, body);
             }).build();
     }

@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.sudocode.api.core.annotation.Delete;
-import org.sudocode.api.core.annotation.Get;
-import org.sudocode.api.core.annotation.Post;
+import org.sudocode.api.core.annotation.GetJSON;
+import org.sudocode.api.core.annotation.PostJSON;
 import org.sudocode.api.core.exception.UserNotFoundException;
 import org.sudocode.api.user.User;
 import org.sudocode.api.user.UserService;
@@ -42,7 +42,7 @@ public class UserRestController {
      *
      * @return Currently logged in user.
      */
-    @Get(path = "/me")
+    @GetJSON(path = "/me")
     public ResponseEntity<?> currentUser(@Nullable Authentication auth) {
         if (auth == null) {
             return ResponseEntity.ok().build();
@@ -57,7 +57,7 @@ public class UserRestController {
      *
      * @see UserService#fetchProjectionById(Long)
      */
-    @Get(value = "/{id:[\\d]+}")
+    @GetJSON(value = "/{id:[\\d]+}")
     public UserView fetchById(@PathVariable("id") Long id) throws UserNotFoundException {
         return userService.fetchProjectionById(id);
     }
@@ -70,7 +70,7 @@ public class UserRestController {
      * @param login login to search for.
      * @return User with the given login in DTO form.
      */
-    @Get(path = "/{login:[A-Za-z]+}")
+    @GetJSON(path = "/{login:[A-Za-z]+}")
     public UserView fetchByLogin(@PathVariable String login) {
         return userService.fetchProjectionByLogin(login.toLowerCase());
     }
@@ -80,7 +80,7 @@ public class UserRestController {
      *
      * @see UserService#fetchAllProjections(Pageable)
      */
-    @Get
+    @GetJSON
     public Page<UserView> fetchAll(Pageable pageable) {
         return userService.fetchAllProjections(pageable);
     }
@@ -91,7 +91,7 @@ public class UserRestController {
         userService.deleteById(id);
     }
 
-    @Post(path = "/logout")
+    @PostJSON(path = "/logout")
     public void logout(HttpServletRequest request) {
         request.getSession(false).invalidate();
     }

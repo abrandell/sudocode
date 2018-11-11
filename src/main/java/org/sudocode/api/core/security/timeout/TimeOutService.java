@@ -8,8 +8,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.lang.NonNull;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.sudocode.api.core.exception.TooManyRequestException;
 import org.sudocode.api.post.PostingService;
@@ -20,7 +18,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.concurrent.TimeUnit;
 
-import static org.sudocode.api.core.util.Constants.DEFAULT_LOCAL_DATE_TIME;
+import static org.sudocode.api.core.Constants.LOCAL_DATE_TIME_MIN;
 
 /**
  * Service for timing out users for spamming and/or posting too often.
@@ -37,7 +35,7 @@ class TimeOutService {
         this.postingService = postingService;
     }
 
-    public void handleTimeOut(Long userId) {
+    void handleTimeOut(Long userId) {
         if (isTimedOut(userId)) {
             LOG.info("Timed out User: {} attempted to make a post.", userId);
             throw new TooManyRequestException();
@@ -78,7 +76,7 @@ class TimeOutService {
             return postingService.fetchLatestPostDateByAuthorId(id);
         }
 
-        return DEFAULT_LOCAL_DATE_TIME;
+        return LOCAL_DATE_TIME_MIN;
     }
 
     /**

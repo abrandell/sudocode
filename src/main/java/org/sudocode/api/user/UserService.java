@@ -12,6 +12,8 @@ import org.sudocode.api.core.exception.UserNotFoundException;
 
 /**
  * Service for user transactions. Read only by default & rolls back for any exception.
+ *
+ * @see TransactionalService
  */
 @TransactionalService
 public class UserService {
@@ -87,8 +89,7 @@ public class UserService {
      */
     @ReadOnlyTX
     public UserView fetchProjectionByLogin(String login) {
-        return userRepo.fetchUserViewByLogin(login)
-                       .orElseThrow(() -> new UserNotFoundException(login));
+        return userRepo.fetchViewByLogin(login).orElseThrow(() -> new UserNotFoundException(login));
     }
 
     /**
