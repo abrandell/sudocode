@@ -10,7 +10,7 @@ import java.lang.annotation.*;
 
 /**
  * Meta annotation for {@link PutMapping} that produces & consumes
- * {@code MediaType.APPLICATION_JSON_VALUE}
+ * {@link MediaType#APPLICATION_JSON_VALUE}
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)

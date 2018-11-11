@@ -2,7 +2,7 @@ package org.sudocode.api.core.security.timeout;
 
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import org.sudocode.api.core.security.SecurityUtils;
+import org.sudocode.api.core.security.AuthFacade;
 import org.sudocode.api.post.UserPost;
 import org.sudocode.api.user.User;
 
@@ -16,9 +16,11 @@ import java.io.IOException;
 public class TimeOutFilter extends OncePerRequestFilter {
 
     private final TimeOutService timeOutService;
+    private final AuthFacade authFacade;
 
-    public TimeOutFilter(TimeOutService postingService) {
+    public TimeOutFilter(TimeOutService postingService, AuthFacade authFacade) {
         this.timeOutService = postingService;
+        this.authFacade = authFacade;
     }
 
     /**
@@ -36,8 +38,8 @@ public class TimeOutFilter extends OncePerRequestFilter {
             final String methodRequest = request.getMethod();
 
             if (methodRequest.matches("(?i)(post|put)")) {
-                User user = SecurityUtils.getCurrentUser();
-                timeOutService.handleTimeOut(user.getId());
+                User current = authFacade.currentUser();
+                timeOutService.handleTimeOut(current.getId());
             }
         }
         filterChain.doFilter(request, response);

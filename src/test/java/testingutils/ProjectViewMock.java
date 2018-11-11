@@ -15,19 +15,12 @@ import java.time.LocalDateTime;
 public class ProjectViewMock implements ProjectView {
 
     Long id;
-
     String title;
-
     Difficulty difficulty;
-
     String description;
-
     LocalDateTime datePosted;
-
     LocalDateTime lastModifiedDate;
-
     UserView author;
-
     int rating;
 
 }

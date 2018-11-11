@@ -6,7 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
-import org.sudocode.api.core.annotation.*;
+import org.sudocode.api.core.annotation.Delete;
+import org.sudocode.api.core.annotation.GetJSON;
+import org.sudocode.api.core.annotation.PostJSON;
+import org.sudocode.api.core.annotation.PutJSON;
 import org.sudocode.api.core.exception.ProjectNotFoundException;
 import org.sudocode.api.post.PostingService;
 import org.sudocode.api.post.Vote;
@@ -14,7 +17,6 @@ import org.sudocode.api.post.comment.Comment;
 import org.sudocode.api.post.comment.CommentView;
 import org.sudocode.api.post.project.Project;
 import org.sudocode.api.post.project.ProjectView;
-import org.sudocode.api.user.User;
 
 import java.util.Map;
 
@@ -26,7 +28,6 @@ import java.util.Map;
 public final class PostingRestController {
 
     private final PostingService postingService;
-
     private final Logger logger = LoggerFactory.getLogger(PostingRestController.class);
 
     @Autowired
@@ -53,7 +54,6 @@ public final class PostingRestController {
     @GetJSON
     public Page<ProjectView> fetchProjects(@RequestParam Map<String, String> params,
                                            Pageable pageable) {
-
         return postingService.fetchAllProjectViews(
             params.get("title"),
             params.get("difficulty"),
@@ -96,53 +96,46 @@ public final class PostingRestController {
     /**
      * POST /api/projects/:id/comments
      *
-     * @see PostingService#postComment(Comment, Long, User)
+     * @see PostingService#postComment(Comment, Long)
      */
     @PostJSON(path = "/{id}/comments")
     public Comment postComment(@PathVariable("id") Long projectId,
-                               @RequestBody Comment comment, @CurrentUser User user) {
+                               @RequestBody Comment comment) {
         comment.setId(null);
-        return postingService.postComment(comment, projectId, user);
+        return postingService.postComment(comment, projectId);
     }
 
     @PutJSON(path = "/{projectId}/comments/{commentId}")
     public Comment updateComment(@PathVariable("projectId") Long projectId,
-                                 @PathVariable("commentId") Long commentId, @RequestBody Comment comment,
-                                 @CurrentUser User user) {
+                                 @PathVariable("commentId") Long commentId,
+                                 @RequestBody Comment comment) {
 
-        return postingService.updateComment(comment, commentId, projectId, user);
+        return postingService.updateComment(comment, commentId, projectId);
     }
 
     /**
      * DELETE /api/projects/:projectId/comments/:commentId
-     *
-     * @see PostingService#deleteCommentById(Long, User)
      */
     @Delete(path = "/**/comments/{id}")
-    public void deleteCommentById(@PathVariable("id") Long commentId, @CurrentUser User currentUser) {
+    public void deleteCommentById(@PathVariable("id") Long commentId) {
 
-        this.postingService.deleteCommentById(commentId, currentUser);
+        this.postingService.deleteCommentById(commentId);
     }
 
     /**
      * PUT /api/projects/:id
-     *
-     * @see PostingService#updateProject(Long, Project, User)
      */
     @PutJSON(path = "/{id}")
     public Project updateProject(@PathVariable("id") Long id,
-                                 @RequestBody Project project, @CurrentUser User user) {
-        return postingService.updateProject(id, project, user);
+                                 @RequestBody Project project) {
+        return postingService.updateProject(id, project);
     }
 
     /**
      * DELETE /api/projects/:id
-     *
-     * @see PostingService#deleteProjectById(Long, User)
      */
     @Delete(value = "/{id}")
-    public void deleteProject(@PathVariable("id") Long id, @CurrentUser User user) {
-        postingService.deleteProjectById(id, user);
+    public void deleteProject(@PathVariable("id") Long id) {
+        postingService.deleteProjectById(id);
     }
-
 }

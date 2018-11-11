@@ -9,9 +9,8 @@ public class TooManyRequestException extends RuntimeException {
 
     private static final long serialVersionUID = 1L;
 
-    public TooManyRequestException() {
-        super("Too many requests made.");
-        super.getLocalizedMessage();
+    public TooManyRequestException(Long id) {
+        super("Too many requests made by user ID" + id);
     }
 
 }

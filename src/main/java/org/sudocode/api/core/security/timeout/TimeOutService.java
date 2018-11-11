@@ -38,14 +38,14 @@ class TimeOutService {
     void handleTimeOut(Long userId) {
         if (isTimedOut(userId)) {
             LOG.info("Timed out User: {} attempted to make a post.", userId);
-            throw new TooManyRequestException();
+            throw new TooManyRequestException(userId);
         }
         LocalDateTime lastDatePosted = lastPostDateByUser(userId);
         long secPassed = Duration.between(lastDatePosted, LocalDateTime.now()).toSeconds();
         LOG.info("User: {} waited {} seconds before attempting to post again.", userId, secPassed);
         if (secPassed < 5) {
             timeOutUser(userId);
-            throw new TooManyRequestException();
+            throw new TooManyRequestException(userId);
         }
     }
 

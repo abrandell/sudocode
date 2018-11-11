@@ -116,7 +116,6 @@ class ProjectRepositoryIntTest {
             () -> {
                 assertTrue(optionalProject1.isPresent(), "Project should be present");
 
-                // Executed only if the previous assertion is valid.
                 final Project result = optionalProject1.get();
                 assertEquals(project1, result, "Project1 and result be equal.");
             });

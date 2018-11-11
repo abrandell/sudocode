@@ -1,6 +1,8 @@
 package org.sudocode.api.config;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Scope;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
@@ -76,16 +78,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             // Update the user upon login.
             userService.updateUser((User) authentication.getPrincipal());
 
-            String origin = request.getHeader("Referer");
+            if (System.getenv("ACTIVE_PROFILE").equals("dev")) {
+                String origin = request.getHeader("Referer");
 
-            // Temp fix.
-            // 'Referer' is null if logging into app while already authenticated with
-            // github.
-            if (origin == null || origin.isEmpty()) {
-                origin = "http://localhost:4200";
+                // Temp fix.
+                // 'Referer' is null if logging into app while already authenticated wit github.
+                if (origin == null || origin.isEmpty()) {
+                    origin = "http://localhost:4200";
+                }
+
+                new DefaultRedirectStrategy().sendRedirect(request, response, origin);
             }
-
-            new DefaultRedirectStrategy().sendRedirect(request, response, origin);
         };
     }
 

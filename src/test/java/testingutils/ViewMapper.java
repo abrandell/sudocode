@@ -1,10 +1,10 @@
 package testingutils;
 
+import org.sudocode.api.post.comment.Comment;
 import org.sudocode.api.post.project.Project;
 import org.sudocode.api.user.User;
 
 public class ViewMapper {
-
 
     public static UserViewMock userToView(User user) {
         return UserViewMock.builder()
@@ -25,6 +25,16 @@ public class ViewMapper {
                               .description(project.getDescription())
                               .rating(project.getRating())
                               .title(project.getTitle())
+                              .build();
+    }
+
+    public static CommentViewMock commentToView(Comment comment) {
+        return CommentViewMock.builder()
+                              .id(comment.getId())
+                              .author(userToView(comment.getAuthor()))
+                              .body(comment.getBody())
+                              .datePosted(comment.getDatePosted())
+                              .lastModifiedDate(comment.getLastModifiedDate())
                               .build();
     }
 }

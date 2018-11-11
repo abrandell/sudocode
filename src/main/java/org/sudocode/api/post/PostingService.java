@@ -10,6 +10,7 @@ import org.sudocode.api.core.annotation.TransactionalService;
 import org.sudocode.api.core.exception.InvalidDifficultyException;
 import org.sudocode.api.core.exception.NotPostAuthorException;
 import org.sudocode.api.core.exception.ProjectNotFoundException;
+import org.sudocode.api.core.security.AuthFacade;
 import org.sudocode.api.post.comment.Comment;
 import org.sudocode.api.post.comment.CommentRepository;
 import org.sudocode.api.post.comment.CommentView;
@@ -27,11 +28,8 @@ import static org.sudocode.api.core.Constants.LOCAL_DATE_TIME_MIN;
 import static org.sudocode.api.post.project.Difficulty.difficultyEnumFromValue;
 
 /**
- * <p>
- * Service for projects and comments transactions. Transactions start here for all
- * projects and comments.
- * <p>
- * By default it is set to read-only and rolls back for ANY exception.
+ * Service for project and comment transactions.
+ * @see TransactionalService
  */
 @TransactionalService
 public class PostingService {
@@ -40,11 +38,13 @@ public class PostingService {
 
     private final ProjectRepository projectRepo;
     private final CommentRepository commentRepo;
+    private final AuthFacade auth;
 
     @Autowired
-    public PostingService(ProjectRepository projectRepo, CommentRepository commentRepo) {
+    public PostingService(ProjectRepository projectRepo, CommentRepository commentRepo, AuthFacade auth) {
         this.projectRepo = projectRepo;
         this.commentRepo = commentRepo;
+        this.auth = auth;
     }
 
     /**
@@ -57,15 +57,14 @@ public class PostingService {
     }
 
     /**
-     * Returns a page of {@link ProjectView} projections based on the given criteria.
+     * Returns a page of {@link ProjectView} projections based on the given params.
      *
      * <p>
      * Converts the difficulty string (if not null or empty) to the {@link Difficulty}
      * enum. Casing does not matter.
      *
-     * @return Page of {@link ProjectView}s.
-     * @throws InvalidDifficultyException if the difficulty param string isn't a
-     * {@link Difficulty} enum value.
+     * @return Page of {@link ProjectView}'s.
+     * @throws InvalidDifficultyException if the difficulty param string isn't {@link Difficulty} enum value.
      * @see Pageable
      * @see ProjectView
      * @see Difficulty#difficultyEnumFromValue(String)
@@ -89,8 +88,7 @@ public class PostingService {
      */
     @ReadOnlyTX
     public ProjectView fetchProjectViewById(Long id) {
-        return projectRepo.findViewById(id)
-                          .orElseThrow(() -> new ProjectNotFoundException(id));
+        return projectRepo.findViewById(id).orElseThrow(() -> new ProjectNotFoundException(id));
     }
 
     /**
@@ -99,9 +97,9 @@ public class PostingService {
      * @param id of the project to update..
      * @return The updated (or new) {@link Project}.
      */
-    public Project updateProject(Long id, Project newProject, User currentUser) {
+    public Project updateProject(Long id, Project newProject) {
         return projectRepo.fetchById(id)
-                          .filter(project -> project.isPostedBy(currentUser))
+                          .filter(project -> project.isPostedBy(auth.currentUser()))
                           .map(project -> {
                               project.setTitle(newProject.getTitle());
                               project.setDescription(newProject.getDescription());
@@ -109,29 +107,28 @@ public class PostingService {
                               return project;
                           })
                           .orElseGet(() -> {
-                              // Make sure not to replace an already existing project
+                              /* Make sure not to replace an already existing project */
                               newProject.setId(projectRepo.existsById(id) ? null : id);
                               return postProject(newProject);
                           });
     }
 
     /**
-     * Deletes the comment builder the given ID.
+     * Delete the comment with the given ID.
      *
      * @param id of the comment.
-     * @throws NotPostAuthorException if the user making the request did not postProject
-     * the comment.
+     * @throws NotPostAuthorException if the user making the request did not post the project.
      */
-    public void deleteProjectById(Long id, User currentUser) {
+    public void deleteProjectById(Long id) {
         projectRepo.fetchById(id).ifPresent(project -> {
-            if (!project.isPostedBy(currentUser)) {
+            if (!project.isPostedBy(auth.currentUser())) {
                 throw new NotPostAuthorException("Not author of comment");
             }
             // Two different queries to avoid a bi-directional relationship.
             commentRepo.deleteCommentsByProjectId(id);
             projectRepo.delete(project);
 
-            LOGGER.info("Deleted project ID: {} by {}", id, currentUser.getLogin());
+            LOGGER.debug("Deleted project ID: {} by {}", id, auth.currentUser());
         });
 
     }
@@ -143,22 +140,23 @@ public class PostingService {
     /**
      * Post a comment.
      *
-     * @param comment Comment to post..
      * @param projectId id of the project to comment on.
      * @return The newly created comment.
      * @throws ProjectNotFoundException if the projectId does not match any project id in
      * the DB.
      */
-    public Comment postComment(Comment comment, Long projectId, User user) {
-        comment.setProject(projectRepo.findById(projectId)
-                                      .orElseThrow(() -> new ProjectNotFoundException(projectId)));
-        LOGGER.info("Posting comment by user ID: {} at {}", user.getId(), now());
+    public Comment postComment(Comment comment, Long projectId) {
+        comment.setProject(
+            projectRepo.findById(projectId)
+                       .orElseThrow(() -> new ProjectNotFoundException(projectId))
+        );
+        LOGGER.debug("Posting comment by user ID: {} at {}", auth.currentUser().getId(), now());
         return commentRepo.save(comment);
     }
 
-    public Comment updateComment(Comment updated, Long commentId, Long projectId, User currentUser) {
+    public Comment updateComment(Comment updated, Long commentId, Long projectId) {
         return commentRepo.fetchById(commentId)
-                          .filter(comment -> comment.isPostedBy(currentUser))
+                          .filter(comment -> comment.isPostedBy(auth.currentUser()))
                           .map(comment -> {
                               comment.setBody(updated.getBody());
                               return comment;
@@ -166,7 +164,7 @@ public class PostingService {
                           .orElseGet(() -> {
                               // Make sure not to replace an already existing comment
                               updated.setId(commentRepo.existsById(commentId) ? null : commentId);
-                              return postComment(updated, projectId, currentUser);
+                              return postComment(updated, projectId);
                           });
     }
 
@@ -174,12 +172,11 @@ public class PostingService {
      * Delete a comment.
      *
      * @param id of the comment to be deleted.
-     * @throws NotPostAuthorException if the user making the request did not post the
-     * comment.
+     * @throws NotPostAuthorException if the user making the request did not post the comment.
      */
-    public void deleteCommentById(Long id, User currentUser) {
+    public void deleteCommentById(Long id) {
         commentRepo.fetchById(id).ifPresent(comment -> {
-            if (!comment.isPostedBy(currentUser)) {
+            if (!comment.isPostedBy(auth.currentUser())) {
                 throw new NotPostAuthorException("Not author of comment");
             }
             commentRepo.delete(comment);
@@ -191,7 +188,7 @@ public class PostingService {
      *
      * @param id id of the project to fetch comments for.
      * @param pageable the Page request.
-     * @return Page of all comments for the given project.
+     * @return Page of {@link CommentView} projections for the given project.
      * @see Pageable
      * @see CommentView
      */
