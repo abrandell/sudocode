@@ -92,9 +92,9 @@ class TimeOutService {
      * @see LoadingCache
      * @see PostingService#fetchLatestPostDateByAuthorId(Long)
      */
-    @Bean
     public LoadingCache<Long, LocalDateTime> loadingCache() {
-        return CacheBuilder.newBuilder().expireAfterWrite(6, TimeUnit.MINUTES)
+        return CacheBuilder.newBuilder()
+                           .expireAfterWrite(6, TimeUnit.MINUTES)
                            .maximumSize(100)
                            .build(new CacheLoader<>() {
                                @Override

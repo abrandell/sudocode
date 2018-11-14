@@ -27,6 +27,7 @@ import testingutils.ViewMapper;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ExecutionException;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
@@ -101,7 +102,7 @@ class PostingServiceUnitTests {
     }
 
     @Test
-    void updateProject_notSameAuthor_thenPostNew() {
+    void updateProject_notSameAuthor_thenPostNew() throws ExecutionException, InterruptedException {
         given(authMock.currentUser()).willReturn(user2);
 
         Project result = service.updateProject(project1.getId(), project2);
@@ -122,7 +123,7 @@ class PostingServiceUnitTests {
     }
 
     @Test
-    void updateProject_sameAuthor_thenUpdate() {
+    void updateProject_sameAuthor_thenUpdate() throws ExecutionException, InterruptedException {
         given(authMock.currentUser()).willReturn(user1);
 
         final Project original = Project.builder(project1.getAuthor())

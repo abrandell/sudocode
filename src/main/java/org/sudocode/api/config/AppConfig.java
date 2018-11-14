@@ -21,7 +21,6 @@ public class AppConfig {
 
     /**
      * AuditorAware bean that returns the current user.
-     *
      * @return Optional of the currently authenticated user.
      * @see AuthFacade#currentUser()
      * @see AuditorAware
@@ -30,5 +29,4 @@ public class AppConfig {
     public AuditorAware<User> auditorAware() {
         return () -> Optional.of(authFacade.currentUser());
     }
-
 }

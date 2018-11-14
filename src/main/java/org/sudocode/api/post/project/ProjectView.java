@@ -10,7 +10,14 @@ import java.time.LocalDateTime;
  */
 @SuppressWarnings({"unused"})
 @JsonPropertyOrder({
-    "id", "title", "difficulty", "description", "date_posted", "author"
+        "id",
+        "title",
+        "difficulty",
+        "rating",
+        "description",
+        "date_posted",
+        "last_modified",
+        "author"
 })
 public interface ProjectView {
 
@@ -18,16 +25,15 @@ public interface ProjectView {
 
     String getTitle();
 
-    int getRating();
+    UserView getAuthor();
 
     Difficulty getDifficulty();
+
+    int getRating();
 
     String getDescription();
 
     LocalDateTime getDatePosted();
 
     LocalDateTime getLastModifiedDate();
-
-    UserView getAuthor();
-
 }

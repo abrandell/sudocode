@@ -49,7 +49,6 @@ public class PostingService {
 
     /**
      * Post a project.
-     *
      * @return the saved project.
      */
     public Project postProject(Project project) {
@@ -58,11 +57,9 @@ public class PostingService {
 
     /**
      * Returns a page of {@link ProjectView} projections based on the given params.
-     *
      * <p>
      * Converts the difficulty string (if not null or empty) to the {@link Difficulty}
      * enum. Casing does not matter.
-     *
      * @return Page of {@link ProjectView}'s.
      * @throws InvalidDifficultyException if the difficulty param string isn't {@link Difficulty} enum value.
      * @see Pageable
@@ -82,18 +79,16 @@ public class PostingService {
     /**
      * Searches for and returns a {@link ProjectView} projection of the project with the
      * given id.
-     *
      * @param id of the project to fetch.
      * @return The {@link ProjectView} projection of the {@link Project} if found.
      */
     @ReadOnlyTX
     public ProjectView fetchProjectViewById(Long id) {
-        return projectRepo.findViewById(id).orElseThrow(() -> new ProjectNotFoundException(id));
+        return projectRepo.fetchViewById(id).orElseThrow(() -> new ProjectNotFoundException(id));
     }
 
     /**
      * Updates the given project.
-     *
      * @param id of the project to update..
      * @return The updated (or new) {@link Project}.
      */
@@ -115,7 +110,6 @@ public class PostingService {
 
     /**
      * Delete the comment with the given ID.
-     *
      * @param id of the comment.
      * @throws NotPostAuthorException if the user making the request did not post the project.
      */
@@ -139,7 +133,6 @@ public class PostingService {
 
     /**
      * Post a comment.
-     *
      * @param projectId id of the project to comment on.
      * @return The newly created comment.
      * @throws ProjectNotFoundException if the projectId does not match any project id in
@@ -147,8 +140,8 @@ public class PostingService {
      */
     public Comment postComment(Comment comment, Long projectId) {
         comment.setProject(
-            projectRepo.findById(projectId)
-                       .orElseThrow(() -> new ProjectNotFoundException(projectId))
+                projectRepo.findById(projectId)
+                           .orElseThrow(() -> new ProjectNotFoundException(projectId))
         );
         LOGGER.debug("Posting comment by user ID: {} at {}", auth.currentUser().getId(), now());
         return commentRepo.save(comment);
@@ -170,7 +163,6 @@ public class PostingService {
 
     /**
      * Delete a comment.
-     *
      * @param id of the comment to be deleted.
      * @throws NotPostAuthorException if the user making the request did not post the comment.
      */
@@ -185,7 +177,6 @@ public class PostingService {
 
     /**
      * Fetches a page with all comments projections for the given project.
-     *
      * @param id id of the project to fetch comments for.
      * @param pageable the Page request.
      * @return Page of {@link CommentView} projections for the given project.
@@ -200,10 +191,8 @@ public class PostingService {
     /**
      * Returns the latest {@link LocalDateTime} of a post made by a {@link User} with the
      * given id.
-     *
      * <p>This method exists for {@link org.sudocode.api.core.security.timeout.TimeOutService}.
      * <p>If no results are found, it returns {@link LocalDateTime#MIN}
-     *
      * @param id The ID of the User.
      * @return The {@link LocalDateTime} of the latest post made from the {@link User} if
      * exists, else {@link LocalDateTime#MIN}.

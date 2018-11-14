@@ -2,10 +2,11 @@ package org.sudocode.api.core;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.annotation.AccessType;
+import org.springframework.data.domain.Persistable;
 
-import javax.persistence.MappedSuperclass;
-import javax.persistence.Transient;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -23,7 +24,14 @@ import static org.springframework.data.annotation.AccessType.Type;
  */
 @MappedSuperclass
 @AccessType(Type.FIELD)
-public abstract class AbstractEntity implements Serializable {
+public abstract class AbstractEntity implements Serializable, Persistable<Long> {
+
+    // So the generator picks IDENTITY instead of TABLE
+    // https://vladmihalcea.com/why-should-not-use-the-auto-jpa-generationtype-with-mysql-and-hibernate/
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
+    @GenericGenerator(name = "native", strategy = "native")
+    private Long id;
 
     @JsonIgnore
     @Transient
@@ -46,13 +54,24 @@ public abstract class AbstractEntity implements Serializable {
     }
 
     @Override
+    public Long getId() {
+        return this.id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    @JsonIgnore
+    @Override
+    public boolean isNew() {
+        return this.id == null;
+    }
+
+    @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
+        if (this == o) { return true; }
+        if (o == null || getClass() != o.getClass()) { return false; }
         AbstractEntity that = (AbstractEntity) o;
 
         return new EqualsBuilder().append(UUID, that.UUID).isEquals();

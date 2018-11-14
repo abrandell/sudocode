@@ -79,8 +79,7 @@ public final class PostingRestController {
      * @see PostingService#fetchProjectViewById(Long) (Long)
      */
     @GetJSON(path = "/{id}")
-    public ProjectView fetchProjectById(@PathVariable("id") Long id)
-        throws ProjectNotFoundException {
+    public ProjectView fetchProjectById(@PathVariable("id") Long id) throws ProjectNotFoundException {
         return postingService.fetchProjectViewById(id);
     }
 

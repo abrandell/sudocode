@@ -28,7 +28,7 @@ import static org.sudocode.api.post.project.Difficulty.BEGINNER;
  */
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
-@DataJpaTest(showSql = false)
+@DataJpaTest(showSql = true)
 @Transactional
 @ActiveProfiles("test")
 class ProjectRepositoryIntTest {
@@ -123,7 +123,7 @@ class ProjectRepositoryIntTest {
 
     @Test
     void findViewById() {
-        Optional<ProjectView> optionalProjectView = projectRepo.findViewById(project1.getId());
+        Optional<ProjectView> optionalProjectView = projectRepo.fetchViewById(project1.getId());
 
         assertAll("findViewById",
             () -> {

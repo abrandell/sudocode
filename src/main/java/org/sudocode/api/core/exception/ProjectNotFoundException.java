@@ -7,7 +7,7 @@ import org.sudocode.api.post.project.Project;
  */
 public class ProjectNotFoundException extends RuntimeException {
 
-    private static final long serialVersionUID = 19101L;
+    private static final long serialVersionUID = 1L;
 
     /**
      * Exception thrown when the given ID doesn't match any entity's ID in the database.

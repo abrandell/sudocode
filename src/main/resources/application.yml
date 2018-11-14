@@ -21,6 +21,8 @@ spring:
     serialization:
       indent-output: true
       fail-on-empty-beans: false
+    deserialization:
+      accept-single-value-as-array: true
   profiles:
     active: ${ACTIVE_PROFILE}
 
@@ -34,7 +36,7 @@ spring:
     password: ${SPRING_DB_PASS} #password
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL5Dialect
@@ -42,9 +44,8 @@ logging:
   level:
     org.sudocode.api: debug
     org.springframework.web.mvc: info
-    com.fasterxml.jackson.databind: info
-    org.springframework.transaction.interceptor: info
-    org.springframework.web.filter: trace
+    org.hibernate.SQL: debug
+    org.hibernate.type.descriptor.sql.BasicBinder: trace
 
 ---
 

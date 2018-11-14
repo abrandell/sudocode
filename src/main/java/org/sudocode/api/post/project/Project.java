@@ -7,7 +7,6 @@ import lombok.ToString;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.lang.NonNull;
 import org.sudocode.api.post.UserPost;
-import org.sudocode.api.post.Vote;
 import org.sudocode.api.post.project.support.ProjectBuilder;
 import org.sudocode.api.user.User;
 
@@ -37,10 +36,6 @@ public class Project extends UserPost {
 
     public static ProjectBuilder.Builder builder(@NonNull User author) {
         return new ProjectBuilder.Builder(author);
-    }
-
-    public void vote(Vote vote) {
-        this.rating += vote.primitiveValue();
     }
 
 }
