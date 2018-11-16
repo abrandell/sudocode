@@ -1,6 +1,5 @@
 package org.sudocode.api.core;
 
-import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -9,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * a SPA such as Angular or React.
  */
 @Controller
-public class RedirectController implements ErrorController {
+public class RedirectController {
 
     /**
      * Redirects the path to the index.<br>
@@ -21,18 +20,8 @@ public class RedirectController implements ErrorController {
      */
     // https://spring.io/blog/2015/05/13/modularizing-the-client-angular-js-and-spring-security-part-vii#using-ldquo-natural-rdquo-routes
     // https://stackoverflow.com/questions/24837715/spring-boot-with-angularjs-html5mode/44850886#44850886
-    @RequestMapping(value = "/**/{[path:(?!api|error)[^\\\\.]*}")
+    @RequestMapping(value = "/**/{[path:(?!api)[^\\\\.]*}")
     public String redirect() {
         return "forward:/";
-    }
-
-    @RequestMapping("/error")
-    public String error() {
-        return "error";
-    }
-
-    @Override
-    public String getErrorPath() {
-        return "/error";
     }
 }

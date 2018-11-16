@@ -29,7 +29,12 @@ spring:
       accept-single-value-as-array: true
   profiles:
     active: ${ACTIVE_PROFILE}
-
+#management:
+#  endpoints:
+#    web:
+#      base-path: /api/actuator
+#      exposure:
+#        include: '*'
 ---
 
 spring:

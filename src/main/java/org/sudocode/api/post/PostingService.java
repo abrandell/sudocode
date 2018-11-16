@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.lang.NonNull;
 import org.sudocode.api.core.annotation.ReadOnlyTX;
 import org.sudocode.api.core.annotation.TransactionalService;
 import org.sudocode.api.core.exception.InvalidDifficultyException;
@@ -57,10 +58,8 @@ public class PostingService {
 
     /**
      * Returns a page of {@link ProjectView} projections based on the given params.
-     *
      * <p>Converts the difficulty string (if not null or empty) to the {@link Difficulty}
      * enum. Casing does not matter.
-     *
      * @return Page of {@link ProjectView}'s.
      * @throws InvalidDifficultyException if the difficulty param string isn't {@link Difficulty} enum value.
      * @see Pageable
@@ -71,8 +70,8 @@ public class PostingService {
     public Page<ProjectView> fetchAllProjectViews(String title, String difficultyStr,
                                                   String description, Pageable pageable) {
 
-        Difficulty diffEnum = isNotBlank(difficultyStr) ? difficultyEnumFromValue(difficultyStr)
-                                                        : null;
+        var diffEnum = isNotBlank(difficultyStr) ? difficultyEnumFromValue(difficultyStr)
+                                                 : null;
 
         return projectRepo.filterAll(title, diffEnum, description, pageable);
     }
@@ -90,7 +89,9 @@ public class PostingService {
 
     /**
      * Updates the given project.
-     * @param id of the project to update..
+     * @param id of the project to update. Must not be null.
+     * @param newProject The project with the fields/properties to update to the existing
+     * or new entity.
      * @return The updated (or new) {@link Project}.
      */
     public Project updateProject(Long id, Project newProject) {
@@ -128,10 +129,6 @@ public class PostingService {
 
     }
 
-    public void voteOnProject(Vote vote, Long projectId) {
-        projectRepo.vote(projectId, vote.primitiveValue());
-    }
-
     /**
      * Post a comment.
      * @param projectId id of the project to comment on.
@@ -149,9 +146,8 @@ public class PostingService {
     }
 
     /**
-     * Update a comment if it exists, else post a new.
-     *
-     * @param updated The new || existing comment to make changes to.
+     * Update a comment if it exists, else posts a new.
+     * @param updated The new or existing comment to make changes to.
      * @param commentId The ID of the comment to update.
      * @param projectId ID of the project the comment was posted on.
      * @return The updated or newly created comment.
@@ -172,7 +168,6 @@ public class PostingService {
 
     /**
      * Delete a comment.
-     *
      * @param id of the comment to be deleted.
      * @throws NotPostAuthorException if the user making the request did not post the comment.
      */
@@ -183,6 +178,10 @@ public class PostingService {
             }
             commentRepo.delete(comment);
         });
+    }
+
+    public void voteOnProject(Vote vote, Long projectId) {
+        projectRepo.vote(projectId, vote.primitiveValue());
     }
 
     /**
@@ -201,10 +200,8 @@ public class PostingService {
     /**
      * Returns the latest {@link LocalDateTime} of a post made by a {@link User} with the
      * given id.
-     *
      * <p>This method exists for {@link org.sudocode.api.core.security.timeout.TimeOutService}.
      * <p>If no results are found, it returns {@link LocalDateTime#MIN}
-     *
      * @param id The ID of the User.
      * @return The {@link LocalDateTime} of the latest post made from the {@link User} if
      * exists, else {@link LocalDateTime#MIN}.

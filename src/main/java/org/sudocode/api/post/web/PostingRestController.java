@@ -117,7 +117,6 @@ public final class PostingRestController {
      */
     @Delete(path = "/**/comments/{id}")
     public void deleteCommentById(@PathVariable("id") Long commentId) {
-
         this.postingService.deleteCommentById(commentId);
     }
 
