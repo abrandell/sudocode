@@ -15,7 +15,6 @@ spring:
   jpa:
     properties:
       hibernate:
-        cache.use_second_level_cache: true
         format_sql: true
     open-in-view: false
     show-sql: false
