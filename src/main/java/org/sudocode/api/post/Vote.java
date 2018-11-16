@@ -16,7 +16,7 @@ public enum Vote {
     /**
      * The primitive int value of the Vote enum.
      *
-     * @return the primitive value.
+     * @return the primitive value (-1 or 1).
      */
     @JsonValue
     public int primitiveValue() {

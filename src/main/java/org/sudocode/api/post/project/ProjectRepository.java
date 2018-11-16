@@ -16,9 +16,8 @@ import java.util.Optional;
 
 /**
  * Project repository.
- * <p>
- * Not to be accessed without an ongoing transaction (preferably from
- * {@link PostingService}.
+ *
+ * <p>Not to be accessed without an ongoing transaction (preferably from {@link PostingService}).
  */
 @Repository
 @Transactional(

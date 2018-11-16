@@ -1,0 +1,434 @@
+2018-11-15 18:14:29.980  INFO 25008 --- [main] org.sudocode.api.ServerApplication       : Starting ServerApplication on alex-desktop with PID 25008 (/home/Smokey/Desktop/sudocode-org/server/target/classes started by Smokey in /home/Smokey/Desktop/sudocode-org/server)
+2018-11-15 18:14:29.981 DEBUG 25008 --- [main] org.sudocode.api.ServerApplication       : Running with Spring Boot v2.0.6.RELEASE, Spring v5.0.10.RELEASE
+2018-11-15 18:14:29.982  INFO 25008 --- [main] org.sudocode.api.ServerApplication       : The following profiles are active: dev
+2018-11-15 18:14:30.018  INFO 25008 --- [main] ConfigServletWebServerApplicationContext : Refreshing org.springframework.boot.web.servlet.context.AnnotationConfigServletWebServerApplicationContext@180da663: startup date [Thu Nov 15 18:14:30 PST 2018]; root of context hierarchy
+2018-11-15 18:14:30.973  INFO 25008 --- [main] trationDelegate$BeanPostProcessorChecker : Bean 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration' of type [org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration$$EnhancerBySpringCGLIB$$24127af] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2018-11-15 18:14:30.997  INFO 25008 --- [main] trationDelegate$BeanPostProcessorChecker : Bean 'org.springframework.security.config.annotation.configuration.ObjectPostProcessorConfiguration' of type [org.springframework.security.config.annotation.configuration.ObjectPostProcessorConfiguration$$EnhancerBySpringCGLIB$$9aeeefe9] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2018-11-15 18:14:31.003  INFO 25008 --- [main] trationDelegate$BeanPostProcessorChecker : Bean 'objectPostProcessor' of type [org.springframework.security.config.annotation.configuration.AutowireBeanFactoryObjectPostProcessor] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2018-11-15 18:14:31.004  INFO 25008 --- [main] trationDelegate$BeanPostProcessorChecker : Bean 'org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler@7f37b6d9' of type [org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2018-11-15 18:14:31.009  INFO 25008 --- [main] trationDelegate$BeanPostProcessorChecker : Bean 'org.springframework.security.config.annotation.method.configuration.GlobalMethodSecurityConfiguration' of type [org.springframework.security.config.annotation.method.configuration.GlobalMethodSecurityConfiguration$$EnhancerBySpringCGLIB$$bfc3929b] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2018-11-15 18:14:31.015  INFO 25008 --- [main] trationDelegate$BeanPostProcessorChecker : Bean 'methodSecurityMetadataSource' of type [org.springframework.security.access.method.DelegatingMethodSecurityMetadataSource] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2018-11-15 18:14:31.024  INFO 25008 --- [main] trationDelegate$BeanPostProcessorChecker : Bean 'org.springframework.hateoas.config.HateoasConfiguration' of type [org.springframework.hateoas.config.HateoasConfiguration$$EnhancerBySpringCGLIB$$81c174e1] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2018-11-15 18:14:31.260  INFO 25008 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8080 (http)
+2018-11-15 18:14:31.273  INFO 25008 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2018-11-15 18:14:31.273  INFO 25008 --- [main] org.apache.catalina.core.StandardEngine  : Starting Servlet Engine: Apache Tomcat/8.5.34
+2018-11-15 18:14:31.276  INFO 25008 --- [localhost-startStop-1] o.a.catalina.core.AprLifecycleListener   : The APR based Apache Tomcat Native library which allows optimal performance in production environments was not found on the java.library.path: [/usr/java/packages/lib:/usr/lib64:/lib64:/lib:/usr/lib]
+2018-11-15 18:14:31.323  INFO 25008 --- [localhost-startStop-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2018-11-15 18:14:31.323  INFO 25008 --- [localhost-startStop-1] o.s.web.context.ContextLoader            : Root WebApplicationContext: initialization completed in 1305 ms
+2018-11-15 18:14:31.443  INFO 25008 --- [localhost-startStop-1] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2018-11-15 18:14:31.528  INFO 25008 --- [localhost-startStop-1] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2018-11-15 18:14:31.551  INFO 25008 --- [localhost-startStop-1] j.LocalContainerEntityManagerFactoryBean : Building JPA container EntityManagerFactory for persistence unit 'default'
+2018-11-15 18:14:31.557  INFO 25008 --- [localhost-startStop-1] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [
+	name: default
+	...]
+2018-11-15 18:14:31.583  INFO 25008 --- [localhost-startStop-1] org.hibernate.Version                    : HHH000412: Hibernate Core {5.2.17.Final}
+2018-11-15 18:14:31.584  INFO 25008 --- [localhost-startStop-1] org.hibernate.cfg.Environment            : HHH000206: hibernate.properties not found
+2018-11-15 18:14:31.599  INFO 25008 --- [localhost-startStop-1] o.hibernate.annotations.common.Version   : HCANN000001: Hibernate Commons Annotations {5.0.1.Final}
+2018-11-15 18:14:31.653  INFO 25008 --- [localhost-startStop-1] org.hibernate.dialect.Dialect            : HHH000400: Using dialect: org.hibernate.dialect.MySQL5Dialect
+2018-11-15 18:14:31.965 DEBUG 25008 --- [localhost-startStop-1] org.hibernate.SQL                        : 
+    
+    alter table comments 
+       add constraint FK8omq0tc18jd43bu5tjh6jvraq 
+       foreign key (user_id) 
+       references users (id)
+2018-11-15 18:14:32.002 DEBUG 25008 --- [localhost-startStop-1] org.hibernate.SQL                        : 
+    
+    alter table comments 
+       add constraint FKlri30okf66phtcgbe5pok7cc0 
+       foreign key (parent_id) 
+       references comments (id)
+2018-11-15 18:14:32.013 DEBUG 25008 --- [localhost-startStop-1] org.hibernate.SQL                        : 
+    
+    alter table comments 
+       add constraint FKgkoamotsfr3mc0pwa1qrrmwhi 
+       foreign key (project_id) 
+       references projects (id)
+2018-11-15 18:14:32.044 DEBUG 25008 --- [localhost-startStop-1] org.hibernate.SQL                        : 
+    
+    alter table projects 
+       add constraint FKhswfwa3ga88vxv1pmboss6jhm 
+       foreign key (user_id) 
+       references users (id)
+2018-11-15 18:14:32.059  INFO 25008 --- [localhost-startStop-1] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2018-11-15 18:14:32.216  INFO 25008 --- [localhost-startStop-1] o.h.h.i.QueryTranslatorFactoryInitiator  : HHH000397: Using ASTQueryTranslatorFactory
+2018-11-15 18:14:32.390  INFO 25008 --- [localhost-startStop-1] o.s.b.w.servlet.FilterRegistrationBean   : Mapping filter: 'characterEncodingFilter' to: [/*]
+2018-11-15 18:14:32.391  INFO 25008 --- [localhost-startStop-1] o.s.b.w.servlet.FilterRegistrationBean   : Mapping filter: 'hiddenHttpMethodFilter' to: [/*]
+2018-11-15 18:14:32.391  INFO 25008 --- [localhost-startStop-1] o.s.b.w.servlet.FilterRegistrationBean   : Mapping filter: 'httpPutFormContentFilter' to: [/*]
+2018-11-15 18:14:32.391  INFO 25008 --- [localhost-startStop-1] o.s.b.w.servlet.FilterRegistrationBean   : Mapping filter: 'requestContextFilter' to: [/*]
+2018-11-15 18:14:32.391  INFO 25008 --- [localhost-startStop-1] .s.DelegatingFilterProxyRegistrationBean : Mapping filter: 'springSecurityFilterChain' to: [/*]
+2018-11-15 18:14:32.392  INFO 25008 --- [localhost-startStop-1] o.s.b.w.servlet.FilterRegistrationBean   : Mapping filter: 'timeOutFilter' to: [/*]
+2018-11-15 18:14:32.392  INFO 25008 --- [localhost-startStop-1] o.s.b.w.servlet.ServletRegistrationBean  : Servlet dispatcherServlet mapped to [/]
+2018-11-15 18:14:32.400 DEBUG 25008 --- [localhost-startStop-1] o.s.a.c.security.timeout.TimeOutFilter   : Initializing filter 'timeOutFilter'
+2018-11-15 18:14:32.401 DEBUG 25008 --- [localhost-startStop-1] o.s.a.c.security.timeout.TimeOutFilter   : Filter 'timeOutFilter' configured successfully
+2018-11-15 18:14:32.628  INFO 25008 --- [main] o.s.s.web.DefaultSecurityFilterChain     : Creating filter chain: Ant [pattern='/**', OPTIONS], []
+2018-11-15 18:14:32.628  INFO 25008 --- [main] o.s.s.web.DefaultSecurityFilterChain     : Creating filter chain: Ant [pattern='/*.{html, js}'], []
+2018-11-15 18:14:32.692  INFO 25008 --- [main] o.s.s.web.DefaultSecurityFilterChain     : Creating filter chain: org.springframework.security.web.util.matcher.AnyRequestMatcher@1, [org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@7ce29a2d, org.springframework.security.web.context.SecurityContextPersistenceFilter@613f7eb7, org.springframework.security.web.header.HeaderWriterFilter@2abafa97, org.springframework.security.web.csrf.CsrfFilter@644a3add, org.springframework.security.web.authentication.logout.LogoutFilter@31834a2b, org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestRedirectFilter@24876a7e, org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter@2eda2062, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@528c8c1, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@dbddbe3, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@457a5b2d, org.springframework.security.web.session.SessionManagementFilter@40717ed, org.springframework.security.web.access.ExceptionTranslationFilter@42679fc2, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@237add]
+2018-11-15 18:14:32.896  INFO 25008 --- [main] o.s.w.s.handler.SimpleUrlHandlerMapping  : Mapped URL path [/**/favicon.ico] onto handler of type [class org.springframework.web.servlet.resource.ResourceHttpRequestHandler]
+2018-11-15 18:14:32.961  INFO 25008 --- [main] s.w.s.m.m.a.RequestMappingHandlerAdapter : Looking for @ControllerAdvice: org.springframework.boot.web.servlet.context.AnnotationConfigServletWebServerApplicationContext@180da663: startup date [Thu Nov 15 18:14:30 PST 2018]; root of context hierarchy
+2018-11-15 18:14:32.997  INFO 25008 --- [main] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped "{[/**/{[path:(?!api)[^\\.]*}]}" onto public java.lang.String org.sudocode.api.core.RedirectController.redirect()
+2018-11-15 18:14:33.004  INFO 25008 --- [main] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped "{[/api/projects/{id}],methods=[GET],produces=[application/json]}" onto public org.sudocode.api.post.project.ProjectView org.sudocode.api.post.web.PostingRestController.fetchProjectById(java.lang.Long) throws org.sudocode.api.core.exception.ProjectNotFoundException
+2018-11-15 18:14:33.004  INFO 25008 --- [main] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped "{[/api/projects/{id}/comments],methods=[GET],produces=[application/json]}" onto public org.springframework.data.domain.Page<org.sudocode.api.post.comment.CommentView> org.sudocode.api.post.web.PostingRestController.fetchComments(java.lang.Long,org.springframework.data.domain.Pageable)
+2018-11-15 18:14:33.005  INFO 25008 --- [main] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped "{[/api/projects/{id}],methods=[DELETE]}" onto public void org.sudocode.api.post.web.PostingRestController.deleteProject(java.lang.Long)
+2018-11-15 18:14:33.005  INFO 25008 --- [main] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped "{[/api/projects],methods=[POST],consumes=[application/json],produces=[application/json]}" onto public org.sudocode.api.post.project.Project org.sudocode.api.post.web.PostingRestController.postProject(org.sudocode.api.post.project.Project)
+2018-11-15 18:14:33.005  INFO 25008 --- [main] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped "{[/api/projects/{id}],methods=[PUT],consumes=[application/json],produces=[application/json]}" onto public org.sudocode.api.post.project.Project org.sudocode.api.post.web.PostingRestController.updateProject(java.lang.Long,org.sudocode.api.post.project.Project)
+2018-11-15 18:14:33.006  INFO 25008 --- [main] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped "{[/api/projects/{id}/vote],methods=[POST],consumes=[application/json],produces=[application/json]}" onto public void org.sudocode.api.post.web.PostingRestController.voteOnProject(java.lang.Long,org.sudocode.api.post.Vote)
+2018-11-15 18:14:33.006  INFO 25008 --- [main] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped "{[/api/projects/{id}/comments],methods=[POST],consumes=[application/json],produces=[application/json]}" onto public org.sudocode.api.post.comment.Comment org.sudocode.api.post.web.PostingRestController.postComment(java.lang.Long,org.sudocode.api.post.comment.Comment)
+2018-11-15 18:14:33.006  INFO 25008 --- [main] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped "{[/api/projects/{projectId}/comments/{commentId}],methods=[PUT],consumes=[application/json],produces=[application/json]}" onto public org.sudocode.api.post.comment.Comment org.sudocode.api.post.web.PostingRestController.updateComment(java.lang.Long,java.lang.Long,org.sudocode.api.post.comment.Comment)
+2018-11-15 18:14:33.006  INFO 25008 --- [main] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped "{[/api/projects/**/comments/{id}],methods=[DELETE]}" onto public void org.sudocode.api.post.web.PostingRestController.deleteCommentById(java.lang.Long)
+2018-11-15 18:14:33.006  INFO 25008 --- [main] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped "{[/api/projects],methods=[GET],produces=[application/json]}" onto public org.springframework.data.domain.Page<org.sudocode.api.post.project.ProjectView> org.sudocode.api.post.web.PostingRestController.fetchProjects(java.util.Map<java.lang.String, java.lang.String>,org.springframework.data.domain.Pageable)
+2018-11-15 18:14:33.009  INFO 25008 --- [main] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped "{[/api/users/{id}],methods=[DELETE]}" onto public void org.sudocode.api.user.web.UserRestController.deleteById(java.lang.Long)
+2018-11-15 18:14:33.009  INFO 25008 --- [main] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped "{[/api/users/logout],methods=[POST],consumes=[application/json],produces=[application/json]}" onto public void org.sudocode.api.user.web.UserRestController.logout(javax.servlet.http.HttpServletRequest)
+2018-11-15 18:14:33.009  INFO 25008 --- [main] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped "{[/api/users/me],methods=[GET],produces=[application/json]}" onto public org.springframework.http.ResponseEntity<?> org.sudocode.api.user.web.UserRestController.currentUser(org.springframework.security.core.Authentication)
+2018-11-15 18:14:33.009  INFO 25008 --- [main] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped "{[/api/users/{login:[A-Za-z]+}],methods=[GET],produces=[application/json]}" onto public org.sudocode.api.user.UserView org.sudocode.api.user.web.UserRestController.fetchByLogin(java.lang.String)
+2018-11-15 18:14:33.010  INFO 25008 --- [main] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped "{[/api/users],methods=[GET],produces=[application/json]}" onto public org.springframework.data.domain.Page<org.sudocode.api.user.UserView> org.sudocode.api.user.web.UserRestController.fetchAll(org.springframework.data.domain.Pageable)
+2018-11-15 18:14:33.010  INFO 25008 --- [main] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped "{[/api/users/{id:[\d]+}],methods=[GET],produces=[application/json]}" onto public org.sudocode.api.user.UserView org.sudocode.api.user.web.UserRestController.fetchById(java.lang.Long) throws org.sudocode.api.core.exception.UserNotFoundException
+2018-11-15 18:14:33.011  INFO 25008 --- [main] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped "{[/error],produces=[text/html]}" onto public org.springframework.web.servlet.ModelAndView org.springframework.boot.autoconfigure.web.servlet.error.BasicErrorController.errorHtml(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse)
+2018-11-15 18:14:33.011  INFO 25008 --- [main] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped "{[/error]}" onto public org.springframework.http.ResponseEntity<java.util.Map<java.lang.String, java.lang.Object>> org.springframework.boot.autoconfigure.web.servlet.error.BasicErrorController.error(javax.servlet.http.HttpServletRequest)
+2018-11-15 18:14:33.035  INFO 25008 --- [main] o.s.w.s.handler.SimpleUrlHandlerMapping  : Mapped URL path [/webjars/**] onto handler of type [class org.springframework.web.servlet.resource.ResourceHttpRequestHandler]
+2018-11-15 18:14:33.035  INFO 25008 --- [main] o.s.w.s.handler.SimpleUrlHandlerMapping  : Mapped URL path [/**] onto handler of type [class org.springframework.web.servlet.resource.ResourceHttpRequestHandler]
+2018-11-15 18:14:33.044  INFO 25008 --- [main] .m.m.a.ExceptionHandlerExceptionResolver : Detected @ExceptionHandler methods in restExceptionHandler
+2018-11-15 18:14:33.064  INFO 25008 --- [main] o.s.b.a.w.s.WelcomePageHandlerMapping    : Adding welcome page: class path resource [static/index.html]
+2018-11-15 18:14:33.255  INFO 25008 --- [main] o.s.j.e.a.AnnotationMBeanExporter        : Registering beans for JMX exposure on startup
+2018-11-15 18:14:33.256  INFO 25008 --- [main] o.s.j.e.a.AnnotationMBeanExporter        : Bean with name 'dataSource' has been autodetected for JMX exposure
+2018-11-15 18:14:33.260  INFO 25008 --- [main] o.s.j.e.a.AnnotationMBeanExporter        : Located MBean 'dataSource': registering with JMX server as MBean [com.zaxxer.hikari:name=dataSource,type=HikariDataSource]
+2018-11-15 18:14:33.278  INFO 25008 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8080 (http) with context path ''
+2018-11-15 18:14:33.280  INFO 25008 --- [main] org.sudocode.api.ServerApplication       : Started ServerApplication in 3.666 seconds (JVM running for 4.184)
+2018-11-15 18:15:05.669  INFO 25008 --- [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring FrameworkServlet 'dispatcherServlet'
+2018-11-15 18:15:05.669  INFO 25008 --- [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : FrameworkServlet 'dispatcherServlet': initialization started
+2018-11-15 18:15:05.679  INFO 25008 --- [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : FrameworkServlet 'dispatcherServlet': initialization completed in 10 ms
+2018-11-15 18:15:05.725 DEBUG 25008 --- [http-nio-8080-exec-1] org.hibernate.SQL                        : 
+    select
+        user0_.id as col_0_0_,
+        user0_.login as col_1_0_,
+        user0_.avatar_url as col_2_0_,
+        user0_.hireable as col_3_0_ 
+    from
+        users user0_ limit ?
+2018-11-15 18:15:07.421 DEBUG 25008 --- [http-nio-8080-exec-2] org.hibernate.SQL                        : 
+    select
+        project0_.id as col_0_0_,
+        project0_.title as col_1_0_,
+        project0_.difficulty as col_2_0_,
+        project0_.description as col_3_0_,
+        project0_.rating as col_4_0_,
+        project0_.posted_date as col_5_0_,
+        project0_.last_modified as col_6_0_,
+        project0_.user_id as col_7_0_,
+        user1_.id as id1_2_,
+        user1_.avatar_url as avatar_u2_2_,
+        user1_.hireable as hireable3_2_,
+        user1_.login as login4_2_ 
+    from
+        projects project0_ 
+    inner join
+        users user1_ 
+            on project0_.user_id=user1_.id 
+    where
+        (
+            ? is null 
+            or lower(project0_.title) like concat('%', lower(?), '%')
+        ) 
+        and (
+            ? is null 
+            or project0_.difficulty=?
+        ) 
+        and (
+            ? is null 
+            or lower(project0_.description) like concat('%', lower(?), '%')
+        ) 
+    order by
+        project0_.rating desc limit ?
+2018-11-15 18:15:07.422 TRACE 25008 --- [http-nio-8080-exec-2] o.h.type.descriptor.sql.BasicBinder      : binding parameter [1] as [VARBINARY] - [null]
+2018-11-15 18:15:07.423 TRACE 25008 --- [http-nio-8080-exec-2] o.h.type.descriptor.sql.BasicBinder      : binding parameter [2] as [VARBINARY] - [null]
+2018-11-15 18:15:07.423 TRACE 25008 --- [http-nio-8080-exec-2] o.h.type.descriptor.sql.BasicBinder      : binding parameter [5] as [VARBINARY] - [null]
+2018-11-15 18:15:07.423 TRACE 25008 --- [http-nio-8080-exec-2] o.h.type.descriptor.sql.BasicBinder      : binding parameter [6] as [VARBINARY] - [null]
+2018-11-15 18:15:52.186  INFO 25008 --- [Thread-2] ConfigServletWebServerApplicationContext : Closing org.springframework.boot.web.servlet.context.AnnotationConfigServletWebServerApplicationContext@180da663: startup date [Thu Nov 15 18:14:30 PST 2018]; root of context hierarchy
+2018-11-15 18:15:52.190  INFO 25008 --- [Thread-2] o.s.j.e.a.AnnotationMBeanExporter        : Unregistering JMX-exposed beans on shutdown
+2018-11-15 18:15:52.191  INFO 25008 --- [Thread-2] o.s.j.e.a.AnnotationMBeanExporter        : Unregistering JMX-exposed beans
+2018-11-15 18:15:52.192  INFO 25008 --- [Thread-2] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2018-11-15 18:15:52.193  INFO 25008 --- [Thread-2] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2018-11-15 18:15:52.199  INFO 25008 --- [Thread-2] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2018-11-15 18:15:54.165  INFO 25207 --- [main] org.sudocode.api.ServerApplication       : Starting ServerApplication on alex-desktop with PID 25207 (/home/Smokey/Desktop/sudocode-org/server/target/classes started by Smokey in /home/Smokey/Desktop/sudocode-org/server)
+2018-11-15 18:15:54.166 DEBUG 25207 --- [main] org.sudocode.api.ServerApplication       : Running with Spring Boot v2.0.6.RELEASE, Spring v5.0.10.RELEASE
+2018-11-15 18:15:54.167  INFO 25207 --- [main] org.sudocode.api.ServerApplication       : The following profiles are active: dev
+2018-11-15 18:15:54.198  INFO 25207 --- [main] ConfigServletWebServerApplicationContext : Refreshing org.springframework.boot.web.servlet.context.AnnotationConfigServletWebServerApplicationContext@7a560583: startup date [Thu Nov 15 18:15:54 PST 2018]; root of context hierarchy
+2018-11-15 18:15:55.195  INFO 25207 --- [main] trationDelegate$BeanPostProcessorChecker : Bean 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration' of type [org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration$$EnhancerBySpringCGLIB$$61bb6df0] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2018-11-15 18:15:55.221  INFO 25207 --- [main] trationDelegate$BeanPostProcessorChecker : Bean 'org.springframework.security.config.annotation.configuration.ObjectPostProcessorConfiguration' of type [org.springframework.security.config.annotation.configuration.ObjectPostProcessorConfiguration$$EnhancerBySpringCGLIB$$fa69362a] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2018-11-15 18:15:55.227  INFO 25207 --- [main] trationDelegate$BeanPostProcessorChecker : Bean 'objectPostProcessor' of type [org.springframework.security.config.annotation.configuration.AutowireBeanFactoryObjectPostProcessor] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2018-11-15 18:15:55.228  INFO 25207 --- [main] trationDelegate$BeanPostProcessorChecker : Bean 'org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler@503df2d0' of type [org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2018-11-15 18:15:55.233  INFO 25207 --- [main] trationDelegate$BeanPostProcessorChecker : Bean 'org.springframework.security.config.annotation.method.configuration.GlobalMethodSecurityConfiguration' of type [org.springframework.security.config.annotation.method.configuration.GlobalMethodSecurityConfiguration$$EnhancerBySpringCGLIB$$1f3dd8dc] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2018-11-15 18:15:55.240  INFO 25207 --- [main] trationDelegate$BeanPostProcessorChecker : Bean 'methodSecurityMetadataSource' of type [org.springframework.security.access.method.DelegatingMethodSecurityMetadataSource] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2018-11-15 18:15:55.254  INFO 25207 --- [main] trationDelegate$BeanPostProcessorChecker : Bean 'org.springframework.hateoas.config.HateoasConfiguration' of type [org.springframework.hateoas.config.HateoasConfiguration$$EnhancerBySpringCGLIB$$e13bbb22] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2018-11-15 18:15:55.531  INFO 25207 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8080 (http)
+2018-11-15 18:15:55.545  INFO 25207 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2018-11-15 18:15:55.545  INFO 25207 --- [main] org.apache.catalina.core.StandardEngine  : Starting Servlet Engine: Apache Tomcat/8.5.34
+2018-11-15 18:15:55.549  INFO 25207 --- [localhost-startStop-1] o.a.catalina.core.AprLifecycleListener   : The APR based Apache Tomcat Native library which allows optimal performance in production environments was not found on the java.library.path: [/usr/java/packages/lib:/usr/lib64:/lib64:/lib:/usr/lib]
+2018-11-15 18:15:55.598  INFO 25207 --- [localhost-startStop-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2018-11-15 18:15:55.599  INFO 25207 --- [localhost-startStop-1] o.s.web.context.ContextLoader            : Root WebApplicationContext: initialization completed in 1401 ms
+2018-11-15 18:15:55.718  INFO 25207 --- [localhost-startStop-1] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2018-11-15 18:15:55.804  INFO 25207 --- [localhost-startStop-1] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2018-11-15 18:15:55.828  INFO 25207 --- [localhost-startStop-1] j.LocalContainerEntityManagerFactoryBean : Building JPA container EntityManagerFactory for persistence unit 'default'
+2018-11-15 18:15:55.834  INFO 25207 --- [localhost-startStop-1] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [
+	name: default
+	...]
+2018-11-15 18:15:55.861  INFO 25207 --- [localhost-startStop-1] org.hibernate.Version                    : HHH000412: Hibernate Core {5.2.17.Final}
+2018-11-15 18:15:55.861  INFO 25207 --- [localhost-startStop-1] org.hibernate.cfg.Environment            : HHH000206: hibernate.properties not found
+2018-11-15 18:15:55.877  INFO 25207 --- [localhost-startStop-1] o.hibernate.annotations.common.Version   : HCANN000001: Hibernate Commons Annotations {5.0.1.Final}
+2018-11-15 18:15:55.932  INFO 25207 --- [localhost-startStop-1] org.hibernate.dialect.Dialect            : HHH000400: Using dialect: org.hibernate.dialect.MySQL5Dialect
+2018-11-15 18:15:56.234 DEBUG 25207 --- [localhost-startStop-1] org.hibernate.SQL                        : 
+    
+    alter table comments 
+       add constraint FK8omq0tc18jd43bu5tjh6jvraq 
+       foreign key (user_id) 
+       references users (id)
+2018-11-15 18:15:56.330 DEBUG 25207 --- [localhost-startStop-1] org.hibernate.SQL                        : 
+    
+    alter table comments 
+       add constraint FKlri30okf66phtcgbe5pok7cc0 
+       foreign key (parent_id) 
+       references comments (id)
+2018-11-15 18:15:56.379 DEBUG 25207 --- [localhost-startStop-1] org.hibernate.SQL                        : 
+    
+    alter table comments 
+       add constraint FKgkoamotsfr3mc0pwa1qrrmwhi 
+       foreign key (project_id) 
+       references projects (id)
+2018-11-15 18:15:56.406 DEBUG 25207 --- [localhost-startStop-1] org.hibernate.SQL                        : 
+    
+    alter table projects 
+       add constraint FKhswfwa3ga88vxv1pmboss6jhm 
+       foreign key (user_id) 
+       references users (id)
+2018-11-15 18:15:56.460  INFO 25207 --- [localhost-startStop-1] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2018-11-15 18:15:56.623  INFO 25207 --- [localhost-startStop-1] o.h.h.i.QueryTranslatorFactoryInitiator  : HHH000397: Using ASTQueryTranslatorFactory
+2018-11-15 18:15:56.807  INFO 25207 --- [localhost-startStop-1] o.s.b.w.servlet.FilterRegistrationBean   : Mapping filter: 'characterEncodingFilter' to: [/*]
+2018-11-15 18:15:56.807  INFO 25207 --- [localhost-startStop-1] o.s.b.w.servlet.FilterRegistrationBean   : Mapping filter: 'hiddenHttpMethodFilter' to: [/*]
+2018-11-15 18:15:56.807  INFO 25207 --- [localhost-startStop-1] o.s.b.w.servlet.FilterRegistrationBean   : Mapping filter: 'httpPutFormContentFilter' to: [/*]
+2018-11-15 18:15:56.807  INFO 25207 --- [localhost-startStop-1] o.s.b.w.servlet.FilterRegistrationBean   : Mapping filter: 'requestContextFilter' to: [/*]
+2018-11-15 18:15:56.807  INFO 25207 --- [localhost-startStop-1] .s.DelegatingFilterProxyRegistrationBean : Mapping filter: 'springSecurityFilterChain' to: [/*]
+2018-11-15 18:15:56.807  INFO 25207 --- [localhost-startStop-1] o.s.b.w.servlet.FilterRegistrationBean   : Mapping filter: 'timeOutFilter' to: [/*]
+2018-11-15 18:15:56.808  INFO 25207 --- [localhost-startStop-1] o.s.b.w.servlet.ServletRegistrationBean  : Servlet dispatcherServlet mapped to [/]
+2018-11-15 18:15:56.815 DEBUG 25207 --- [localhost-startStop-1] o.s.a.c.security.timeout.TimeOutFilter   : Initializing filter 'timeOutFilter'
+2018-11-15 18:15:56.815 DEBUG 25207 --- [localhost-startStop-1] o.s.a.c.security.timeout.TimeOutFilter   : Filter 'timeOutFilter' configured successfully
+2018-11-15 18:15:57.012  INFO 25207 --- [main] o.s.s.web.DefaultSecurityFilterChain     : Creating filter chain: Ant [pattern='/**', OPTIONS], []
+2018-11-15 18:15:57.013  INFO 25207 --- [main] o.s.s.web.DefaultSecurityFilterChain     : Creating filter chain: Ant [pattern='/*.{html, js}'], []
+2018-11-15 18:15:57.069  INFO 25207 --- [main] o.s.s.web.DefaultSecurityFilterChain     : Creating filter chain: org.springframework.security.web.util.matcher.AnyRequestMatcher@1, [org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@79d7035, org.springframework.security.web.context.SecurityContextPersistenceFilter@2abafa97, org.springframework.security.web.header.HeaderWriterFilter@798cb6d9, org.springframework.security.web.csrf.CsrfFilter@377949f1, org.springframework.security.web.authentication.logout.LogoutFilter@5e1a986c, org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestRedirectFilter@67f9cb52, org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter@71a4f441, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@29f3c438, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@153cb763, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@372461a9, org.springframework.security.web.session.SessionManagementFilter@5e50df2e, org.springframework.security.web.access.ExceptionTranslationFilter@37e0056e, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@1a7cb3a4]
+2018-11-15 18:15:57.227  INFO 25207 --- [main] o.s.w.s.handler.SimpleUrlHandlerMapping  : Mapped URL path [/**/favicon.ico] onto handler of type [class org.springframework.web.servlet.resource.ResourceHttpRequestHandler]
+2018-11-15 18:15:57.282  INFO 25207 --- [main] s.w.s.m.m.a.RequestMappingHandlerAdapter : Looking for @ControllerAdvice: org.springframework.boot.web.servlet.context.AnnotationConfigServletWebServerApplicationContext@7a560583: startup date [Thu Nov 15 18:15:54 PST 2018]; root of context hierarchy
+2018-11-15 18:15:57.313  INFO 25207 --- [main] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped "{[/**/{[path:(?!api)[^\\.]*}]}" onto public java.lang.String org.sudocode.api.core.RedirectController.redirect()
+2018-11-15 18:15:57.319  INFO 25207 --- [main] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped "{[/api/projects/{id}],methods=[GET],produces=[application/json]}" onto public org.sudocode.api.post.project.ProjectView org.sudocode.api.post.web.PostingRestController.fetchProjectById(java.lang.Long) throws org.sudocode.api.core.exception.ProjectNotFoundException
+2018-11-15 18:15:57.319  INFO 25207 --- [main] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped "{[/api/projects/{id}/comments],methods=[GET],produces=[application/json]}" onto public org.springframework.data.domain.Page<org.sudocode.api.post.comment.CommentView> org.sudocode.api.post.web.PostingRestController.fetchComments(java.lang.Long,org.springframework.data.domain.Pageable)
+2018-11-15 18:15:57.320  INFO 25207 --- [main] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped "{[/api/projects/{id}],methods=[DELETE]}" onto public void org.sudocode.api.post.web.PostingRestController.deleteProject(java.lang.Long)
+2018-11-15 18:15:57.320  INFO 25207 --- [main] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped "{[/api/projects],methods=[POST],consumes=[application/json],produces=[application/json]}" onto public org.sudocode.api.post.project.Project org.sudocode.api.post.web.PostingRestController.postProject(org.sudocode.api.post.project.Project)
+2018-11-15 18:15:57.320  INFO 25207 --- [main] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped "{[/api/projects/{id}],methods=[PUT],consumes=[application/json],produces=[application/json]}" onto public org.sudocode.api.post.project.Project org.sudocode.api.post.web.PostingRestController.updateProject(java.lang.Long,org.sudocode.api.post.project.Project)
+2018-11-15 18:15:57.321  INFO 25207 --- [main] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped "{[/api/projects/{id}/vote],methods=[POST],consumes=[application/json],produces=[application/json]}" onto public void org.sudocode.api.post.web.PostingRestController.voteOnProject(java.lang.Long,org.sudocode.api.post.Vote)
+2018-11-15 18:15:57.321  INFO 25207 --- [main] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped "{[/api/projects/{id}/comments],methods=[POST],consumes=[application/json],produces=[application/json]}" onto public org.sudocode.api.post.comment.Comment org.sudocode.api.post.web.PostingRestController.postComment(java.lang.Long,org.sudocode.api.post.comment.Comment)
+2018-11-15 18:15:57.321  INFO 25207 --- [main] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped "{[/api/projects/{projectId}/comments/{commentId}],methods=[PUT],consumes=[application/json],produces=[application/json]}" onto public org.sudocode.api.post.comment.Comment org.sudocode.api.post.web.PostingRestController.updateComment(java.lang.Long,java.lang.Long,org.sudocode.api.post.comment.Comment)
+2018-11-15 18:15:57.321  INFO 25207 --- [main] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped "{[/api/projects/**/comments/{id}],methods=[DELETE]}" onto public void org.sudocode.api.post.web.PostingRestController.deleteCommentById(java.lang.Long)
+2018-11-15 18:15:57.321  INFO 25207 --- [main] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped "{[/api/projects],methods=[GET],produces=[application/json]}" onto public org.springframework.data.domain.Page<org.sudocode.api.post.project.ProjectView> org.sudocode.api.post.web.PostingRestController.fetchProjects(java.util.Map<java.lang.String, java.lang.String>,org.springframework.data.domain.Pageable)
+2018-11-15 18:15:57.324  INFO 25207 --- [main] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped "{[/api/users/{id}],methods=[DELETE]}" onto public void org.sudocode.api.user.web.UserRestController.deleteById(java.lang.Long)
+2018-11-15 18:15:57.324  INFO 25207 --- [main] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped "{[/api/users/logout],methods=[POST],consumes=[application/json],produces=[application/json]}" onto public void org.sudocode.api.user.web.UserRestController.logout(javax.servlet.http.HttpServletRequest)
+2018-11-15 18:15:57.324  INFO 25207 --- [main] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped "{[/api/users/me],methods=[GET],produces=[application/json]}" onto public org.springframework.http.ResponseEntity<?> org.sudocode.api.user.web.UserRestController.currentUser(org.springframework.security.core.Authentication)
+2018-11-15 18:15:57.324  INFO 25207 --- [main] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped "{[/api/users/{login:[A-Za-z]+}],methods=[GET],produces=[application/json]}" onto public org.sudocode.api.user.UserView org.sudocode.api.user.web.UserRestController.fetchByLogin(java.lang.String)
+2018-11-15 18:15:57.325  INFO 25207 --- [main] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped "{[/api/users],methods=[GET],produces=[application/json]}" onto public org.springframework.data.domain.Page<org.sudocode.api.user.UserView> org.sudocode.api.user.web.UserRestController.fetchAll(org.springframework.data.domain.Pageable)
+2018-11-15 18:15:57.325  INFO 25207 --- [main] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped "{[/api/users/{id:[\d]+}],methods=[GET],produces=[application/json]}" onto public org.sudocode.api.user.UserView org.sudocode.api.user.web.UserRestController.fetchById(java.lang.Long) throws org.sudocode.api.core.exception.UserNotFoundException
+2018-11-15 18:15:57.326  INFO 25207 --- [main] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped "{[/error]}" onto public org.springframework.http.ResponseEntity<java.util.Map<java.lang.String, java.lang.Object>> org.springframework.boot.autoconfigure.web.servlet.error.BasicErrorController.error(javax.servlet.http.HttpServletRequest)
+2018-11-15 18:15:57.326  INFO 25207 --- [main] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped "{[/error],produces=[text/html]}" onto public org.springframework.web.servlet.ModelAndView org.springframework.boot.autoconfigure.web.servlet.error.BasicErrorController.errorHtml(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse)
+2018-11-15 18:15:57.348  INFO 25207 --- [main] o.s.w.s.handler.SimpleUrlHandlerMapping  : Mapped URL path [/webjars/**] onto handler of type [class org.springframework.web.servlet.resource.ResourceHttpRequestHandler]
+2018-11-15 18:15:57.348  INFO 25207 --- [main] o.s.w.s.handler.SimpleUrlHandlerMapping  : Mapped URL path [/**] onto handler of type [class org.springframework.web.servlet.resource.ResourceHttpRequestHandler]
+2018-11-15 18:15:57.356  INFO 25207 --- [main] .m.m.a.ExceptionHandlerExceptionResolver : Detected @ExceptionHandler methods in restExceptionHandler
+2018-11-15 18:15:57.373  INFO 25207 --- [main] o.s.b.a.w.s.WelcomePageHandlerMapping    : Adding welcome page: class path resource [static/index.html]
+2018-11-15 18:15:57.552  INFO 25207 --- [main] o.s.j.e.a.AnnotationMBeanExporter        : Registering beans for JMX exposure on startup
+2018-11-15 18:15:57.553  INFO 25207 --- [main] o.s.j.e.a.AnnotationMBeanExporter        : Bean with name 'dataSource' has been autodetected for JMX exposure
+2018-11-15 18:15:57.557  INFO 25207 --- [main] o.s.j.e.a.AnnotationMBeanExporter        : Located MBean 'dataSource': registering with JMX server as MBean [com.zaxxer.hikari:name=dataSource,type=HikariDataSource]
+2018-11-15 18:15:57.575  INFO 25207 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8080 (http) with context path ''
+2018-11-15 18:15:57.577  INFO 25207 --- [main] org.sudocode.api.ServerApplication       : Started ServerApplication in 3.723 seconds (JVM running for 4.168)
+2018-11-15 18:26:42.355  INFO 25207 --- [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring FrameworkServlet 'dispatcherServlet'
+2018-11-15 18:26:42.356  INFO 25207 --- [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : FrameworkServlet 'dispatcherServlet': initialization started
+2018-11-15 18:26:42.364  INFO 25207 --- [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : FrameworkServlet 'dispatcherServlet': initialization completed in 8 ms
+2018-11-15 18:26:44.915 DEBUG 25207 --- [http-nio-8080-exec-2] org.hibernate.SQL                        : 
+    select
+        user0_.id as id1_2_0_,
+        user0_.avatar_url as avatar_u2_2_0_,
+        user0_.hireable as hireable3_2_0_,
+        user0_.login as login4_2_0_ 
+    from
+        users user0_ 
+    where
+        user0_.id=?
+2018-11-15 18:26:44.921 TRACE 25207 --- [http-nio-8080-exec-2] o.h.type.descriptor.sql.BasicBinder      : binding parameter [1] as [BIGINT] - [37308440]
+2018-11-15 18:26:44.929  INFO 25207 --- [http-nio-8080-exec-2] org.sudocode.api.user.UserService        : Updated user with ID: 37308440
+2018-11-15 18:26:46.782 DEBUG 25207 --- [http-nio-8080-exec-4] org.hibernate.SQL                        : 
+    select
+        project0_.id as col_0_0_,
+        project0_.title as col_1_0_,
+        project0_.difficulty as col_2_0_,
+        project0_.description as col_3_0_,
+        project0_.rating as col_4_0_,
+        project0_.posted_date as col_5_0_,
+        project0_.last_modified as col_6_0_,
+        project0_.user_id as col_7_0_,
+        user1_.id as id1_2_,
+        user1_.avatar_url as avatar_u2_2_,
+        user1_.hireable as hireable3_2_,
+        user1_.login as login4_2_ 
+    from
+        projects project0_ 
+    inner join
+        users user1_ 
+            on project0_.user_id=user1_.id 
+    where
+        (
+            ? is null 
+            or lower(project0_.title) like concat('%', lower(?), '%')
+        ) 
+        and (
+            ? is null 
+            or project0_.difficulty=?
+        ) 
+        and (
+            ? is null 
+            or lower(project0_.description) like concat('%', lower(?), '%')
+        ) 
+    order by
+        project0_.rating desc limit ?
+2018-11-15 18:26:46.783 TRACE 25207 --- [http-nio-8080-exec-4] o.h.type.descriptor.sql.BasicBinder      : binding parameter [1] as [VARBINARY] - [null]
+2018-11-15 18:26:46.783 TRACE 25207 --- [http-nio-8080-exec-4] o.h.type.descriptor.sql.BasicBinder      : binding parameter [2] as [VARBINARY] - [null]
+2018-11-15 18:26:46.783 TRACE 25207 --- [http-nio-8080-exec-4] o.h.type.descriptor.sql.BasicBinder      : binding parameter [5] as [VARBINARY] - [null]
+2018-11-15 18:26:46.783 TRACE 25207 --- [http-nio-8080-exec-4] o.h.type.descriptor.sql.BasicBinder      : binding parameter [6] as [VARBINARY] - [null]
+2018-11-15 18:26:53.296 DEBUG 25207 --- [http-nio-8080-exec-5] org.hibernate.SQL                        : 
+    select
+        user0_.id as col_0_0_,
+        user0_.login as col_1_0_,
+        user0_.avatar_url as col_2_0_,
+        user0_.hireable as col_3_0_ 
+    from
+        users user0_ limit ?
+2018-11-15 18:26:55.248 DEBUG 25207 --- [http-nio-8080-exec-6] org.hibernate.SQL                        : 
+    select
+        project0_.id as col_0_0_,
+        project0_.title as col_1_0_,
+        project0_.difficulty as col_2_0_,
+        project0_.description as col_3_0_,
+        project0_.rating as col_4_0_,
+        project0_.posted_date as col_5_0_,
+        project0_.last_modified as col_6_0_,
+        project0_.user_id as col_7_0_,
+        user1_.id as id1_2_,
+        user1_.avatar_url as avatar_u2_2_,
+        user1_.hireable as hireable3_2_,
+        user1_.login as login4_2_ 
+    from
+        projects project0_ 
+    inner join
+        users user1_ 
+            on project0_.user_id=user1_.id 
+    where
+        (
+            ? is null 
+            or lower(project0_.title) like concat('%', lower(?), '%')
+        ) 
+        and (
+            ? is null 
+            or project0_.difficulty=?
+        ) 
+        and (
+            ? is null 
+            or lower(project0_.description) like concat('%', lower(?), '%')
+        ) 
+    order by
+        project0_.rating desc limit ?
+2018-11-15 18:26:55.249 TRACE 25207 --- [http-nio-8080-exec-6] o.h.type.descriptor.sql.BasicBinder      : binding parameter [1] as [VARBINARY] - [null]
+2018-11-15 18:26:55.249 TRACE 25207 --- [http-nio-8080-exec-6] o.h.type.descriptor.sql.BasicBinder      : binding parameter [2] as [VARBINARY] - [null]
+2018-11-15 18:26:55.249 TRACE 25207 --- [http-nio-8080-exec-6] o.h.type.descriptor.sql.BasicBinder      : binding parameter [5] as [VARBINARY] - [null]
+2018-11-15 18:26:55.249 TRACE 25207 --- [http-nio-8080-exec-6] o.h.type.descriptor.sql.BasicBinder      : binding parameter [6] as [VARBINARY] - [null]
+2018-11-15 18:26:59.252 DEBUG 25207 --- [http-nio-8080-exec-7] org.hibernate.SQL                        : 
+    select
+        user0_.id as col_0_0_,
+        user0_.login as col_1_0_,
+        user0_.avatar_url as col_2_0_,
+        user0_.hireable as col_3_0_ 
+    from
+        users user0_ limit ?
+2018-11-15 18:26:59.925 DEBUG 25207 --- [http-nio-8080-exec-9] org.hibernate.SQL                        : 
+    select
+        project0_.id as col_0_0_,
+        project0_.title as col_1_0_,
+        project0_.difficulty as col_2_0_,
+        project0_.description as col_3_0_,
+        project0_.rating as col_4_0_,
+        project0_.posted_date as col_5_0_,
+        project0_.last_modified as col_6_0_,
+        project0_.user_id as col_7_0_,
+        user1_.id as id1_2_,
+        user1_.avatar_url as avatar_u2_2_,
+        user1_.hireable as hireable3_2_,
+        user1_.login as login4_2_ 
+    from
+        projects project0_ 
+    inner join
+        users user1_ 
+            on project0_.user_id=user1_.id 
+    where
+        (
+            ? is null 
+            or lower(project0_.title) like concat('%', lower(?), '%')
+        ) 
+        and (
+            ? is null 
+            or project0_.difficulty=?
+        ) 
+        and (
+            ? is null 
+            or lower(project0_.description) like concat('%', lower(?), '%')
+        ) 
+    order by
+        project0_.rating desc limit ?
+2018-11-15 18:26:59.926 TRACE 25207 --- [http-nio-8080-exec-9] o.h.type.descriptor.sql.BasicBinder      : binding parameter [1] as [VARBINARY] - [null]
+2018-11-15 18:26:59.926 TRACE 25207 --- [http-nio-8080-exec-9] o.h.type.descriptor.sql.BasicBinder      : binding parameter [2] as [VARBINARY] - [null]
+2018-11-15 18:26:59.926 TRACE 25207 --- [http-nio-8080-exec-9] o.h.type.descriptor.sql.BasicBinder      : binding parameter [5] as [VARBINARY] - [null]
+2018-11-15 18:26:59.926 TRACE 25207 --- [http-nio-8080-exec-9] o.h.type.descriptor.sql.BasicBinder      : binding parameter [6] as [VARBINARY] - [null]
+2018-11-15 18:27:03.514 DEBUG 25207 --- [http-nio-8080-exec-8] org.hibernate.SQL                        : 
+    select
+        project0_.id as col_0_0_,
+        project0_.title as col_1_0_,
+        project0_.difficulty as col_2_0_,
+        project0_.description as col_3_0_,
+        project0_.rating as col_4_0_,
+        project0_.posted_date as col_5_0_,
+        project0_.last_modified as col_6_0_,
+        project0_.user_id as col_7_0_,
+        user1_.id as id1_2_,
+        user1_.avatar_url as avatar_u2_2_,
+        user1_.hireable as hireable3_2_,
+        user1_.login as login4_2_ 
+    from
+        projects project0_ 
+    inner join
+        users user1_ 
+            on project0_.user_id=user1_.id 
+    where
+        (
+            ? is null 
+            or lower(project0_.title) like concat('%', lower(?), '%')
+        ) 
+        and (
+            ? is null 
+            or project0_.difficulty=?
+        ) 
+        and (
+            ? is null 
+            or lower(project0_.description) like concat('%', lower(?), '%')
+        ) 
+    order by
+        project0_.rating desc limit ?
+2018-11-15 18:27:03.514 TRACE 25207 --- [http-nio-8080-exec-8] o.h.type.descriptor.sql.BasicBinder      : binding parameter [1] as [VARCHAR] - []
+2018-11-15 18:27:03.515 TRACE 25207 --- [http-nio-8080-exec-8] o.h.type.descriptor.sql.BasicBinder      : binding parameter [2] as [VARCHAR] - []
+2018-11-15 18:27:03.516 TRACE 25207 --- [http-nio-8080-exec-8] o.h.type.descriptor.sql.BasicBinder      : binding parameter [5] as [VARCHAR] - []
+2018-11-15 18:27:03.516 TRACE 25207 --- [http-nio-8080-exec-8] o.h.type.descriptor.sql.BasicBinder      : binding parameter [6] as [VARCHAR] - []
+2018-11-15 18:28:13.428  INFO 25207 --- [Thread-2] ConfigServletWebServerApplicationContext : Closing org.springframework.boot.web.servlet.context.AnnotationConfigServletWebServerApplicationContext@7a560583: startup date [Thu Nov 15 18:15:54 PST 2018]; root of context hierarchy
+2018-11-15 18:28:13.432  INFO 25207 --- [Thread-2] o.s.j.e.a.AnnotationMBeanExporter        : Unregistering JMX-exposed beans on shutdown
+2018-11-15 18:28:13.432  INFO 25207 --- [Thread-2] o.s.j.e.a.AnnotationMBeanExporter        : Unregistering JMX-exposed beans
+2018-11-15 18:28:13.434  INFO 25207 --- [Thread-2] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2018-11-15 18:28:13.435  INFO 25207 --- [Thread-2] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2018-11-15 18:28:13.439  INFO 25207 --- [Thread-2] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.

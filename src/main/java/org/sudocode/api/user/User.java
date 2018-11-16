@@ -25,6 +25,11 @@ import static org.apache.commons.lang3.builder.ToStringStyle.*;
 import static org.springframework.data.annotation.AccessType.Type;
 import static org.sudocode.api.core.Constants.URL_REGEX;
 
+/**
+ * User entity.
+ *
+ * @see OAuth2User
+ */
 @Entity
 @Table(name = "users")
 @AccessType(Type.FIELD)
@@ -39,8 +44,8 @@ public class User implements OAuth2User, Serializable {
 
     /**
      * Not generated.
-     * <p>
-     * Uses the same ID as the github API.
+     *
+     * <p>Uses the same ID as the github API.
      */
     @Id
     @Column(nullable = false)

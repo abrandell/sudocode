@@ -6,7 +6,6 @@ import com.google.common.cache.LoadingCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.sudocode.api.core.exception.TooManyRequestException;
@@ -69,7 +68,7 @@ class TimeOutService {
      * @param id ID of the user
      * @return The latest post date between the two.
      */
-    protected LocalDateTime lastPostDateByUser(Long id) {
+    private LocalDateTime lastPostDateByUser(Long id) {
 
         // To not make more queries than needed.
         if (!isTimedOut(id)) {
@@ -92,7 +91,7 @@ class TimeOutService {
      * @see LoadingCache
      * @see PostingService#fetchLatestPostDateByAuthorId(Long)
      */
-    public LoadingCache<Long, LocalDateTime> loadingCache() {
+    private LoadingCache<Long, LocalDateTime> loadingCache() {
         return CacheBuilder.newBuilder()
                            .expireAfterWrite(6, TimeUnit.MINUTES)
                            .maximumSize(100)

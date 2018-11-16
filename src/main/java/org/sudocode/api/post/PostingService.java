@@ -57,9 +57,10 @@ public class PostingService {
 
     /**
      * Returns a page of {@link ProjectView} projections based on the given params.
-     * <p>
-     * Converts the difficulty string (if not null or empty) to the {@link Difficulty}
+     *
+     * <p>Converts the difficulty string (if not null or empty) to the {@link Difficulty}
      * enum. Casing does not matter.
+     *
      * @return Page of {@link ProjectView}'s.
      * @throws InvalidDifficultyException if the difficulty param string isn't {@link Difficulty} enum value.
      * @see Pageable
@@ -147,6 +148,14 @@ public class PostingService {
         return commentRepo.save(comment);
     }
 
+    /**
+     * Update a comment if it exists, else post a new.
+     *
+     * @param updated The new || existing comment to make changes to.
+     * @param commentId The ID of the comment to update.
+     * @param projectId ID of the project the comment was posted on.
+     * @return The updated or newly created comment.
+     */
     public Comment updateComment(Comment updated, Long commentId, Long projectId) {
         return commentRepo.fetchById(commentId)
                           .filter(comment -> comment.isPostedBy(auth.currentUser()))
@@ -163,6 +172,7 @@ public class PostingService {
 
     /**
      * Delete a comment.
+     *
      * @param id of the comment to be deleted.
      * @throws NotPostAuthorException if the user making the request did not post the comment.
      */
@@ -191,8 +201,10 @@ public class PostingService {
     /**
      * Returns the latest {@link LocalDateTime} of a post made by a {@link User} with the
      * given id.
+     *
      * <p>This method exists for {@link org.sudocode.api.core.security.timeout.TimeOutService}.
      * <p>If no results are found, it returns {@link LocalDateTime#MIN}
+     *
      * @param id The ID of the User.
      * @return The {@link LocalDateTime} of the latest post made from the {@link User} if
      * exists, else {@link LocalDateTime#MIN}.
