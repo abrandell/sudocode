@@ -1,8 +1,6 @@
 package org.sudocode.api.config;
 
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Scope;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
@@ -17,8 +15,7 @@ import org.sudocode.api.user.UserService;
 
 import java.util.Map;
 
-import static org.springframework.http.HttpMethod.GET;
-import static org.springframework.http.HttpMethod.OPTIONS;
+import static org.springframework.http.HttpMethod.*;
 
 @Configuration
 @EnableWebSecurity(debug = false)
@@ -34,34 +31,32 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(WebSecurity web) {
         web.ignoring()
-           .antMatchers(OPTIONS, "/**")
            .antMatchers("/*.{html, js}");
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        //@formatter:off
+        // @formatter:off
         http
-            .csrf()
-                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-            .and()
-            .authorizeRequests()
-                .antMatchers(GET, "/").permitAll()
-                .antMatchers(GET, "/api/projects*").permitAll()
-                .antMatchers(GET, "/api/projects/**").permitAll()
-                .antMatchers(GET, "/api/projects/**/comments**").permitAll()
-                .antMatchers(GET, "/api/users/me").permitAll()
-                .antMatchers(GET, "/api/users/**").permitAll()
-                .anyRequest()
-                .authenticated()
-            .and()
+                .csrf()
+                    .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                    .and()
+                .authorizeRequests()
+                    .antMatchers(POST, "/").authenticated()
+                    .antMatchers(PUT).authenticated()
+                    .antMatchers(DELETE).authenticated()
+                    .antMatchers(PATCH).authenticated()
+                    .antMatchers(OPTIONS).denyAll()
+                    .antMatchers(TRACE).denyAll()
+                    .mvcMatchers("/api/actuator/**/").hasAuthority("ROLE_ADMIN")
+                    .anyRequest().permitAll()
+                    .and()
                 .oauth2Login()
-                .loginPage("/")
-                .userInfoEndpoint()
-                .userService(customOAuth2UserService())
-            .and()
+                    .loginPage("/").userInfoEndpoint()
+                    .userService(customOAuth2UserService())
+                    .and()
                 .successHandler(successHandler());
-        //@formatter:on
+        // @formatter:on
     }
 
     private CustomUserTypesOAuth2UserService customOAuth2UserService() {
@@ -75,7 +70,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
      */
     public AuthenticationSuccessHandler successHandler() {
         return (request, response, authentication) -> {
-
             // Update the user upon login.
             userService.updateUser((User) authentication.getPrincipal());
 
@@ -87,10 +81,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 if (origin == null || origin.isEmpty()) {
                     origin = "http://localhost:4200";
                 }
-
                 new DefaultRedirectStrategy().sendRedirect(request, response, origin);
             }
         };
     }
-
 }

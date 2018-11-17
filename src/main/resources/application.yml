@@ -29,12 +29,15 @@ spring:
       accept-single-value-as-array: true
   profiles:
     active: ${ACTIVE_PROFILE}
-#management:
-#  endpoints:
-#    web:
-#      base-path: /api/actuator
-#      exposure:
-#        include: '*'
+
+management:
+  endpoints:
+    web:
+      base-path: /api/actuator
+      exposure:
+        include:
+          - health
+          - info
 ---
 
 spring:
@@ -52,14 +55,18 @@ spring:
 logging:
   level:
     org.sudocode.api: debug
-    org.springframework.web.mvc: info
+    org.springframework.web: trace
     org.hibernate.SQL: debug
     org.hibernate.type.descriptor.sql.BasicBinder: trace
 server:
   error:
     whitelabel:
       enabled: false
-    path: /error
+    path: '/error'
+management.endpoints:
+  web:
+    exposure:
+      include: '*'
 ---
 
 spring:

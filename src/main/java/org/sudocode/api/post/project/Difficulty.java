@@ -8,7 +8,6 @@ import java.util.Arrays;
 
 /**
  * Difficulty for the {@link Project} idea.
- *
  * @see Project
  */
 public enum Difficulty {
@@ -27,7 +26,6 @@ public enum Difficulty {
 
     /**
      * Returns the Enum from the text value param.
-     *
      * @param value - the value (string) of the enum constant to get. Ignores casing.
      * @return the Enum constant if the text matches any.
      * @throws InvalidDifficultyException if no enum has the value of the string param.

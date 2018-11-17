@@ -35,22 +35,6 @@ public class UserRestController {
     }
 
     /**
-     * GET /api/users/me
-     *
-     * <p>Used for the client to check if a user is logged in. Returns an
-     * empty body if not authenticated and no exception gets thrown.
-     *
-     * @return Currently logged in user.
-     */
-    @GetJSON(path = "/me")
-    public ResponseEntity<?> currentUser(@Nullable Authentication auth) {
-        if (auth == null) {
-            return ResponseEntity.ok().build();
-        }
-        return ResponseEntity.ok((User) auth.getPrincipal());
-    }
-
-    /**
      * GET /api/users/:id
      * <p>
      * Returns the user with the given ID in DTO form.
@@ -85,15 +69,11 @@ public class UserRestController {
         return userService.fetchAllProjections(pageable);
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') || principal.id.equals(#id)")
     @Delete(value = "/{id}")
     public void deleteById(@PathVariable("id") Long id) {
         userService.deleteById(id);
     }
 
-    @PostJSON(path = "/logout")
-    public void logout(HttpServletRequest request) {
-        request.getSession(false).invalidate();
-    }
 
 }

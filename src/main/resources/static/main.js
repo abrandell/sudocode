@@ -791,7 +791,7 @@ var CommentPostComponent = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<footer class=\"jumbotron jumbotron-fluid\" style=\"margin-bottom: 0; z-index: revert\">\n  <div class=\"max-width-wrapper container\">\n    <div id=\"footer-content\" class=\"container\" style=\"min-height: 5rem\">\n      <div id=\"footer-links\">\n        <p>Created with <i class=\"fa fa-heart\"></i> using Spring Boot + Angular</p>\n        <div class=\"logos\">\n        <img id=\"spring-logo\" src=\"spring-logo.png\">\n        <i class=\"fa fa-plus\"></i>\n        <img id=\"angular-logo\" src=\"angular-logo.png\">\n        </div>\n      </div>\n    </div>\n  </div>\n</footer>\n\n"
+module.exports = "<footer class=\"jumbotron jumbotron-fluid\" style=\"margin-bottom: 0; z-index: revert\">\n  <div class=\"max-width-wrapper container\">\n    <div id=\"footer-content\" class=\"container\" style=\"min-height: 5rem\">\n      <div id=\"footer-links\">\n        <p>Created with <i class=\"fa fa-heart\"></i> using Spring Boot + Angular</p>\n        <div class=\"logos\">\n        <img id=\"spring-logo\" src=\"./spring-logo.png\">\n        <i class=\"fa fa-plus\"></i>\n        <img id=\"angular-logo\" src=\"./angular-logo.png\">\n        </div>\n      </div>\n    </div>\n  </div>\n</footer>\n\n"
 
 /***/ }),
 
@@ -1660,7 +1660,7 @@ var AuthService = /** @class */ (function () {
     AuthService.prototype.authenticate = function () {
         var _this = this;
         if (!this.authenticated) {
-            this.http.get('/api/users/me').subscribe(function (data) {
+            this.http.get('/api/auth/user').subscribe(function (data) {
                 _this.authenticated = JSON.stringify(data).includes('login');
                 if (_this.authenticated) {
                     _this.currentUser = data;
@@ -1671,7 +1671,7 @@ var AuthService = /** @class */ (function () {
     AuthService.prototype.logout = function () {
         this.currentUser = null;
         this.authenticated = false;
-        return this.http.post('/api/users/logout', {});
+        return this.http.post('/api/auth/logout', {});
     };
     AuthService = __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Injectable"])({
@@ -1798,7 +1798,7 @@ var ProjectService = /** @class */ (function () {
         return this.http.get(this.URL + "/" + projectId + "/comments?page=" + pageNum + "&sort=datePosted," + sortOrder);
     };
     ProjectService.prototype.deleteComment = function (projectId, commentId) {
-        return this.http.delete(this.URL + "/" + projectId + "/comments/" + commentId).pipe();
+        return this.http.delete(this.URL + "/" + projectId + "/comments/" + commentId);
     };
     ProjectService.prototype.deleteProject = function (projectId) {
         return this.http.delete(this.URL + "/" + projectId);

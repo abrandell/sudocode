@@ -5,7 +5,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpClientErrorException;
 import org.sudocode.api.core.annotation.Delete;
 import org.sudocode.api.core.annotation.GetJSON;
 import org.sudocode.api.core.annotation.PostJSON;
@@ -19,6 +21,8 @@ import org.sudocode.api.post.project.Project;
 import org.sudocode.api.post.project.ProjectView;
 
 import java.util.Map;
+
+import static java.lang.Long.valueOf;
 
 /**
  * {@link RestController} for {@link Project} and {@link Comment} posts.
@@ -37,7 +41,6 @@ public final class PostingRestController {
 
     /**
      * POST /api/projects
-     *
      * @see PostingService#postProject(Project)
      */
     @PostJSON
@@ -48,17 +51,15 @@ public final class PostingRestController {
 
     /**
      * GET /api/projects{?page=}&{title=}&{difficulty=}&{description=}&{sort=}
-     *
      * @see PostingService#fetchAllProjectViews(String, String, String, Pageable)
      */
     @GetJSON
-    public Page<ProjectView> fetchProjects(@RequestParam Map<String, String> params,
-                                           Pageable pageable) {
+    public Page<ProjectView> fetchProjects(@RequestParam Map<String, String> params, Pageable page) {
         return postingService.fetchAllProjectViews(
-            params.get("title"),
-            params.get("difficulty"),
-            params.get("description"),
-            pageable
+                params.get("title"),
+                params.get("difficulty"),
+                params.get("description"),
+                page
         );
     }
 
@@ -68,14 +69,12 @@ public final class PostingRestController {
      * Upvote or downvote a project idea.
      */
     @PostJSON(path = "/{id}/vote")
-    public void voteOnProject(@PathVariable("id") Long id,
-                              @RequestParam("dir") Vote vote) {
+    public void voteOnProject(@PathVariable("id") Long id, @RequestParam("dir") Vote vote) {
         postingService.voteOnProject(vote, id);
     }
 
     /**
      * GET /api/projects/:id
-     *
      * @see PostingService#fetchProjectViewById(Long) (Long)
      */
     @GetJSON(path = "/{id}")
@@ -87,29 +86,28 @@ public final class PostingRestController {
      * GET /api/projects/:id/comments{?page=}&{sort=}
      */
     @GetJSON(path = "/{id}/comments")
-    public Page<CommentView> fetchComments(@PathVariable("id") Long id,
-                                           Pageable pageable) {
-        return postingService.fetchCommentViewsByProjectId(id, pageable);
+    public Page<CommentView> fetchComments(@PathVariable("id") Long id, Pageable page) {
+        return postingService.fetchCommentViewsByProjectId(id, page);
     }
 
     /**
      * POST /api/projects/:id/comments
-     *
      * @see PostingService#postComment(Comment, Long)
      */
     @PostJSON(path = "/{id}/comments")
-    public Comment postComment(@PathVariable("id") Long projectId,
-                               @RequestBody Comment comment) {
+    public Comment postComment(@PathVariable("id") Long projectId, @RequestBody Comment comment) {
         comment.setId(null);
         return postingService.postComment(comment, projectId);
     }
 
-    @PutJSON(path = "/{projectId}/comments/{commentId}")
-    public Comment updateComment(@PathVariable("projectId") Long projectId,
-                                 @PathVariable("commentId") Long commentId,
-                                 @RequestBody Comment comment) {
-
-        return postingService.updateComment(comment, commentId, projectId);
+    @SuppressWarnings("MVCPathVariableInspection")
+    @PutJSON(path = "/{projectId:[\\d]+}/comments/{commentId:[\\d]+}")
+    public Comment updateComment(@PathVariable Map<String, String> pathVars, @RequestBody Comment comment) {
+        return postingService.updateComment(
+                comment,
+                Long.valueOf(pathVars.get("commentId")),
+                Long.valueOf(pathVars.get("projectId"))
+        );
     }
 
     /**
@@ -124,8 +122,7 @@ public final class PostingRestController {
      * PUT /api/projects/:id
      */
     @PutJSON(path = "/{id}")
-    public Project updateProject(@PathVariable("id") Long id,
-                                 @RequestBody Project project) {
+    public Project updateProject(@PathVariable("id") Long id, @RequestBody Project project) {
         return postingService.updateProject(id, project);
     }
 

@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.lang.NonNull;
 import org.sudocode.api.core.annotation.ReadOnlyTX;
 import org.sudocode.api.core.annotation.TransactionalService;
 import org.sudocode.api.core.exception.InvalidDifficultyException;
@@ -36,7 +35,6 @@ import static org.sudocode.api.post.project.Difficulty.difficultyEnumFromValue;
 public class PostingService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PostingService.class);
-
     private final ProjectRepository projectRepo;
     private final CommentRepository commentRepo;
     private final AuthFacade auth;
@@ -214,5 +212,4 @@ public class PostingService {
         return lastCommentDate.compareTo(lastPostDate) > 0 ? lastCommentDate
                                                            : lastPostDate;
     }
-
 }
