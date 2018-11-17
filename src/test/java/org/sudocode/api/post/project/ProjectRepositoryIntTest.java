@@ -26,8 +26,6 @@ import static org.sudocode.api.post.project.Difficulty.BEGINNER;
  *
  * @see <a href="https://junit.org/junit5/docs/current/user-guide/#writing-tests-assertions">JUnit 5 guide</a>
  */
-@ExtendWith(SpringExtension.class)
-@SpringBootTest
 @DataJpaTest(showSql = true)
 @Transactional
 @ActiveProfiles("test")
@@ -87,13 +85,15 @@ class ProjectRepositoryIntTest {
     @Test
     void filterAll_BeginnerDifficulty() {
 
-        Page<ProjectView> result = projectRepo.filterAll("    ", BEGINNER, null, null);
+        Page<ProjectView> result = projectRepo.filterAll(null, BEGINNER, null, null);
 
         assertAll("FilterAll",
             () -> {
                 assertNotNull(result, "Page result must not be null");
 
                 final List<ProjectView> resultList = result.getContent();
+
+                System.out.println(resultList);
                 assertAll("ProjectView results",
                     () -> assertEquals(1, resultList.size(),
                         "List should have 1 entry. Make sure project1 difficulty isn't set to BEGINNER"),

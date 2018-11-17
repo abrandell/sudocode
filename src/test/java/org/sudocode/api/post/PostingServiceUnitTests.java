@@ -34,7 +34,6 @@ import static org.mockito.BDDMockito.*;
 import static org.sudocode.api.post.project.Difficulty.BASIC;
 import static org.sudocode.api.post.project.Difficulty.INTERMEDIATE;
 
-@ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.WARN)
 @ActiveProfiles("test")
 class PostingServiceUnitTests {

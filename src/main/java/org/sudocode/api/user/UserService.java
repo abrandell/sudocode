@@ -11,8 +11,6 @@ import org.sudocode.api.core.annotation.ReadOnlyTX;
 import org.sudocode.api.core.annotation.TransactionalService;
 import org.sudocode.api.core.exception.UserNotFoundException;
 
-import java.util.concurrent.CompletableFuture;
-
 /**
  * Service for user transactions. Read only by default & rolls back for any exception.
  * @see TransactionalService
@@ -42,21 +40,18 @@ public class UserService {
      * Update a user.
      */
     @SuppressWarnings("UnusedReturnValue")
-    @Async
-    public CompletableFuture<User> updateUser(User user) {
+    public User updateUser(User user) {
         Assert.notNull(user.getId(), () -> "User ID must not be null!");
 
-        return CompletableFuture
-                .completedFuture(
-                        userRepo.findById(user.getId())
-                                .map(updated -> {
-                                    updated.setLogin(user.getLogin());
-                                    updated.setAvatarUrl(user.getAvatarUrl());
-                                    updated.setHireable(user.isHireable());
-                                    logger.info("Updated user with ID: {}", updated.getId());
-                                    return updated;
-                                }).orElseGet(() -> saveUser(user))
-                );
+        return userRepo.findById(user.getId())
+                       .map(updated -> {
+                           updated.setLogin(user.getLogin());
+                           updated.setAvatarUrl(user.getAvatarUrl());
+                           updated.setHireable(user.isHireable());
+                           logger.info("Updated user with ID: {}", updated.getId());
+                           return updated;
+                       }).orElseGet(() -> saveUser(user))
+                ;
     }
 
     /**
