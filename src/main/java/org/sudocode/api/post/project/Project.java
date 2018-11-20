@@ -45,11 +45,4 @@ public class Project extends UserPost {
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.MERGE)
     private Set<Vote> votes;
-
-/*    @Basic
-    @AccessType(AccessType.Type.PROPERTY)
-    public int getRating() {
-        return votes.stream().mapToInt(value -> value.getDir().primitiveValue()).sum();
-    }*/
-
 }

@@ -23,6 +23,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -78,6 +79,44 @@ class UserServiceTest {
         given(userRepoMock.fetchViewByLogin("mock-username")).willReturn(Optional.of(userViewMock1));
 
         assertEquals(userViewMock1, userService.fetchProjectionByLogin("mock-username"));
+    }
+
+    @Test
+    void updateUser_notInDB_thenSaveNew() {
+        User user = User.builder().id(9L).login("newuser").build();
+
+        given(userRepoMock.findById(user.getId())).willReturn(Optional.empty());
+        given(userRepoMock.save(user)).willReturn(user);
+
+
+        var result = userService.updateUser(user);
+
+        assertAll("Update user -- not in DB -- save new",
+
+                () -> assertEquals(result, user, "User and result should match."),
+                () -> verify(userRepoMock, times(1)).findById(user.getId()),
+                () -> verify(userRepoMock, times(1)).save(any()),
+                () -> verifyNoMoreInteractions(userRepoMock)
+        );
+    }
+
+    @Test
+    void updateUser_inDB_thenUpdate() {
+        given(userRepoMock.findById(user1.getId())).willReturn(Optional.of(user1));
+
+        final User og = User.builder().id(user1.getId()).login(user1.getLogin()).build();
+        User updated = User.builder().id(user1.getId()).login("new-login").build();
+        User result = userService.updateUser(updated);
+
+
+        assertAll("Update user -- ID in DB -- then update",
+                () -> assertNotEquals(og.getLogin(), result.getLogin(), "Logins should not match"),
+                () -> assertEquals(updated.getLogin(), result.getLogin(), "Logins should match"),
+                () -> assertEquals(user1.getId(), result.getId(), "ID's should match"),
+
+                () -> verify(userRepoMock, times(1)).findById(user1.getId()),
+                () -> verifyNoMoreInteractions(userRepoMock)
+        );
     }
 
 }

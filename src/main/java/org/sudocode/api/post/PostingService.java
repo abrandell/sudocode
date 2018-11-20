@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.lang.NonNull;
 import org.sudocode.api.core.annotation.ReadOnlyTX;
 import org.sudocode.api.core.annotation.TransactionalService;
 import org.sudocode.api.core.exception.InvalidDifficultyException;
@@ -180,7 +181,7 @@ public class PostingService {
         });
     }
 
-    /* Works, but ugly and too expensive. TODO: refactor */
+    /* Works, but ugly and too expensive Also difficult to test. TODO: refactor */
     public void voteOnProject(VoteEnum voteEnum, Long projectId) {
         Project project = projectRepo.findById(projectId)
                                      .orElseThrow(() -> new ProjectNotFoundException(projectId));

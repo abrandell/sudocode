@@ -43,6 +43,9 @@ class PostingServiceUnitTests {
     private ProjectRepository projectRepo;
 
     @Mock
+    private VoteRepository voteRepo;
+
+    @Mock
     private CommentRepository commentRepo;
 
     @InjectMocks

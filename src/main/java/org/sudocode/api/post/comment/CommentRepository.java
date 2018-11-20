@@ -20,11 +20,6 @@ import java.util.Optional;
 )
 public interface CommentRepository extends JpaRepository<Comment, Long> {
 
-    @Deprecated
-    @Query(value = "SELECT c FROM Comment c JOIN FETCH c.project JOIN FETCH c.author WHERE c.project.id = :id",
-        countQuery = "SELECT count(c) FROM Comment c WHERE c.project.id = :id")
-    Page<Comment> fetchAllByProjectId(@Param("id") Long id, Pageable pageable);
-
     @Query("SELECT c FROM Comment c JOIN FETCH c.author WHERE c.id = :id")
     Optional<Comment> fetchById(@Param("id") Long id);
 
@@ -47,7 +42,6 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
         + " c.lastModifiedDate AS lastModifiedDate "
         + "FROM Comment c "
         + "WHERE c.project.id = :id")
-    Page<CommentView> fetchCommentViewsByProjectId(@Param("id") Long id,
-                                                   Pageable pageable);
+    Page<CommentView> fetchCommentViewsByProjectId(@Param("id") Long id, Pageable pageable);
 
 }

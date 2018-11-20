@@ -3,13 +3,17 @@ package org.sudocode.api.post.project;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.BDDMockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
+import org.sudocode.api.core.security.AuthFacade;
 import org.sudocode.api.user.User;
 import org.sudocode.api.user.UserRepository;
 
@@ -29,6 +33,7 @@ import static org.sudocode.api.post.project.Difficulty.BEGINNER;
 @DataJpaTest(showSql = true)
 @Transactional
 @ActiveProfiles("test")
+@ExtendWith(MockitoExtension.class)
 class ProjectRepositoryIntTest {
 
     @Autowired
@@ -36,6 +41,9 @@ class ProjectRepositoryIntTest {
 
     @Autowired
     private UserRepository userRepo;
+
+    @MockBean
+    private AuthFacade authFacade;
 
     private User user1;
     private User user2;
@@ -80,6 +88,7 @@ class ProjectRepositoryIntTest {
 
         this.project1 = projectRepo.save(project1);
         this.project2 = projectRepo.save(project2);
+        BDDMockito.given(authFacade.currentUser()).willReturn(user1);
     }
 
     @Test
@@ -128,8 +137,8 @@ class ProjectRepositoryIntTest {
         assertAll("findViewById",
             () -> {
                 assertTrue(optionalProjectView.isPresent(), "Optional should be present");
-
                 final ProjectView result = optionalProjectView.get();
+
                 assertEquals(project1.getId(), result.getId(), "ID's should be equal");
             });
     }
