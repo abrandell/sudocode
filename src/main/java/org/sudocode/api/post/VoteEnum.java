@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 public enum VoteEnum {
 
     UPVOTE(1),
+    UNVOTE(0),
     DOWNVOTE(-1);
 
     private final int value;

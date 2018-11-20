@@ -180,20 +180,22 @@ public class PostingService {
         });
     }
 
+    /* Works, but ugly and too expensive. TODO: refactor */
     public void voteOnProject(VoteEnum voteEnum, Long projectId) {
-        Project project = projectRepo.fetchById(projectId).orElseThrow(() -> new ProjectNotFoundException(projectId));
+        Project project = projectRepo.findById(projectId)
+                                     .orElseThrow(() -> new ProjectNotFoundException(projectId));
 
         voteRepo.fetchByUserAndProjectId(projectId, auth.currentUser().getId())
-                .map(v -> {
-                    v.setDir(voteEnum);
-                    return v;
+                .map(vote -> {
+                    vote.setDir(voteEnum);
+                    return vote;
                 }).orElseGet(() -> voteRepo.save(new Vote(voteEnum, auth.currentUser(), project)));
 
-        int total = voteRepo.fetchAllByProjectId(projectId).mapToInt(v -> v.getDir().primitiveValue()).sum();
+        int totalRating = voteRepo.fetchAllByProjectId(projectId)
+                                  .mapToInt(v -> v.getDir().primitiveValue())
+                                  .sum();
 
-        projectRepo.updateRatingForProject(projectId, total);
-        LOGGER.info("Project rating {}", project.getRating());
-
+        projectRepo.setRating(projectId, totalRating);
     }
 
     /**

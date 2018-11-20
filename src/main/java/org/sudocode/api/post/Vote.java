@@ -17,7 +17,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 public class Vote extends AbstractEntity {
 
-    @Enumerated(EnumType.ORDINAL)
+    @Enumerated(EnumType.STRING)
     private VoteEnum dir;
 
     @ManyToOne(fetch = FetchType.LAZY)
