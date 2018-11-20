@@ -44,7 +44,7 @@ class ServerApplicationTests {
     @Test
     @WithMockOAuth2User(name = "Patrick Ewing")
     void testFetchProjectById() throws Exception {
-        mockMvc.perform(get("/api/users/me"))
+        mockMvc.perform(get("/api/auth/user"))
                .andExpect(jsonPath("$.login", is("Patrick Ewing")))
                .andExpect(jsonPath("$.id", is(1))).andDo(print());
 

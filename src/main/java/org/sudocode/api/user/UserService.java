@@ -50,8 +50,7 @@ public class UserService {
                            updated.setHireable(user.isHireable());
                            logger.info("Updated user with ID: {}", updated.getId());
                            return updated;
-                       }).orElseGet(() -> saveUser(user))
-                ;
+                       }).orElseGet(() -> saveUser(user));
     }
 
     /**

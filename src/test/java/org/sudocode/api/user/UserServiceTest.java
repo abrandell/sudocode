@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.platform.commons.logging.Logger;
 import org.junit.platform.commons.logging.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
@@ -29,6 +30,7 @@ class UserServiceTest {
 
     private final Logger logger = LoggerFactory.getLogger(UserServiceTest.class);
 
+    @Autowired
     private UserService userService;
 
     @MockBean
@@ -41,7 +43,6 @@ class UserServiceTest {
     void setUp() {
         this.user1 = User.builder().id(1L).login("porzingod").build();
         userViewMock1 = UserViewMock.builder().id(1L).login("porzingod").build();
-        this.userService = new UserService(userRepoMock);
 
     }
 
