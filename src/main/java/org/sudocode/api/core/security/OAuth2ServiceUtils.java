@@ -28,8 +28,8 @@ public class OAuth2ServiceUtils {
     }
 
     /**
-     * RestTemplate with the added header "Authorization: Bearer
-     * {@literal <access-token>}" if the current auth is OAuth2.
+     * RestTemplate with the added header "Authorization: Bearer{@literal <access-token>}"
+     * if the current auth is OAuth2.
      *
      * @return RestTemplate with the added header.
      */

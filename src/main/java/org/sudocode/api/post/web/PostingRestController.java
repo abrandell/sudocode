@@ -5,16 +5,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.HttpClientErrorException;
 import org.sudocode.api.core.annotation.Delete;
 import org.sudocode.api.core.annotation.GetJSON;
 import org.sudocode.api.core.annotation.PostJSON;
 import org.sudocode.api.core.annotation.PutJSON;
 import org.sudocode.api.core.exception.ProjectNotFoundException;
 import org.sudocode.api.post.PostingService;
-import org.sudocode.api.post.Vote;
+import org.sudocode.api.post.VoteEnum;
 import org.sudocode.api.post.comment.Comment;
 import org.sudocode.api.post.comment.CommentView;
 import org.sudocode.api.post.project.Project;
@@ -69,8 +67,8 @@ public final class PostingRestController {
      * Upvote or downvote a project idea.
      */
     @PostJSON(path = "/{id}/vote")
-    public void voteOnProject(@PathVariable("id") Long id, @RequestParam("dir") Vote vote) {
-        postingService.voteOnProject(vote, id);
+    public void voteOnProject(@PathVariable("id") Long id, @RequestParam("dir") VoteEnum voteEnum) {
+        postingService.voteOnProject(voteEnum, id);
     }
 
     /**

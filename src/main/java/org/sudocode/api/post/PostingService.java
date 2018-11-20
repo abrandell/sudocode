@@ -37,12 +37,14 @@ public class PostingService {
     private static final Logger LOGGER = LoggerFactory.getLogger(PostingService.class);
     private final ProjectRepository projectRepo;
     private final CommentRepository commentRepo;
+    private final VoteRepository voteRepo;
     private final AuthFacade auth;
 
     @Autowired
-    public PostingService(ProjectRepository projectRepo, CommentRepository commentRepo, AuthFacade auth) {
+    public PostingService(ProjectRepository projectRepo, CommentRepository commentRepo, VoteRepository voteRepo, AuthFacade auth) {
         this.projectRepo = projectRepo;
         this.commentRepo = commentRepo;
+        this.voteRepo = voteRepo;
         this.auth = auth;
     }
 
@@ -178,8 +180,20 @@ public class PostingService {
         });
     }
 
-    public void voteOnProject(Vote vote, Long projectId) {
-        projectRepo.vote(projectId, vote.primitiveValue());
+    public void voteOnProject(VoteEnum voteEnum, Long projectId) {
+        Project project = projectRepo.fetchById(projectId).orElseThrow(() -> new ProjectNotFoundException(projectId));
+
+        voteRepo.fetchByUserAndProjectId(projectId, auth.currentUser().getId())
+                .map(v -> {
+                    v.setDir(voteEnum);
+                    return v;
+                }).orElseGet(() -> voteRepo.save(new Vote(voteEnum, auth.currentUser(), project)));
+
+        int total = voteRepo.fetchAllByProjectId(projectId).mapToInt(v -> v.getDir().primitiveValue()).sum();
+
+        projectRepo.updateRatingForProject(projectId, total);
+        LOGGER.info("Project rating {}", project.getRating());
+
     }
 
     /**

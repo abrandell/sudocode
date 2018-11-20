@@ -69,4 +69,8 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
     @Query("UPDATE Project p SET p.rating = p.rating + (:vote) WHERE p.id = :id")
     int vote(@Param("id") Long projectId, @Param("vote") int vote);
 
+    @Modifying
+    @Query("UPDATE Project p SET p.rating = :total WHERE p.id = :projectId")
+    int updateRatingForProject(@Param("projectId") Long projectId, @Param("total") int total);
+
 }

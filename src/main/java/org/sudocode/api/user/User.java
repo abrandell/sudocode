@@ -61,6 +61,8 @@ public class User implements OAuth2User, Serializable {
     @Column(nullable = false)
     private boolean hireable;
 
+
+
     /**
      * @return Fluent builder for creating a {@link User} POJO.
      * @see UserBuilder

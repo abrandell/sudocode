@@ -61,14 +61,16 @@ class UserServiceTest {
 
         Page<UserView> actual = userService.fetchAllProjections(PageRequest.of(1, 1));
 
-        assertAll("FetchAll", () -> assertEquals(actual.getContent().get(0).getId(),
-            userViewMock1.getId()));
+        assertAll("FetchAll",
+                () -> assertEquals(actual.getContent().get(0).getId(), userViewMock1.getId())
+        );
     }
 
     @Test
     void fetchById_notFound_thenException() {
         assertThrows(UserNotFoundException.class,
-            () -> userService.fetchProjectionById(-1L));
+            () -> userService.fetchProjectionById(-1L)
+        );
     }
 
     @Test

@@ -1,31 +1,33 @@
 package org.sudocode.api.post;
 
-import com.fasterxml.jackson.annotation.JsonValue;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.sudocode.api.core.AbstractEntity;
+import org.sudocode.api.post.project.Project;
+import org.sudocode.api.user.User;
 
-public enum Vote {
+import javax.persistence.*;
 
-    UPVOTE(1),
-    DOWNVOTE(-1);
+@Entity
+@NoArgsConstructor
+@Getter
+@Setter
+@AllArgsConstructor
+public class Vote extends AbstractEntity {
 
-    private final int value;
+    @Enumerated(EnumType.ORDINAL)
+    private VoteEnum dir;
 
-    Vote(int value) {
-        this.value = value;
-    }
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 
-    /**
-     * The primitive int value of the Vote enum.
-     *
-     * @return the primitive value (-1 or 1).
-     */
-    @JsonValue
-    public int primitiveValue() {
-        return value;
-    }
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "project_id")
+    private Project project;
 
-    @Override
-    public String toString() {
-        return String.valueOf(value);
-    }
+
 
 }
