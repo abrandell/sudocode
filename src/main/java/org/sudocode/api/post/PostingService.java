@@ -181,7 +181,7 @@ public class PostingService {
         });
     }
 
-    /* Works, but ugly and too expensive Also difficult to test. TODO: refactor */
+    /* Works, but too expensive and difficult to test. TODO: refactor */
     public void voteOnProject(VoteEnum voteEnum, Long projectId) {
         Project project = projectRepo.findById(projectId)
                                      .orElseThrow(() -> new ProjectNotFoundException(projectId));

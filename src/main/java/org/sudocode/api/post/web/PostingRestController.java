@@ -20,8 +20,6 @@ import org.sudocode.api.post.project.ProjectView;
 
 import java.util.Map;
 
-import static java.lang.Long.valueOf;
-
 /**
  * {@link RestController} for {@link Project} and {@link Comment} posts.
  */

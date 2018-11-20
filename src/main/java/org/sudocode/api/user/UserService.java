@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.util.Assert;
 import org.sudocode.api.core.annotation.ReadOnlyTX;
 import org.sudocode.api.core.annotation.TransactionalService;
