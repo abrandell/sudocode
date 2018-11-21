@@ -3,6 +3,8 @@
 A web-app for Github devs to find and share ideas for side projects. 
 (more interesting features will be added soon). 
 
+[Angular Front End](https://github.com/abrandell/sudocode-client)
+
 
 
 
