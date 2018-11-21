@@ -1,6 +1,6 @@
 # sudoCode
 
-A web-app for built in Spring Boot & Angular for Github devs to find and share ideas for side projects. 
+A web-app for Github devs to find and share ideas for side projects. 
 (more interesting features will be added soon). 
 
 
