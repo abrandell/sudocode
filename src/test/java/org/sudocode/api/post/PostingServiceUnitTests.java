@@ -242,12 +242,14 @@ class PostingServiceUnitTests {
 
         assertAll("Update comment -- same author",
             () -> assertEquals(comment1.getId(), updated.getId(),
-                "ID's should match"),
-            () -> assertEquals(user1, updated.getAuthor(), "Users should match"),
+                    "ID's should match"),
+            () -> assertEquals(user1, updated.getAuthor(),
+                    "Users should match"),
             () -> assertNotEquals(originalCommentBody, updated.getBody(),
-                "Comment body should not match"),
+                    "Comment body should not match"),
             () -> assertEquals(newComment.getBody(), updated.getBody(),
-                "Comment bodies should match."),
+                    "Comment bodies should match."),
+
             () -> verify(commentRepo, times(1)).fetchById(originalId),
             () -> verify(commentRepo, times(0)).save(any()),
             () -> verifyZeroInteractions(projectRepo));

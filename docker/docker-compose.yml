@@ -4,8 +4,6 @@ services:
 
   mysql-dev:
     image: mysql:5.7
-#    volumes:
-#      - "./data:/var/lib/mysql:rw"
     ports:
       - 3308:3306
     environment:

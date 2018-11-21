@@ -190,7 +190,8 @@ public class PostingService {
                 .map(vote -> {
                     vote.setDir(voteEnum);
                     return vote;
-                }).orElseGet(() -> voteRepo.save(new Vote(voteEnum, auth.currentUser(), project)));
+                }).orElseGet(() -> voteRepo.save(new Vote(voteEnum, auth.currentUser(), project))
+        );
 
         int totalRating = voteRepo.fetchAllByProjectId(projectId)
                                   .mapToInt(v -> v.getDir().primitiveValue())
