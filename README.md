@@ -10,7 +10,6 @@ A web-app for Github devs to find and share ideas for side projects.
 
 
 
-### Wanna try it out?
 
 To run the site in it's current state on a local server, you'll need to create an OAuth2 Github app
 (or use an existing OAuth Github client id/secret). 
