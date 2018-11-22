@@ -77,7 +77,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 String origin = request.getHeader("Referer");
 
                 // Temp fix.
-                // 'Referer' is null if logging into app while already authenticated wit github.
+                // 'Referer' is null if logging into app while already authenticated with github.
                 if (origin == null || origin.isEmpty()) {
                     origin = "http://localhost:4200";
                 }
