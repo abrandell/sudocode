@@ -23,7 +23,7 @@ import static org.sudocode.api.core.Constants.LOCAL_DATE_TIME_MIN;
  * Service for timing out users for spamming and/or posting too often.
  */
 @Service
-class TimeOutService {
+public class TimeOutService {
 
     private final Logger LOG = LoggerFactory.getLogger(TimeOutService.class);
 
