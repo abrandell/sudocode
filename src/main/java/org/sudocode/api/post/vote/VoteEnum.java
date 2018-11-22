@@ -1,4 +1,4 @@
-package org.sudocode.api.post;
+package org.sudocode.api.post.vote;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 

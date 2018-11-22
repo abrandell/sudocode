@@ -1,4 +1,4 @@
-package org.sudocode.api.post;
+package org.sudocode.api.post.vote;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

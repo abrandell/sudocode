@@ -5,18 +5,14 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.validator.constraints.Length;
-import org.springframework.data.annotation.AccessType;
 import org.springframework.lang.NonNull;
-import org.springframework.lang.Nullable;
 import org.sudocode.api.post.UserPost;
-import org.sudocode.api.post.Vote;
 import org.sudocode.api.post.project.support.ProjectBuilder;
+import org.sudocode.api.post.vote.Vote;
 import org.sudocode.api.user.User;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.Set;
 
 @Entity

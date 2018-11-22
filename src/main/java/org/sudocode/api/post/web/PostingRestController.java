@@ -12,11 +12,11 @@ import org.sudocode.api.core.annotation.PostJSON;
 import org.sudocode.api.core.annotation.PutJSON;
 import org.sudocode.api.core.exception.ProjectNotFoundException;
 import org.sudocode.api.post.PostingService;
-import org.sudocode.api.post.VoteEnum;
 import org.sudocode.api.post.comment.Comment;
 import org.sudocode.api.post.comment.CommentView;
 import org.sudocode.api.post.project.Project;
 import org.sudocode.api.post.project.ProjectView;
+import org.sudocode.api.post.vote.VoteEnum;
 
 import java.util.Map;
 

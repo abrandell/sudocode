@@ -18,6 +18,9 @@ import org.sudocode.api.post.project.Difficulty;
 import org.sudocode.api.post.project.Project;
 import org.sudocode.api.post.project.ProjectRepository;
 import org.sudocode.api.post.project.ProjectView;
+import org.sudocode.api.post.vote.Vote;
+import org.sudocode.api.post.vote.VoteEnum;
+import org.sudocode.api.post.vote.VoteRepository;
 import org.sudocode.api.user.User;
 
 import java.time.LocalDateTime;
