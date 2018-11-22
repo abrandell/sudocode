@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.validator.constraints.Length;
-import org.sudocode.api.post.UserPost;
+import org.sudocode.api.post.Post;
 import org.sudocode.api.post.comment.support.CommentBuilder;
 import org.sudocode.api.post.project.Project;
 
@@ -21,7 +21,7 @@ import javax.persistence.Table;
 @NoArgsConstructor
 @Table(name = "comments")
 @ToString(callSuper = true)
-public class Comment extends UserPost {
+public class Comment extends Post {
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

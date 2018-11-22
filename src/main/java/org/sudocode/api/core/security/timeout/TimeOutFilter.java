@@ -3,7 +3,7 @@ package org.sudocode.api.core.security.timeout;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.sudocode.api.core.security.AuthFacade;
-import org.sudocode.api.post.UserPost;
+import org.sudocode.api.post.Post;
 import org.sudocode.api.user.User;
 
 import javax.servlet.FilterChain;
@@ -25,7 +25,7 @@ public class TimeOutFilter extends OncePerRequestFilter {
 
     /**
      * Filter to check if a user is spamming when they post or update any
-     * {@link UserPost}.
+     * {@link Post}.
      *
      * @see TimeOutService#handleTimeOut(Long)
      */

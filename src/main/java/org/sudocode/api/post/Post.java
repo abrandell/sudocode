@@ -6,7 +6,6 @@ import lombok.ToString;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.domain.Persistable;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.sudocode.api.core.AbstractEntity;
 import org.sudocode.api.user.User;
@@ -23,7 +22,7 @@ import java.time.LocalDateTime;
 @Setter
 @ToString(callSuper = true)
 @EntityListeners(AuditingEntityListener.class)
-public abstract class UserPost extends AbstractEntity implements Persistable<Long> {
+public abstract class Post extends AbstractEntity {
 
     @Column(name = "posted_date", updatable = false)
     @CreatedDate

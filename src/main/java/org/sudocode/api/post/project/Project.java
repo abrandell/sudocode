@@ -6,7 +6,7 @@ import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.lang.NonNull;
-import org.sudocode.api.post.UserPost;
+import org.sudocode.api.post.Post;
 import org.sudocode.api.post.project.support.ProjectBuilder;
 import org.sudocode.api.post.vote.Vote;
 import org.sudocode.api.user.User;
@@ -21,7 +21,7 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @ToString(callSuper = true)
-public class Project extends UserPost {
+public class Project extends Post {
 
     @Length(min = 5, max = 300)
     private String title;
