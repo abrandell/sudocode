@@ -3,15 +3,12 @@ package org.sudocode.api.post.project;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.BDDMockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 import org.sudocode.api.core.security.AuthFacade;
 import org.sudocode.api.user.User;
@@ -22,6 +19,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.BDDMockito.given;
 import static org.sudocode.api.post.project.Difficulty.ADVANCED;
 import static org.sudocode.api.post.project.Difficulty.BEGINNER;
 
@@ -88,7 +86,8 @@ class ProjectRepositoryIntTest {
 
         this.project1 = projectRepo.save(project1);
         this.project2 = projectRepo.save(project2);
-        BDDMockito.given(authFacade.currentUser()).willReturn(user1);
+
+        given(authFacade.currentUser()).willReturn(user1);
     }
 
     @Test
