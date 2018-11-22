@@ -17,7 +17,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class RedirectControllerTests {
 
     @Autowired
-    MockMvc mvc;
+    private MockMvc mvc;
 
     @Test
     void redirect_not_match_API() throws Exception {
