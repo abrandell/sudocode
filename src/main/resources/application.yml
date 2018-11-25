@@ -28,7 +28,7 @@ spring:
     deserialization:
       accept-single-value-as-array: true
   profiles:
-    active: prod
+    active: ${ACTIVE_PROFILE}
 management:
   endpoints:
     web:
@@ -37,8 +37,6 @@ management:
         include:
           - health
           - info
-server:
-  port: ${PORT}
 ---
 
 spring:
@@ -82,9 +80,14 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL5Dialect
+
 server:
   use-forward-headers: true
+  port: ${PORT}
 
+logging:
+  level:
+    org.sudocode.api: debug
 ---
 
 spring:
