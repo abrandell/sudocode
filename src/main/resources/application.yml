@@ -38,6 +38,8 @@ management:
         include:
           - health
           - info
+server:
+  port: ${PORT}
 ---
 
 spring:
