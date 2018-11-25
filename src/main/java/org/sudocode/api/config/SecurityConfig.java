@@ -38,7 +38,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         // @formatter:off
         http
-
+/*                .requiresChannel()
+                    .requestMatchers(r -> r.getHeader("X-Forwarded-Proto") != null)
+                    .requiresSecure()
+                    .and()*/
                 .csrf()
                     .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                     .and()
@@ -54,9 +57,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .and()
                 .oauth2Login()
                     .loginPage("/").userInfoEndpoint()
-                    .userService(customOAuth2UserService())
-                    .and()
-                .successHandler(successHandler());
+                    .userService(customOAuth2UserService());
+/*                    .and()
+                .successHandler(successHandler());*/
         // @formatter:on
     }
 
@@ -73,6 +76,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return (request, response, authentication) -> {
             // Update the user upon login.
             userService.updateUser((User) authentication.getPrincipal());
+
+            if (System.getenv("ACTIVE_PROFILE").equals("dev")) {
+                String origin = request.getHeader("Referer");
+
+                // Temp fix.
+                // 'Referer' is null if logging into app while already authenticated with github.
+                if (origin == null || origin.isEmpty()) {
+                    origin = "http://localhost:4200";
+                }
+                new DefaultRedirectStrategy().sendRedirect(request, response, origin);
+            }
         };
     }
 }
