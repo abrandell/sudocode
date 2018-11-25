@@ -83,7 +83,6 @@
         <dependency>
             <groupId>postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>LATEST</version>
         </dependency>
 
         <dependency>
