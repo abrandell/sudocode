@@ -38,10 +38,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         // @formatter:off
         http
-                .requiresChannel()
-                    .requestMatchers(r -> r.getHeader("X-Forwarded-Proto") != null)
-                    .requiresSecure()
-                    .and()
+
                 .csrf()
                     .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                     .and()
