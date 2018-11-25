@@ -40,7 +40,7 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
            + "AND (:difficulty = '' or p.difficulty = :difficulty) "
            + "AND (:description = '' or lower(p.description) LIKE concat('%', lower(:description), '%'))")
     Page<ProjectView> filterAll(@Param("title") String title,
-                                @Param("difficulty") String difficulty,
+                                @Param("difficulty") Difficulty difficulty,
                                 @Param("description") String description,
                                 Pageable pageable);
 
