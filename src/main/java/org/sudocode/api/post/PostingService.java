@@ -73,13 +73,10 @@ public class PostingService {
     public Page<ProjectView> fetchAllProjectViews(String title, String difficultyStr,
                                                   String description, Pageable pageable) {
 
-/*
         var diffEnum = isNotBlank(difficultyStr) ? difficultyEnumFromValue(difficultyStr)
                                                  : null;
-*/
 
-        var diff = isNotBlank(difficultyStr) ? difficultyStr.trim().toUpperCase() : "";
-        return projectRepo.filterAll(title, diff, description, pageable);
+        return projectRepo.filterAll(title, diffEnum, description, pageable);
     }
 
     /**
