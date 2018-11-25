@@ -28,7 +28,7 @@ spring:
     deserialization:
       accept-single-value-as-array: true
   profiles:
-    active: ${ACTIVE_PROFILE}
+    active: prod
 
 management:
   endpoints:
@@ -79,7 +79,7 @@ spring:
     password: ${SPRING_DATASOURCE_PASSWORD}
   jpa:
     hibernate:
-      ddl-auto: validate
+      ddl-auto: update
 
 ---
 
