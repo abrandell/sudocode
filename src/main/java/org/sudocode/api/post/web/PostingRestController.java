@@ -52,9 +52,9 @@ public final class PostingRestController {
     @GetJSON
     public Page<ProjectView> fetchProjects(@RequestParam Map<String, String> params, Pageable page) {
         return postingService.fetchAllProjectViews(
-                params.getOrDefault("title", ""),
-                params.getOrDefault("difficulty", ""),
-                params.getOrDefault("description", ""),
+                params.get("title"),
+                params.get("difficulty"),
+                params.get("description"),
                 page
         );
     }

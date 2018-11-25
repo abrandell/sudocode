@@ -36,9 +36,9 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
            + " p.lastModifiedDate AS lastModifiedDate, "
            + " p.author AS author "
            + "FROM Project p "
-           + "WHERE (:title = '' or lower(p.title) LIKE concat('%', lower(:title), '%')) "
-           + "AND (:difficulty = '' or p.difficulty = :difficulty) "
-           + "AND (:description = '' or lower(p.description) LIKE concat('%', lower(:description), '%'))")
+           + "WHERE (:title is null or lower(p.title) LIKE concat('%', lower(:title), '%')) "
+           + "AND (:difficulty is null or p.difficulty = :difficulty) "
+           + "AND (:description is null or lower(p.description) LIKE concat('%', lower(:description), '%'))")
     Page<ProjectView> filterAll(@Param("title") String title,
                                 @Param("difficulty") Difficulty difficulty,
                                 @Param("description") String description,

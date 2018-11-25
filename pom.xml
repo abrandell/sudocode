@@ -79,13 +79,6 @@
             <artifactId>jackson-datatype-hibernate5</artifactId>
             <version>${jackson.datatype.hibernate5.version}</version>
         </dependency>
-
-        <dependency>
-            <groupId>org.postgresql</groupId>
-            <artifactId>postgresql</artifactId>
-            <version>42.2.5</version>
-        </dependency>
-
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
