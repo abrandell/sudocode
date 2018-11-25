@@ -76,17 +76,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return (request, response, authentication) -> {
             // Update the user upon login.
             userService.updateUser((User) authentication.getPrincipal());
-
-            if (System.getenv("ACTIVE_PROFILE").equals("dev")) {
-                String origin = request.getHeader("Referer");
-
-                // Temp fix.
-                // 'Referer' is null if logging into app while already authenticated with github.
-                if (origin == null || origin.isEmpty()) {
-                    origin = "http://localhost:4200";
-                }
-                new DefaultRedirectStrategy().sendRedirect(request, response, origin);
-            }
         };
     }
 }
