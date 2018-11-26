@@ -26,6 +26,7 @@ import java.util.Optional;
 )
 public interface ProjectRepository extends JpaRepository<Project, Long> {
 
+    // This query works well with MySQL. Postgres will complain about the null's.
     @Query("SELECT "
            + " p.id AS id,"
            + " p.title AS title, "

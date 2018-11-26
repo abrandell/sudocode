@@ -52,7 +52,7 @@ public class UserRestController {
      * Fetch a {@link UserView} projection by their login.
      *
      * @param login login to search for.
-     * @return User with the given login in DTO form.
+     * @return User with the given login in projection form.
      */
     @GetJSON(path = "/{login:[A-Za-z]+}")
     public UserView fetchByLogin(@PathVariable String login) {

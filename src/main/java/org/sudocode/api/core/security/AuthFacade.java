@@ -20,7 +20,10 @@ import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROT
 public class AuthFacade {
 
     /**
+     * Get the currently logged in user. Casts the principal into a {@link User} object.
+     *
      * @return The {@link Principal} in the form of a {@link User}
+     * @throws UserNotLoggedInException if the {@link Authentication} is {@literal null} or not authenticated.
      * @see OAuth2User
      * @see Principal
      * @see User
