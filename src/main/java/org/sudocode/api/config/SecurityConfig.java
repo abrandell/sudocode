@@ -80,7 +80,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 && System.getenv("ACTIVE_PROFILE").equals("dev")) {
                 origin = "http://localhost:4200";
             } else {
-                origin = "https://sudocode.org";
+                origin = "/";
             }
 
             new DefaultRedirectStrategy().sendRedirect(request, response, origin);
