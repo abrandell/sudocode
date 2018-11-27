@@ -1,18 +1,14 @@
 # sudoCode
 
 A web-app for Github devs to find and share ideas for side projects. 
-(more interesting features will be added soon). 
 
+[Live Preview on Heroku](https://www.sudocode.org)
+---
 [Angular Front End](https://github.com/abrandell/sudocode-client)
 
-
-
-
-
-
-
 To run the site in it's current state on a local server, you'll need to create an OAuth2 Github app
-(or use an existing OAuth Github client id/secret). 
+(or use an existing OAuth Github client id/secret) as well as remove the Github OAuth login link (in the [frontend](https://github.com/abrandell/sudocode-client)) 
+and replace it with `<your-home-page-url>/oauth2/authorization/github`
 
 You'll also either need to use the docker-compose.yml file included:
  ```yaml
@@ -34,9 +30,10 @@ services:
  
  Or just use an in-memory DB like H2.
 
-
 ## Technologies Used (so far)
 
 * [Spring Boot 2.1.0](https://spring.io/)
 * [Angular 7](https://angular.io/) 
-* [MySQL](https://www.mysql.com/) 
+* [MySQL](https://www.mysql.com/)
+* [Cloudflare](https://www.cloudflare.com)
+* [Heroku](https://www.heroku.com/)
