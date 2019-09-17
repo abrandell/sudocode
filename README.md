@@ -2,7 +2,7 @@
 
 A web-app for Github devs to find and share ideas for side projects. 
 
-[Live Preview on Heroku](https://www.sudocode.org)
+[Live Preview on Heroku](https://sudocode-app.herokuapp.com/projects)
 ---
 [Angular Front End](https://github.com/abrandell/sudocode-client)
 
